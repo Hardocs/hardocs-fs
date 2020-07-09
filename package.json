@@ -1,8 +1,11 @@
 {
   "name": "hardocs-plugin-based",
   "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "plugins/*"
+  ],
   "description": "Hardocs project with couchdb and a plugin based approach",
-  "main": "index.js",
   "scripts": {
     "test": "yarn test"
   },
