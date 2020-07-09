@@ -1,16 +1,21 @@
 import { GraphQLServer } from 'graphql-yoga';
+import { Server } from 'http';
+import { Server as HTTPSServer } from 'https';
+import generateSchema from './utils/generateSchema';
 
-const typeDefs = `
-  type Query {
-    hello(name: String): String!
-  }
-`;
+export default async (): Promise<Server | HTTPSServer> => {
+  const schema = generateSchema();
 
-const resolvers = {
-  Query: {
-    hello: (_, { name }) => `Hello ${name || 'World'}`
-  }
+  const server = new GraphQLServer({
+    schema
+  });
+
+  const port = process.env.PORT || 4000;
+
+  return await server.start(
+    {
+      port
+    },
+    () => console.log(`server is running on http://localhost:${port}`)
+  );
 };
-
-const server = new GraphQLServer({ typeDefs, resolvers });
-server.start(() => console.log('Server is running on localhost:4000'));
