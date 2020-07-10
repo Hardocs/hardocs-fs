@@ -1,3 +1,4 @@
+require('dotenv').config();
 import server from './server';
 
 server(); // I didn't start the server authomatically
