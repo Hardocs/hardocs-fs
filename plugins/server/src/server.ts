@@ -2,49 +2,42 @@ import { GraphQLServer } from 'graphql-yoga';
 import { Server } from 'http';
 import { Server as HTTPSServer } from 'https';
 import generateSchema from './utils/generateSchema';
-// import * as Nano from 'nano';
+import * as Nano from 'nano';
+import { MaybeDocument } from 'nano';
+
+interface Divine extends MaybeDocument {
+  name: string;
+  email: string;
+  age: number;
+  nice: boolean;
+}
+
+const doc: Divine = {
+  name: 'Nature',
+  email: 'divinehycenth@yahoo.com',
+  age: 22,
+  nice: true
+};
 
 export default async (): Promise<Server | HTTPSServer> => {
-  // const db_name = 'test';
-  // const nano = Nano({
-  //   url: process.env.DB_HOST_AUTH,
-  //   log: (id, args) => {
-  //     console.log(id, args);
-  //   }
-  // });
-  // const db = nano.use(db_name);
-  // interface iPerson extends Nano.MaybeDocument {
-  //   name: string;
-  //   dob: string;
-  // }
-
-  // class Person implements iPerson {
-  //   _id: string;
-  //   _rev: string;
-  //   name: string;
-  //   dob: string;
-
-  //   constructor(name: string, dob: string) {
-  //     this._id = undefined;
-  //     this._rev = undefined;
-  //     this.name = name;
-  //     this.dob = dob;
-  //   }
-
-  //   processAPIResponse(response: Nano.DocumentInsertResponse) {
-  //     if (response.ok === true) {
-  //       this._id = response.id;
-  //       this._rev = response.rev;
-  //     }
-  //   }
-  // }
-
-  // const p = new Person('Bob', '2015-02-04');
-  // db.insert(p).then((response) => {
-  //   p.processAPIResponse(response);
-  //   console.log(p);
-  // });
   const schema = generateSchema();
+  const dbName = 'hello';
+  const nano = Nano(process.env.DB_HOST_AUTH);
+
+  // const dbList = await nano.db.list(); // Returns a list of database
+
+  try {
+    // if (!dbList.includes(dbName)) {
+    // await nano.db.create(dbName);
+    const db = nano.use(dbName);
+    console.log('database created successfully');
+    const list = await db.insert(doc);
+
+    console.log(list);
+    // }
+  } catch (err) {
+    throw new Error(err);
+  }
 
   const server = new GraphQLServer({
     schema
