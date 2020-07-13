@@ -1,5 +1,6 @@
 type Mutation {
   createRecord(name: String!, email: String!, age: Int!, nice: Boolean!): Boolean!
+  delete(id: String, rev: String): Boolean!
 }
 
 type Query {

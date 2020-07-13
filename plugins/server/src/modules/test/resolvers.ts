@@ -22,6 +22,12 @@ export const resolver = {
         console.log(err);
         return false;
       }
+    },
+
+    delete: async (_: any, { id, rev }: { id: string; rev: string }) => {
+      const f = await (await couch).destroy(id, rev);
+      console.log(f);
+      return true;
     }
   },
   Query: {
