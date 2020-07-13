@@ -9,6 +9,12 @@ export interface Divine extends MaybeDocument {
   nice: boolean;
 }
 
+interface Update extends MaybeDocument {
+  updated: boolean;
+  id: string;
+  rev: string;
+}
+
 export const resolver = {
   Mutation: {
     createRecord: async (_: any, args: Divine) => {
@@ -17,7 +23,6 @@ export const resolver = {
 
         console.log(list);
         return true;
-        // }
       } catch (err) {
         console.log(err);
         return false;
@@ -27,6 +32,20 @@ export const resolver = {
     delete: async (_: any, { id, rev }: { id: string; rev: string }) => {
       const f = await (await couch).destroy(id, rev);
       console.log(f);
+      return true;
+    },
+
+    update: async (_: any, { id, rev, ...args }: Update) => {
+      const findFile = await (await couch).get(id);
+      if (findFile) {
+        const file = await (await couch).insert({
+          _id: id,
+          _rev: rev,
+          ...findFile,
+          ...args
+        });
+        console.log(file);
+      }
       return true;
     }
   },
