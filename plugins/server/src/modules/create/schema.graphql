@@ -1,3 +1,8 @@
 type Mutation {
   createRecord(name: String!, email: String!, age: Int!, nice: Boolean!): Boolean!
 }
+
+type Query {
+  findAll: Boolean!
+  findSingle(id: String!): Boolean!
+}

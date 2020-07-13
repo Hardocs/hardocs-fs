@@ -12,13 +12,6 @@ export interface Divine extends MaybeDocument {
 export const resolver = {
   Mutation: {
     createRecord: async (_: any, args: Divine) => {
-      //   const doc: Divine = {
-      //     name: 'Nature',
-      //     email: 'divinehycenth@yahoo.com',
-      //     age: 22,
-      //     nice: true
-      //   };
-
       try {
         const list = await (await couch).insert(args);
 
@@ -29,6 +22,21 @@ export const resolver = {
         console.log(err);
         return false;
       }
+    }
+  },
+  Query: {
+    findAll: async () => {
+      const files = await (await couch).find({
+        selector: {}
+      });
+      console.log(files.docs);
+      return true;
+    },
+
+    findSingle: async (_: any, { id }: { id: string }) => {
+      const file = await (await couch).get(id);
+      console.log(file);
+      return true;
     }
   }
 };
