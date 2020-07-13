@@ -12,6 +12,10 @@ export default (async () => {
       const db = nano.use(dbName);
       console.log('database created successfully');
       return db;
+    } else {
+      const db = nano.use(dbName);
+      console.log('connected to database successfully');
+      return db;
     }
   } catch (err) {
     throw new Error(err);

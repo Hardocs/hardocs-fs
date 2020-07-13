@@ -1,0 +1,12 @@
+type Docs {
+  name: String!
+  email: String!
+  age: Int!
+  nice: Boolean!
+}
+
+type Query {
+  findAll: [Docs!]!
+
+  find(id: String!): Docs!
+}
