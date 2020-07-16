@@ -10,7 +10,7 @@ export default (): GraphQLSchema => {
 
   const graphqlTypes = glob.sync(`${pathModules}/**/*.graphql`).map((x) => fs.readFileSync(x, 'utf8'));
 
-  const resolvers = glob.sync(`${pathModules}/**/resolvers.?s`).map((r) => require(r).resolver);
+  const resolvers = glob.sync(`${pathModules}/**/resolvers.?s`).map((r) => require(r).resolver || require(r).default);
 
   return makeExecutableSchema({
     typeDefs: mergeTypes(graphqlTypes),

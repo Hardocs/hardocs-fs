@@ -2,9 +2,14 @@
   "name": "hardocs-plugin-based",
   "version": "1.0.0",
   "private": true,
-  "workspaces": [
-    "plugins/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "plugins/*"
+    ],
+    "noHoist": [
+      "**/*vue"
+    ]
+  },
   "description": "Hardocs project with couchdb and a plugin based approach",
   "scripts": {
     "test": "yarn test"
@@ -13,5 +18,18 @@
     "Hardocs"
   ],
   "author": "Divine Hycenth",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.6.0",
+    "@typescript-eslint/parser": "^3.6.0",
+    "eslint": "^7.4.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-json": "^2.1.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.0.5"
+  },
+  "dependencies": {
+    "fs-extra": "^9.0.1"
+  }
 }
