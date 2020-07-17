@@ -1,9 +1,8 @@
+import { ResolverMap } from '../../typings/globals';
 import cwd from './cwd';
 
-const resolver = {
+export const resolver: ResolverMap = {
   Query: {
     cwd: () => cwd.get()
   }
 };
-
-export default resolver;

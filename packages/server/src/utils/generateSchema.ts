@@ -8,9 +8,13 @@ import { GraphQLSchema } from 'graphql';
 export default (): GraphQLSchema => {
   const pathModules = path.join(__dirname, '../modules');
 
-  const graphqlTypes = glob.sync(`${pathModules}/**/*.graphql`).map((x) => fs.readFileSync(x, 'utf8'));
+  const graphqlTypes = glob
+    .sync(`${pathModules}/**/*.graphql`)
+    .map((x) => fs.readFileSync(x, 'utf8'));
 
-  const resolvers = glob.sync(`${pathModules}/**/resolvers.?s`).map((r) => require(r).resolver || require(r).default);
+  const resolvers = glob
+    .sync(`${pathModules}/**/resolvers.?s`)
+    .map((r) => require(r).resolver);
 
   return makeExecutableSchema({
     typeDefs: mergeTypes(graphqlTypes),
