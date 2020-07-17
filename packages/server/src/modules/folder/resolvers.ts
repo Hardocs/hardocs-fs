@@ -3,8 +3,15 @@ import { ResolverMap } from '../../typings/globals';
 
 export const resolver: ResolverMap = {
   Query: {
-    folderExists: (_root, args: HDS.IFolderExistsOnQueryArguments) =>
-      folders.isDirectory(args.file)
+    folderExists: (
+      _root,
+      { file }: HDS.IFolderExistsOnQueryArguments
+    ): boolean => folders.isDirectory(file),
+    folderCurrent: (_root, args, context) => folders.getCurrent(args, context),
+    folderOpen: (
+      _root,
+      { path }: HDS.IFolderOpenOnMutationArguments
+    ): boolean => folders.isDirectory(path)
   }
 };
 

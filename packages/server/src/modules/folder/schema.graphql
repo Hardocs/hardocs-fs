@@ -1,3 +1,17 @@
 type Query {
   folderExists(file: String!): Boolean
+  folderCurrent: Folder
+}
+
+type Mutation {
+  folderOpen(path: String!): Folder
+}
+
+type Folder {
+  name: String!
+  path: String!
+  isPackage: Boolean
+  isHardocsProject: Boolean
+  children: [Folder]
+  hidden: Boolean
 }

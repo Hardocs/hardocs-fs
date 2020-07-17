@@ -3,7 +3,7 @@
 
 declare namespace HDS {
   interface IGraphQLResponseRoot {
-    data?: IQuery;
+    data?: IQuery | IMutation;
     errors?: Array<IGraphQLResponseError>;
   }
 
@@ -24,10 +24,30 @@ declare namespace HDS {
     __typename: 'Query';
     cwd: string;
     folderExists: boolean | null;
+    folderCurrent: IFolder | null;
   }
 
   interface IFolderExistsOnQueryArguments {
     file: string;
+  }
+
+  interface IFolder {
+    __typename: 'Folder';
+    name: string;
+    path: string;
+    isPackage: boolean | null;
+    isHardocsProject: boolean | null;
+    children: Array<IFolder | null> | null;
+    hidden: boolean | null;
+  }
+
+  interface IMutation {
+    __typename: 'Mutation';
+    folderOpen: IFolder | null;
+  }
+
+  interface IFolderOpenOnMutationArguments {
+    path: string;
   }
 }
 
