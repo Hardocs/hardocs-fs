@@ -7,7 +7,10 @@ export const resolver: ResolverMap = {
       _root,
       { file }: HDS.IFolderExistsOnQueryArguments
     ): boolean => folders.isDirectory(file),
-    folderCurrent: (_root, args, context) => folders.getCurrent(args, context),
+    folderCurrent: (_root, args, context) => folders.getCurrent(args, context)
+  },
+
+  Mutation: {
     folderOpen: (
       _root,
       { path }: HDS.IFolderOpenOnMutationArguments
