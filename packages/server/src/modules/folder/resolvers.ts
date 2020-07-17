@@ -14,7 +14,9 @@ export const resolver: ResolverMap = {
   Mutation: {
     folderOpen: (_root, { path }: HDS.IFolderOpenOnMutationArguments) =>
       folders.open(path),
-    folderOpenParent: () => folders.openParent(cwd.get())
+    folderOpenParent: () => folders.openParent(cwd.get()),
+    folderCreate: (_root, { name }: HDS.IFolderCreateOnMutationArguments) =>
+      folders.createFolder(name)
   }
 };
 

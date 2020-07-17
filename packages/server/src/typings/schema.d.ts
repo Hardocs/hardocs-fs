@@ -44,10 +44,16 @@ declare namespace HDS {
   interface IMutation {
     __typename: 'Mutation';
     folderOpen: IFolder | null;
+    folderOpenParent: IFolder | null;
+    folderCreate: IFolder | null;
   }
 
   interface IFolderOpenOnMutationArguments {
     path: string;
+  }
+
+  interface IFolderCreateOnMutationArguments {
+    name: string;
   }
 }
 

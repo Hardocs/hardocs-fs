@@ -6,7 +6,7 @@ type Query {
 type Mutation {
   folderOpen(path: String!): Folder
   folderOpenParent: Folder
-  folderCreate(name: String): Folder
+  folderCreate(name: String!): Folder
 }
 
 type Folder {

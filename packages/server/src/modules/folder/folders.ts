@@ -1,5 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
+
+import { GeneratedFolder } from './../../typings/globals';
 import logs from '../../utils/logs';
 import cwd from '../cwd/cwd';
 
@@ -13,7 +15,7 @@ const isDirectory = (file: string) => {
   return false;
 };
 
-const generateFolder = (file: string) => {
+const generateFolder = (file: string): GeneratedFolder => {
   return {
     name: path.basename(file),
     path: file
@@ -36,10 +38,17 @@ function openParent(file: string) {
   return generateFolder(cwd.get());
 }
 
+function createFolder(name: string) {
+  const folder = path.join(cwd.get(), name);
+  fs.mkdirpSync(folder);
+  return generateFolder(folder);
+}
+
 export default {
   isDirectory,
   generateFolder,
   getCurrent,
   open,
-  openParent
+  openParent,
+  createFolder
 };
