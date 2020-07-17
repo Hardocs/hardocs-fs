@@ -13,20 +13,33 @@ const isDirectory = (file: string) => {
   return false;
 };
 
-const generateFolder = (file: string, _context: any) => {
+const generateFolder = (file: string) => {
   return {
     name: path.basename(file),
     path: file
   };
 };
 
-const getCurrent = (_file: any, context: any) => {
+const getCurrent = (_file: any) => {
   const baseDir = cwd.get();
-  return generateFolder(baseDir, context);
+  return generateFolder(baseDir);
 };
+
+const open = (file: string) => {
+  cwd.set(file);
+  return generateFolder(cwd.get());
+};
+
+function openParent(file: string) {
+  const newPath = path.dirname(file);
+  cwd.set(newPath);
+  return generateFolder(cwd.get());
+}
 
 export default {
   isDirectory,
   generateFolder,
-  getCurrent
+  getCurrent,
+  open,
+  openParent
 };
