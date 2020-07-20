@@ -95,6 +95,15 @@ const isHidden = (file: string) => {
   }
 };
 
+const isPackage = (file: string): boolean => {
+  try {
+    return fs.existsSync(path.join(file, 'package.json'));
+  } catch (er) {
+    logs.Warn(er.message);
+  }
+  return false;
+};
+
 export default {
   isDirectory,
   generateFolder,
@@ -103,5 +112,6 @@ export default {
   openParent,
   createFolder,
   list,
-  isHidden
+  isHidden,
+  isPackage
 };

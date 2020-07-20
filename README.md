@@ -13,7 +13,7 @@ Another fun part of this monorepo aproach using [`yarn workspaces`](https://clas
 - 🐛 for bug fix
 - 🚀 for creating a new plugin
 - ✨ for adding a new features
-- Any fruit, food or plant for simple fixes
+- Any fruit, food or plant for simple fixes 🍍 🍎 🍏 🍓
 
 Feel free to suggest an emoji 😼
 
