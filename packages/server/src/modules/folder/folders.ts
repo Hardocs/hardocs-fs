@@ -1,3 +1,5 @@
+import { READ_PACKAGE_PREFIX } from './constants';
+import { Redis } from 'ioredis';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as winattr from 'winattr';
@@ -88,20 +90,73 @@ const isHidden = (file: string) => {
       (isPlatformWindows && result.windows)
     );
   } catch (er) {
-    if (process.env.DEV_MODE) {
+    if (process.env.HARDOCS_DEV_MODE) {
       logs.Warn('File: ' + file);
       return logs.Err(er);
     }
   }
 };
 
-const isPackage = (file: string): boolean => {
-  try {
-    return fs.existsSync(path.join(file, 'package.json'));
-  } catch (er) {
-    logs.Warn(er.message);
+// const isPackage = (file: string): boolean => {
+//   try {
+//     return fs.existsSync(path.join(file, 'package.json'));
+//   } catch (er) {
+//     logs.Warn(er.message);
+//   }
+//   return false;
+// };
+
+const readPackage = async (options: {
+  redis: Redis;
+  file: string;
+  force?: boolean;
+}) => {
+  const { file, force = false, redis } = options;
+  if (!force) {
+    console.log(file);
+    const cachedValue = await redis.get(`${READ_PACKAGE_PREFIX}${file}`);
+    if (cachedValue) {
+      return cachedValue;
+    }
   }
-  return false;
+
+  // Hardocs hidden folder
+  const hardocsDir = path.join(file, '.hardocs');
+  const hardocsPkg = path.join(hardocsDir, 'hardocs.json');
+
+  if (fs.existsSync(hardocsDir) && fs.existsSync(hardocsPkg)) {
+    const pkg = fs.readJsonSync(hardocsPkg);
+    await redis.set(file, pkg, 'EX', 60 * 60);
+    return pkg;
+  }
+};
+
+const clearCachedValue = async ({
+  file,
+  redis
+}: {
+  file: string;
+  redis: Redis;
+}): Promise<boolean> => {
+  await redis.del(`${READ_PACKAGE_PREFIX}${file}`);
+  return true;
+};
+
+const isHardocsProject = async (
+  file: string,
+  redis: Redis
+): Promise<boolean> => {
+  try {
+    const pkg = await readPackage({ file, redis });
+    return !!pkg;
+  } catch (er) {
+    if (process.env.HARDOCS_DEV_MODE) {
+      logs.Warn(`${er}
+      ${logs.chalk.blue('This is not a HARDOCS projects')}
+      `);
+    }
+    return false;
+  }
 };
 
 export default {
@@ -113,5 +168,8 @@ export default {
   createFolder,
   list,
   isHidden,
-  isPackage
+  // isPackage,
+  readPackage,
+  clearCachedValue,
+  isHardocsProject
 };

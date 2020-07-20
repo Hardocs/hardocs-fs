@@ -21,11 +21,17 @@ const RedisStore = RateLimit({
 export default async (): Promise<Server | HTTPSServer> => {
   const schema = generateSchema();
   const server = new ApolloServer({
-    schema
+    schema,
+    context: ({ req, res }) => ({
+      redis,
+      req,
+      res
+    })
   });
 
   const app = express();
-  server.applyMiddleware({ app });
+  const graphqlPath = '/';
+  server.applyMiddleware({ app, path: graphqlPath });
 
   app.use(RedisStore);
 

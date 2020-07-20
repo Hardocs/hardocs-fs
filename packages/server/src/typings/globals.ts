@@ -1,4 +1,17 @@
-export type Resolver = (root: any, args: any, context: any, info: any) => any;
+import { Redis } from 'ioredis';
+
+export interface Context {
+  redis: Redis;
+  req: Express.Request;
+  res: Express.Response;
+}
+
+export type Resolver = (
+  root: any,
+  args: any,
+  context: Context,
+  info: any
+) => any;
 
 export interface GeneratedFolder {
   name: string;
