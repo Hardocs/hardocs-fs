@@ -14,13 +14,13 @@ const normalize = (value: string) => {
 
 export default {
   get: () => cwd,
-  set: (value: string) => {
+  set: async (value: string) => {
     const newDir = normalize(value);
-    console.log(newDir);
+    // console.log(newDir);
     if (!fs.existsSync(value)) return;
     cwd = newDir;
     try {
-      process.chdir(newDir);
+      return process.chdir(newDir);
     } catch (err) {
       console.log(err);
     }

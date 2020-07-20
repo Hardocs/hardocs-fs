@@ -2,6 +2,13 @@
 # yarn lockfile v1
 
 
+"@akryum/winattr@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@akryum/winattr/-/winattr-3.0.0.tgz#c345d49f8415583897e345729c12b3503927dd11"
+  integrity sha512-t4WmWoGV9gyzypwG3y3JlcK2t8fKLtvzBA7xEoFTj9SMPvOuLsf13uh4ikK0RRaaa9RPPWLgFUdOyIRaQvCpwQ==
+  dependencies:
+    fswin "^2.17.1227"
+
 "@apollo/protobufjs@^1.0.3":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@apollo/protobufjs/-/protobufjs-1.0.4.tgz#cf01747a55359066341f31b5ce8db17df44244e0"
@@ -1008,6 +1015,12 @@
   integrity sha512-PyRA9sm1Yayuj5OIoJ1hGt2YISX45w9WcFbh6ddT0Z/0yaFxOtGLInr4jUfU1EAFVs0Yfyfev4RNwBlUaHdlDQ==
   dependencies:
     defer-to-connect "^2.0.0"
+
+"@types/@akryum/winattr":
+  version "3.0.0"
+  resolved "https://codeload.github.com/akryum/winattr/tar.gz/11a6e5c140e2c55af3422257df6fb097e729a4fa"
+  dependencies:
+    fswin "^2.17.1227"
 
 "@types/accepts@*", "@types/accepts@^1.3.5":
   version "1.3.5"
@@ -2975,6 +2988,16 @@ fsevents@~2.1.2:
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.1.3.tgz#fb738703ae8d2f9fe900c33836ddebee8b97f23e"
   integrity sha512-Auw9a4AxqWpa9GUfj370BMPzzyncfBABW8Mab7BGWBYDj4Isgq+cDKtx0i6u9jcX9pQDnswsaaOTgTmA5pEjuQ==
+
+fswin@^2.17.1227:
+  version "2.17.1227"
+  resolved "https://registry.yarnpkg.com/fswin/-/fswin-2.17.1227.tgz#c598061e1ac1e7110e2e6ce884296efa27dc2507"
+  integrity sha512-xNDktvwzSsXT8Xqnpz59VbuFwGHhtn1w+dS7QQ+wAu5cbH0p3WMGKU9Duf7cPna+nubhR+5ZG1MTl6/V6xgRgw==
+
+fswin@^3.18.918:
+  version "3.19.908"
+  resolved "https://registry.yarnpkg.com/fswin/-/fswin-3.19.908.tgz#7bf4d945757f9f94c5e29e4c8bba9f709af4d7a7"
+  integrity sha512-xwq6wBg+KNuSjzQ3gZUOXt/FUhN9Wd+qQxz3yGM1xyTWu00ty82X+9Tc09z9XtMONYAhA8cCE3nolWoU7Rlz6g==
 
 function-bind@^1.1.1:
   version "1.1.1"
@@ -5313,6 +5336,13 @@ widest-line@^3.1.0:
   integrity sha512-NsmoXalsWVDMGupxZ5R08ka9flZjjiLvHVAWYOKtiKM8ujtZWr9cRffak+uSE48+Ob8ObalXpwyeUiyDD6QFgg==
   dependencies:
     string-width "^4.0.0"
+
+winattr@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/winattr/-/winattr-3.0.0.tgz#33e430c41510ce4018a0daaabb24927c162f1b1d"
+  integrity sha512-dt33rYsTYcGbB+I1ubB6ZLODibRSCW//TgY/SuajLllR9kHnHnbUMqnXIe0osYsXUdRLGs770zb3t9z/ScGUpw==
+  dependencies:
+    fswin "^3.18.918"
 
 word-wrap@^1.2.3:
   version "1.2.3"

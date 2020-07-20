@@ -22,6 +22,7 @@
     "typescript": "^3.9.6"
   },
   "dependencies": {
+    "@akryum/winattr": "^3.0.0",
     "@gql2ts/from-schema": "^2.0.0-4",
     "@gql2ts/types": "^1.9.0",
     "apollo-server": "^2.15.1",
@@ -35,6 +36,7 @@
     "graphql-yoga": "^1.18.3",
     "merge-graphql-schemas": "^1.7.8",
     "nano": "^8.2.2",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "winattr": "^3.0.0"
   }
 }
