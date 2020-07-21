@@ -1,5 +1,10 @@
 import { Redis } from 'ioredis';
 
+export interface FolderProjectOptions {
+  path: string;
+  redis?: Redis;
+}
+
 export interface Context {
   redis: Redis;
   req: Express.Request;

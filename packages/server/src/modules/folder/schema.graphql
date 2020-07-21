@@ -1,5 +1,5 @@
 type Query {
-  folderExists(file: String!): Boolean
+  folderExists(path: String!): Boolean
   folderCurrent: Folder
 }
 

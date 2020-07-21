@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as winattr from 'winattr';
 
-import { GeneratedFolder } from './../../typings/globals';
+import { FolderProjectOptions, GeneratedFolder } from '../../typings/globals';
 import logs from '../../utils/logs';
 import cwd from '../cwd/cwd';
 
@@ -12,7 +12,7 @@ const isPlatformWindows =
   process.platform.indexOf('win') === 0 || process.platform.includes('win');
 const hiddenPrefix = '.';
 
-const isDirectory = (file: string) => {
+const isDirectory = ({ path: file }: FolderProjectOptions) => {
   file = file.replace(/\\/g, path.sep);
   try {
     return fs.statSync(file).isDirectory();
@@ -22,33 +22,40 @@ const isDirectory = (file: string) => {
   return false;
 };
 
-const generateFolder = (file: string): GeneratedFolder => {
+const generateFolder = ({
+  path: file
+}: FolderProjectOptions): GeneratedFolder => {
   return {
     name: path.basename(file),
     path: file
   };
 };
 
-const getCurrent = (_file: any) => {
+const getCurrent = () => {
   const baseDir = cwd.get();
-  return generateFolder(baseDir);
+  return generateFolder({ path: baseDir });
 };
 
-const open = async (file: string) => {
+const open = async ({ path: file }: FolderProjectOptions) => {
   await cwd.set(file);
-  return generateFolder(cwd.get());
+  return generateFolder({ path: cwd.get() });
 };
 
-const openParent = (file: string) => {
+const openParent = ({ path: file }: FolderProjectOptions) => {
   const newPath = path.dirname(file);
   cwd.set(newPath);
-  return generateFolder(cwd.get());
+  return generateFolder({ path: cwd.get() });
 };
 
-const createFolder = (name: string) => {
+const createFolder = ({ name }: { name: string }) => {
+  if (isDirectory({ path: name })) {
+    logs.Warn(`Folder already exist.`);
+    return false;
+  }
+
   const folder = path.join(cwd.get(), name);
   fs.mkdirpSync(folder);
-  return generateFolder(folder);
+  return generateFolder({ path: folder });
 };
 
 const list = async (base: string) => {
@@ -59,7 +66,7 @@ const list = async (base: string) => {
     }
   }
 
-  const files = await fs.readdirSync(dir, 'utf8');
+  const files = fs.readdirSync(dir, 'utf8');
   return files
     .map((file) => {
       const folderPath = path.join(base, file);
@@ -69,7 +76,7 @@ const list = async (base: string) => {
         hidden: isHidden(folderPath)
       };
     })
-    .filter((file) => isDirectory(file.path));
+    .filter((file) => isDirectory({ path: file.path }));
 };
 
 const isHidden = (file: string) => {
@@ -96,15 +103,6 @@ const isHidden = (file: string) => {
     }
   }
 };
-
-// const isPackage = (file: string): boolean => {
-//   try {
-//     return fs.existsSync(path.join(file, 'package.json'));
-//   } catch (er) {
-//     logs.Warn(er.message);
-//   }
-//   return false;
-// };
 
 const readPackage = async (options: {
   redis: Redis;
@@ -159,6 +157,11 @@ const isHardocsProject = async (
   }
 };
 
+const deleteFolder = async ({ path }: { path: string }): Promise<boolean> => {
+  await fs.remove(path);
+  return true;
+};
+
 export default {
   isDirectory,
   generateFolder,
@@ -171,5 +174,6 @@ export default {
   // isPackage,
   readPackage,
   clearCachedValue,
-  isHardocsProject
+  isHardocsProject,
+  deleteFolder
 };

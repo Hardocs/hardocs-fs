@@ -28,7 +28,7 @@ declare namespace HDS {
   }
 
   interface IFolderExistsOnQueryArguments {
-    file: string;
+    path: string;
   }
 
   interface IFolder {
