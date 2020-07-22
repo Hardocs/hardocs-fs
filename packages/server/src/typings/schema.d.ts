@@ -46,6 +46,7 @@ declare namespace HDS {
     folderOpen: IFolder | null;
     folderOpenParent: IFolder | null;
     folderCreate: IFolder | null;
+    createProject: IProject;
   }
 
   interface IFolderOpenOnMutationArguments {
@@ -53,6 +54,60 @@ declare namespace HDS {
   }
 
   interface IFolderCreateOnMutationArguments {
+    name: string;
+  }
+
+  interface ICreateProjectOnMutationArguments {
+    input?: ICreateProjectInput | null;
+  }
+
+  interface ICreateProjectInput {
+    folder: string;
+    force: boolean;
+    remote?: string | null;
+    clone?: boolean | null;
+  }
+
+  interface IProject {
+    __typename: 'Project';
+    id: string;
+    path: string;
+    name: string;
+    shortTitle: string;
+    nameWithOwner: string;
+    longTitle: string;
+    languages: Array<ILanguage> | null;
+    projectLink: string;
+    intendedUse: string;
+    made: boolean;
+    madeIndependently: boolean;
+    license: Array<ILicense | null> | null;
+    updatedAt: string;
+    author: Array<IAuthor> | null;
+    contributors: Array<IContributor> | null;
+  }
+
+  interface ILanguage {
+    __typename: 'Language';
+    name: string;
+    description: string;
+    longDescription: string;
+    keywords: Array<string> | null;
+  }
+
+  interface ILicense {
+    __typename: 'License';
+    hardware: string | null;
+  }
+
+  interface IAuthor {
+    __typename: 'Author';
+    name: string;
+    affiliation: string;
+  }
+
+  interface IContributor {
+    __typename: 'Contributor';
     name: string;
   }
 }

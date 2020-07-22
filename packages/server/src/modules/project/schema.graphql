@@ -24,7 +24,7 @@ type Project {
   license: [License]
   updatedAt: String!
   author: [Author!]
-  contributors: [Contributors!]
+  contributors: [Contributor!]
 }
 
 type Language {
