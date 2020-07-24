@@ -46,7 +46,7 @@ declare namespace HDS {
     folderOpen: IFolder | null;
     folderOpenParent: IFolder | null;
     folderCreate: IFolder | null;
-    createProject: IProject;
+    createProject: ITest;
   }
 
   interface IFolderOpenOnMutationArguments {
@@ -58,7 +58,12 @@ declare namespace HDS {
   }
 
   interface ICreateProjectOnMutationArguments {
-    input?: ICreateProjectInput | null;
+    folder: string;
+  }
+
+  interface ITest {
+    __typename: 'Test';
+    folder: string;
   }
 
   interface ICreateProjectInput {
@@ -109,6 +114,12 @@ declare namespace HDS {
   interface IContributor {
     __typename: 'Contributor';
     name: string;
+  }
+
+  const enum Lang {
+    EN = 'EN',
+    FR = 'FR',
+    CH = 'CH',
   }
 }
 

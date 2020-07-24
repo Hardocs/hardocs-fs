@@ -15,7 +15,7 @@ const hiddenPrefix = '.';
 const isDirectory = ({ path: file }: FolderProjectOptions) => {
   file = file.replace(/\\/g, path.sep);
   try {
-    return fs.statSync(file).isDirectory();
+    return fs.existsSync(file) && fs.statSync(file).isDirectory();
   } catch (err) {
     logs.Warn(err.message);
   }

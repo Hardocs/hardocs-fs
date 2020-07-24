@@ -1,5 +1,9 @@
 type Mutation {
-  createProject(input: CreateProjectInput): Project!
+  createProject(folder: String!): Test!
+}
+
+type Test {
+  folder: String!
 }
 
 input CreateProjectInput {
@@ -32,6 +36,12 @@ type Language {
   description: String!
   longDescription: String!
   keywords: [String!]
+}
+
+enum Lang {
+  EN
+  FR
+  CH
 }
 
 type License {
