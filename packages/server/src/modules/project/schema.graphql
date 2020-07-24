@@ -1,21 +1,53 @@
 type Mutation {
-  createProject(folder: String!): Test!
-}
-
-type Test {
-  folder: String!
+  createProject(input: CreateProjectInput!): Project!
 }
 
 input CreateProjectInput {
-  folder: String!
-  force: Boolean!
-  remote: String
-  clone: Boolean
+  # path: String!
+  name: String!
+  shortTitle: String
+  nameWithOwner: String!
+  longTitle: String!
+  languages: [LanguageInput!]
+  projectLink: String!
+  intendedUse: String!
+  made: Boolean!
+  madeIndependently: Boolean!
+  license: [LicenseInput]
+  author: AuthorInput!
+  contributors: [ContributorInput!]
 }
 
+"""
+Input type for language.
+"""
+input LanguageInput {
+  "The name is a required field and it must be one of EN, FR or CH"
+  name: Lang!
+  description: String!
+  longDescription: String!
+  keywords: [String!]
+}
+
+input LicenseInput {
+  "Name of license. i.e MIT, ISC, Apache License etc."
+  name: String!
+  "Specify the name of the file that will contain your license. Defaults to LICENSE"
+  file: String! = "LICENSE"
+}
+input ContributorInput {
+  name: String!
+}
+
+input AuthorInput {
+  name: String!
+  affiliation: String!
+}
+
+# Project schemas
 type Project {
   id: ID!
-  path: String!
+  path: String
   name: String!
   shortTitle: String!
   nameWithOwner: String!
@@ -27,25 +59,30 @@ type Project {
   madeIndependently: Boolean!
   license: [License]
   updatedAt: String!
-  author: [Author!]
+  author: Author!
   contributors: [Contributor!]
 }
 
 type Language {
-  name: String!
+  name: Lang!
   description: String!
   longDescription: String!
   keywords: [String!]
 }
 
 enum Lang {
+  "English"
   EN
+  "French"
   FR
+  "Chineese"
   CH
 }
 
 type License {
-  hardware: String
+  "Name of license. i.e MIT, ISC, Apache License etc."
+  name: String!
+  file: String!
 }
 
 type Author {

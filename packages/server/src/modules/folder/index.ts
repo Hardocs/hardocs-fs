@@ -54,7 +54,7 @@ const createFolder = ({ name }: { name: string }) => {
   }
 
   const folder = path.join(cwd.get(), name);
-  fs.mkdirpSync(folder);
+  fs.ensureDirSync(folder);
   return generateFolder({ path: folder });
 };
 

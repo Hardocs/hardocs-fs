@@ -46,7 +46,7 @@ declare namespace HDS {
     folderOpen: IFolder | null;
     folderOpenParent: IFolder | null;
     folderCreate: IFolder | null;
-    createProject: ITest;
+    createProject: IProject;
   }
 
   interface IFolderOpenOnMutationArguments {
@@ -58,25 +58,86 @@ declare namespace HDS {
   }
 
   interface ICreateProjectOnMutationArguments {
-    folder: string;
-  }
-
-  interface ITest {
-    __typename: 'Test';
-    folder: string;
+    input: ICreateProjectInput;
   }
 
   interface ICreateProjectInput {
-    folder: string;
-    force: boolean;
-    remote?: string | null;
-    clone?: boolean | null;
+    /**
+     * path: String!
+     */
+    name: string;
+    shortTitle?: string | null;
+    nameWithOwner: string;
+    longTitle: string;
+    languages?: Array<ILanguageInput> | null;
+    projectLink: string;
+    intendedUse: string;
+    made: boolean;
+    madeIndependently: boolean;
+    license?: Array<ILicenseInput | null> | null;
+    author: IAuthorInput;
+    contributors?: Array<IContributorInput> | null;
   }
 
+  /**
+   * Input type for language.
+   */
+  interface ILanguageInput {
+    /**
+     * The name is a required field and it must be one of EN, FR or CH
+     */
+    name: Lang;
+    description: string;
+    longDescription: string;
+    keywords?: Array<string> | null;
+  }
+
+  const enum Lang {
+    /**
+     * English
+     */
+    EN = 'EN',
+
+    /**
+     * French
+     */
+    FR = 'FR',
+
+    /**
+     * Chineese
+     */
+    CH = 'CH',
+  }
+
+  interface ILicenseInput {
+    /**
+     * Name of license. i.e MIT, ISC, Apache License etc.
+     */
+    name: string;
+
+    /**
+     * Specify the name of the file that will contain your license. Defaults to LICENSE
+     * @default "LICENSE"
+     */
+    file: string;
+  }
+
+  interface IAuthorInput {
+    name: string;
+    affiliation: string;
+  }
+
+  interface IContributorInput {
+    name: string;
+  }
+
+  /**
+   * Project schemas
+   */
   interface IProject {
     __typename: 'Project';
     id: string;
-    path: string;
+    path: string | null;
     name: string;
     shortTitle: string;
     nameWithOwner: string;
@@ -88,13 +149,13 @@ declare namespace HDS {
     madeIndependently: boolean;
     license: Array<ILicense | null> | null;
     updatedAt: string;
-    author: Array<IAuthor> | null;
+    author: IAuthor;
     contributors: Array<IContributor> | null;
   }
 
   interface ILanguage {
     __typename: 'Language';
-    name: string;
+    name: Lang;
     description: string;
     longDescription: string;
     keywords: Array<string> | null;
@@ -102,7 +163,12 @@ declare namespace HDS {
 
   interface ILicense {
     __typename: 'License';
-    hardware: string | null;
+
+    /**
+     * Name of license. i.e MIT, ISC, Apache License etc.
+     */
+    name: string;
+    file: string;
   }
 
   interface IAuthor {
@@ -114,12 +180,6 @@ declare namespace HDS {
   interface IContributor {
     __typename: 'Contributor';
     name: string;
-  }
-
-  const enum Lang {
-    EN = 'EN',
-    FR = 'FR',
-    CH = 'CH',
   }
 }
 
