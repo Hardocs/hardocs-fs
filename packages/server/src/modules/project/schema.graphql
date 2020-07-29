@@ -1,9 +1,9 @@
 type Mutation {
   createProject(input: CreateProjectInput!): Project!
+  openProject(path: String!): Project!
 }
 
 input CreateProjectInput {
-  # path: String!
   name: String!
   shortTitle: String
   nameWithOwner: String!
@@ -16,6 +16,20 @@ input CreateProjectInput {
   license: [LicenseInput]
   author: AuthorInput!
   contributors: [ContributorInput!]
+  docsDir: String! = "docs"
+  allDocs: [AllDocsInput!]!
+}
+
+input AllDocsInput {
+  title: String! = "Example"
+  description: String! = "This is an example"
+  fileName: String! = "index.md"
+}
+
+type AllDocs {
+  title: String!
+  description: String!
+  fileName: String!
 }
 
 """
@@ -61,6 +75,8 @@ type Project {
   updatedAt: String!
   author: Author!
   contributors: [Contributor!]
+  docsDir: String!
+  allDocs: [AllDocs!]!
 }
 
 type Language {

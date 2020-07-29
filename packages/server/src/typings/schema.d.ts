@@ -47,6 +47,7 @@ declare namespace HDS {
     folderOpenParent: IFolder | null;
     folderCreate: IFolder | null;
     createProject: IProject;
+    openProject: IProject;
   }
 
   interface IFolderOpenOnMutationArguments {
@@ -61,10 +62,11 @@ declare namespace HDS {
     input: ICreateProjectInput;
   }
 
+  interface IOpenProjectOnMutationArguments {
+    path: string;
+  }
+
   interface ICreateProjectInput {
-    /**
-     * path: String!
-     */
     name: string;
     shortTitle?: string | null;
     nameWithOwner: string;
@@ -77,6 +79,12 @@ declare namespace HDS {
     license?: Array<ILicenseInput | null> | null;
     author: IAuthorInput;
     contributors?: Array<IContributorInput> | null;
+
+    /**
+     * @default "docs"
+     */
+    docsDir: string;
+    allDocs: Array<IAllDocsInput>;
   }
 
   /**
@@ -131,6 +139,23 @@ declare namespace HDS {
     name: string;
   }
 
+  interface IAllDocsInput {
+    /**
+     * @default "Example"
+     */
+    title: string;
+
+    /**
+     * @default "This is an example"
+     */
+    description: string;
+
+    /**
+     * @default "index.md"
+     */
+    fileName: string;
+  }
+
   /**
    * Project schemas
    */
@@ -151,6 +176,8 @@ declare namespace HDS {
     updatedAt: string;
     author: IAuthor;
     contributors: Array<IContributor> | null;
+    docsDir: string;
+    allDocs: Array<IAllDocs>;
   }
 
   interface ILanguage {
@@ -180,6 +207,13 @@ declare namespace HDS {
   interface IContributor {
     __typename: 'Contributor';
     name: string;
+  }
+
+  interface IAllDocs {
+    __typename: 'AllDocs';
+    title: string;
+    description: string;
+    fileName: string;
   }
 }
 

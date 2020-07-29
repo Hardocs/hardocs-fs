@@ -1,14 +1,25 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
+// import glob from 'glob';
 
 import cwd from '../cwd/cwd';
 import folder from '../folder';
 
+const templateDir = path.join(__dirname, '../../../template');
+
+const allDocs = async ({ input }: HDS.ICreateProjectOnMutationArguments) => {
+  const docDir = `${templateDir}/${input.docsDir}`;
+  const doc = input.allDocs && input.allDocs[0];
+  const fullPath = docDir + '/' + doc?.fileName;
+  const file = fs.readFileSync(fullPath, 'utf-8');
+  console.log(file);
+};
+
 const create = async ({ input }: HDS.ICreateProjectOnMutationArguments) => {
   if (input) {
+    allDocs({ input });
     const dest = path.join(cwd.get(), input.name);
     await cwd.set(dest);
-    const templateDir = path.join(__dirname, '../../../template');
     if (!folder.isDirectory({ path: dest })) {
       await fs.ensureDir(dest);
     }
@@ -45,5 +56,6 @@ const create = async ({ input }: HDS.ICreateProjectOnMutationArguments) => {
 };
 
 export default {
-  create
+  create,
+  allDocs
 };

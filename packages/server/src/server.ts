@@ -34,7 +34,7 @@ export default async (): Promise<Server | HTTPSServer> => {
   server.applyMiddleware({ app, path: graphqlPath });
 
   app.use(RedisStore);
-
+  app.use('*', express.static('*'));
   const port = process.env.PORT || 4000;
   return app.listen(
     {
