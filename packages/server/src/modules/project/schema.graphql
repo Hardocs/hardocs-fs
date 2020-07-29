@@ -1,5 +1,8 @@
 type Mutation {
   createProject(input: CreateProjectInput!): Project!
+}
+
+type Query {
   openProject(path: String!): Project!
 }
 

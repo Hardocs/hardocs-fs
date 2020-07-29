@@ -8,9 +8,8 @@ import folder from '../folder';
 const templateDir = path.join(__dirname, '../../../template');
 
 const allDocs = async ({ input }: HDS.ICreateProjectOnMutationArguments) => {
-  const docsDir = input.docsDir;
   const allMarkdownFiles = glob.sync(
-    `${templateDir}/${docsDir}/**/*.*(md|mdx)`
+    `${cwd.get()}/${input.docsDir}/**/*.*(md|mdx)`
   );
   console.log(allMarkdownFiles);
 };
