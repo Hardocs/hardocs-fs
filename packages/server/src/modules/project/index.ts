@@ -6,7 +6,6 @@ import cwd from '../cwd/cwd';
 import folder from '../folder';
 
 const templateDir = path.join(__dirname, '../../../template');
-// const regex = /mdx?$/is;
 
 const allDocs = async ({ input }: HDS.ICreateProjectOnMutationArguments) => {
   const docsDir = input.docsDir;
