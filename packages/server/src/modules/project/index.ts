@@ -1,18 +1,19 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
-// import glob from 'glob';
+import * as glob from 'glob';
 
 import cwd from '../cwd/cwd';
 import folder from '../folder';
 
 const templateDir = path.join(__dirname, '../../../template');
+// const regex = /mdx?$/is;
 
 const allDocs = async ({ input }: HDS.ICreateProjectOnMutationArguments) => {
-  const docDir = `${templateDir}/${input.docsDir}`;
-  const doc = input.allDocs && input.allDocs[0];
-  const fullPath = docDir + '/' + doc?.fileName;
-  const file = fs.readFileSync(fullPath, 'utf-8');
-  console.log(file);
+  const docsDir = input.docsDir;
+  const allMarkdownFiles = glob.sync(
+    `${templateDir}/${docsDir}/**/*.*(md|mdx)`
+  );
+  console.log(allMarkdownFiles);
 };
 
 const create = async ({ input }: HDS.ICreateProjectOnMutationArguments) => {
