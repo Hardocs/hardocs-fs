@@ -3,7 +3,7 @@ type Mutation {
 }
 
 type Query {
-  openProject(path: String!): Project!
+  openProject(path: String, fullPath: Boolean): Project!
 }
 
 input CreateProjectInput {
@@ -20,19 +20,6 @@ input CreateProjectInput {
   author: AuthorInput!
   contributors: [ContributorInput!]
   docsDir: String! = "docs"
-  allDocs: [AllDocsInput!]!
-}
-
-input AllDocsInput {
-  title: String! = "Example"
-  description: String! = "This is an example"
-  fileName: String! = "index.md"
-}
-
-type AllDocs {
-  title: String!
-  description: String!
-  fileName: String!
 }
 
 """
@@ -79,7 +66,13 @@ type Project {
   author: Author!
   contributors: [Contributor!]
   docsDir: String!
-  allDocs: [AllDocs!]!
+  allDocsMetadata: [AllDocsMetadata!]!
+}
+
+type AllDocsMetadata {
+  title: String!
+  description: String!
+  fileName: String!
 }
 
 type Language {

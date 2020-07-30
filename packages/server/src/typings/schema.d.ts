@@ -23,12 +23,31 @@ declare namespace HDS {
   interface IQuery {
     __typename: 'Query';
     cwd: string;
+    openFile: IFile;
     folderExists: boolean | null;
     folderCurrent: IFolder | null;
+    openProject: IProject;
+  }
+
+  interface IOpenFileOnQueryArguments {
+    filePath: string;
   }
 
   interface IFolderExistsOnQueryArguments {
     path: string;
+  }
+
+  interface IOpenProjectOnQueryArguments {
+    path?: string | null;
+    fullPath?: boolean | null;
+  }
+
+  interface IFile {
+    __typename: 'File';
+    title: string;
+    description: string;
+    path: string;
+    content: string;
   }
 
   interface IFolder {
@@ -39,121 +58,6 @@ declare namespace HDS {
     isHardocsProject: boolean | null;
     children: Array<IFolder | null> | null;
     hidden: boolean | null;
-  }
-
-  interface IMutation {
-    __typename: 'Mutation';
-    folderOpen: IFolder | null;
-    folderOpenParent: IFolder | null;
-    folderCreate: IFolder | null;
-    createProject: IProject;
-    openProject: IProject;
-  }
-
-  interface IFolderOpenOnMutationArguments {
-    path: string;
-  }
-
-  interface IFolderCreateOnMutationArguments {
-    name: string;
-  }
-
-  interface ICreateProjectOnMutationArguments {
-    input: ICreateProjectInput;
-  }
-
-  interface IOpenProjectOnMutationArguments {
-    path: string;
-  }
-
-  interface ICreateProjectInput {
-    name: string;
-    shortTitle?: string | null;
-    nameWithOwner: string;
-    longTitle: string;
-    languages?: Array<ILanguageInput> | null;
-    projectLink: string;
-    intendedUse: string;
-    made: boolean;
-    madeIndependently: boolean;
-    license?: Array<ILicenseInput | null> | null;
-    author: IAuthorInput;
-    contributors?: Array<IContributorInput> | null;
-
-    /**
-     * @default "docs"
-     */
-    docsDir: string;
-    allDocs: Array<IAllDocsInput>;
-  }
-
-  /**
-   * Input type for language.
-   */
-  interface ILanguageInput {
-    /**
-     * The name is a required field and it must be one of EN, FR or CH
-     */
-    name: Lang;
-    description: string;
-    longDescription: string;
-    keywords?: Array<string> | null;
-  }
-
-  const enum Lang {
-    /**
-     * English
-     */
-    EN = 'EN',
-
-    /**
-     * French
-     */
-    FR = 'FR',
-
-    /**
-     * Chineese
-     */
-    CH = 'CH',
-  }
-
-  interface ILicenseInput {
-    /**
-     * Name of license. i.e MIT, ISC, Apache License etc.
-     */
-    name: string;
-
-    /**
-     * Specify the name of the file that will contain your license. Defaults to LICENSE
-     * @default "LICENSE"
-     */
-    file: string;
-  }
-
-  interface IAuthorInput {
-    name: string;
-    affiliation: string;
-  }
-
-  interface IContributorInput {
-    name: string;
-  }
-
-  interface IAllDocsInput {
-    /**
-     * @default "Example"
-     */
-    title: string;
-
-    /**
-     * @default "This is an example"
-     */
-    description: string;
-
-    /**
-     * @default "index.md"
-     */
-    fileName: string;
   }
 
   /**
@@ -177,7 +81,7 @@ declare namespace HDS {
     author: IAuthor;
     contributors: Array<IContributor> | null;
     docsDir: string;
-    allDocs: Array<IAllDocs>;
+    allDocsMetadata: Array<IAllDocsMetadata>;
   }
 
   interface ILanguage {
@@ -186,6 +90,23 @@ declare namespace HDS {
     description: string;
     longDescription: string;
     keywords: Array<string> | null;
+  }
+
+  const enum Lang {
+    /**
+     * English
+     */
+    EN = 'EN',
+
+    /**
+     * French
+     */
+    FR = 'FR',
+
+    /**
+     * Chineese
+     */
+    CH = 'CH',
   }
 
   interface ILicense {
@@ -209,11 +130,86 @@ declare namespace HDS {
     name: string;
   }
 
-  interface IAllDocs {
-    __typename: 'AllDocs';
+  interface IAllDocsMetadata {
+    __typename: 'AllDocsMetadata';
     title: string;
     description: string;
     fileName: string;
+  }
+
+  interface IMutation {
+    __typename: 'Mutation';
+    folderOpen: IFolder | null;
+    folderOpenParent: IFolder | null;
+    folderCreate: IFolder | null;
+    createProject: IProject;
+  }
+
+  interface IFolderOpenOnMutationArguments {
+    path: string;
+  }
+
+  interface IFolderCreateOnMutationArguments {
+    name: string;
+  }
+
+  interface ICreateProjectOnMutationArguments {
+    input: ICreateProjectInput;
+  }
+
+  interface ICreateProjectInput {
+    name: string;
+    shortTitle?: string | null;
+    nameWithOwner: string;
+    longTitle: string;
+    languages?: Array<ILanguageInput> | null;
+    projectLink: string;
+    intendedUse: string;
+    made: boolean;
+    madeIndependently: boolean;
+    license?: Array<ILicenseInput | null> | null;
+    author: IAuthorInput;
+    contributors?: Array<IContributorInput> | null;
+
+    /**
+     * @default "docs"
+     */
+    docsDir: string;
+  }
+
+  /**
+   * Input type for language.
+   */
+  interface ILanguageInput {
+    /**
+     * The name is a required field and it must be one of EN, FR or CH
+     */
+    name: Lang;
+    description: string;
+    longDescription: string;
+    keywords?: Array<string> | null;
+  }
+
+  interface ILicenseInput {
+    /**
+     * Name of license. i.e MIT, ISC, Apache License etc.
+     */
+    name: string;
+
+    /**
+     * Specify the name of the file that will contain your license. Defaults to LICENSE
+     * @default "LICENSE"
+     */
+    file: string;
+  }
+
+  interface IAuthorInput {
+    name: string;
+    affiliation: string;
+  }
+
+  interface IContributorInput {
+    name: string;
   }
 }
 

@@ -1,26 +1,43 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import * as glob from 'glob';
+// import * as glob from 'glob';
 
 import cwd from '../cwd/cwd';
 import folder from '../folder';
+import logs from '../../utils/logs';
+import { getHardocsDir } from './../../utils/constants';
 
 const templateDir = path.join(__dirname, '../../../template');
 
-const allDocs = async ({ input }: HDS.ICreateProjectOnMutationArguments) => {
-  const allMarkdownFiles = glob.sync(
-    `${cwd.get()}/${input.docsDir}/**/*.*(md|mdx)`
-  );
+const openProject = async ({
+  path,
+  fullPath = false
+}: HDS.IOpenProjectOnQueryArguments) => {
+  let currentDir = cwd.get();
+  if (fullPath) {
+    if (path) {
+      currentDir = path;
+    } else {
+      throw new Error(logs.chalk.red('Please specify a valid path'));
+    }
+  }
+  const hardocsDir = getHardocsDir(currentDir);
+  console.log(hardocsDir);
+
+  if (!folder.isDirectory({ path: currentDir })) {
+    throw new Error(logs.chalk.red('Not a valid directory'));
+  }
+  const allMarkdownFiles = await fs.readdirSync(currentDir);
   console.log(allMarkdownFiles);
 };
 
 const create = async ({ input }: HDS.ICreateProjectOnMutationArguments) => {
   if (input) {
-    allDocs({ input });
     const dest = path.join(cwd.get(), input.name);
     await cwd.set(dest);
     if (!folder.isDirectory({ path: dest })) {
       await fs.ensureDir(dest);
+      await cwd.set(dest);
     }
     try {
       const result = {
@@ -28,8 +45,7 @@ const create = async ({ input }: HDS.ICreateProjectOnMutationArguments) => {
         ...input,
         updatedAt: new Date().toISOString()
       };
-
-      const hardocsDir = path.join(dest, '.hardocs');
+      const hardocsDir = getHardocsDir(dest);
       await fs.ensureDir(hardocsDir);
       const hardocsJson = `${hardocsDir}/hardocs.json`;
 
@@ -46,6 +62,7 @@ const create = async ({ input }: HDS.ICreateProjectOnMutationArguments) => {
           console.log(err.message);
         }
       });
+      openProject({});
       return result;
     } catch (er) {
       throw new Error(er);
@@ -55,6 +72,5 @@ const create = async ({ input }: HDS.ICreateProjectOnMutationArguments) => {
 };
 
 export default {
-  create,
-  allDocs
+  create
 };

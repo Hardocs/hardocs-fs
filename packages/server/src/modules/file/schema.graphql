@@ -1,0 +1,10 @@
+type Query {
+  openFile(filePath: String!): File!
+}
+
+type File {
+  title: String!
+  description: String!
+  path: String!
+  content: String!
+}
