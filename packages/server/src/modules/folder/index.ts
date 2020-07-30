@@ -1,4 +1,3 @@
-import { READ_PACKAGE_PREFIX } from './constants';
 import { Redis } from 'ioredis';
 import * as path from 'path';
 import * as fs from 'fs-extra';
@@ -7,6 +6,8 @@ import * as winattr from 'winattr';
 import { FolderProjectOptions, GeneratedFolder } from '../../typings/globals';
 import logs from '../../utils/logs';
 import cwd from '../cwd/cwd';
+import { getHardocsDir } from './../../utils/constants';
+import { READ_PACKAGE_PREFIX } from './constants';
 
 const isPlatformWindows =
   process.platform.indexOf('win') === 0 || process.platform.includes('win');
@@ -111,7 +112,6 @@ const readPackage = async (options: {
 }) => {
   const { file, force = false, redis } = options;
   if (!force) {
-    console.log(file);
     const cachedValue = await redis.get(`${READ_PACKAGE_PREFIX}${file}`);
     if (cachedValue) {
       return cachedValue;
@@ -119,13 +119,18 @@ const readPackage = async (options: {
   }
 
   // Hardocs hidden folder
-  const hardocsDir = path.join(file, '.hardocs');
+  const hardocsDir = getHardocsDir(file);
   const hardocsPkg = path.join(hardocsDir, 'hardocs.json');
 
-  if (fs.existsSync(hardocsDir) && fs.existsSync(hardocsPkg)) {
-    const pkg = fs.readJsonSync(hardocsPkg);
-    await redis.set(file, pkg, 'EX', 60 * 60);
-    return pkg;
+  if (isDirectory({ path: hardocsDir })) {
+    if (fs.existsSync(hardocsPkg)) {
+      const pkg = fs.readJsonSync(hardocsPkg);
+      await redis.set(file, pkg, 'EX', 60 * 60);
+      return pkg;
+    } else {
+      logs.Warn('Not a hardocs directory');
+      return false;
+    }
   }
 };
 

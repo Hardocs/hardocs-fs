@@ -24,9 +24,10 @@ declare namespace HDS {
     __typename: 'Query';
     cwd: string;
     openFile: IFile;
-    folderExists: boolean | null;
+    folderExists: boolean;
     folderCurrent: IFolder | null;
     openProject: IProject;
+    isHardocsProject: boolean;
   }
 
   interface IOpenFileOnQueryArguments {
@@ -40,6 +41,10 @@ declare namespace HDS {
   interface IOpenProjectOnQueryArguments {
     path?: string | null;
     fullPath?: boolean | null;
+  }
+
+  interface IIsHardocsProjectOnQueryArguments {
+    path: string;
   }
 
   interface IFile {

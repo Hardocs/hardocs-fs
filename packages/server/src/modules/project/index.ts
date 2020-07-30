@@ -1,11 +1,11 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
-// import * as glob from 'glob';
 
 import cwd from '../cwd/cwd';
 import folder from '../folder';
 import logs from '../../utils/logs';
 import { getHardocsDir } from './../../utils/constants';
+import redis from '../../redis';
 
 const templateDir = path.join(__dirname, '../../../template');
 
@@ -21,13 +21,17 @@ const openProject = async ({
       throw new Error(logs.chalk.red('Please specify a valid path'));
     }
   }
+
   const hardocsDir = getHardocsDir(currentDir);
-  console.log(hardocsDir);
 
   if (!folder.isDirectory({ path: currentDir })) {
     throw new Error(logs.chalk.red('Not a valid directory'));
   }
-  const allMarkdownFiles = await fs.readdirSync(currentDir);
+  if (!folder.isHardocsProject(currentDir, redis)) {
+    throw new Error(logs.chalk.red('Not a valid hardocs project'));
+  }
+  console.log(hardocsDir);
+  const allMarkdownFiles = fs.readdirSync(currentDir);
   console.log(allMarkdownFiles);
 };
 

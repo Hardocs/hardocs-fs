@@ -4,6 +4,7 @@ type Mutation {
 
 type Query {
   openProject(path: String, fullPath: Boolean): Project!
+  isHardocsProject(path: String!): Boolean!
 }
 
 input CreateProjectInput {
