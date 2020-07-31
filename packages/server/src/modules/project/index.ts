@@ -6,6 +6,7 @@ import folder from '../folder';
 import logs from '../../utils/logs';
 import { getHardocsDir } from './../../utils/constants';
 import redis from '../../redis';
+import file from '../file';
 
 const templateDir = path.join(__dirname, '../../../template');
 
@@ -30,9 +31,16 @@ const openProject = async ({
   if (!folder.isHardocsProject(currentDir, redis)) {
     throw new Error(logs.chalk.red('Not a valid hardocs project'));
   }
-  console.log(hardocsDir);
-  const allMarkdownFiles = fs.readdirSync(currentDir);
-  console.log(allMarkdownFiles);
+  const hardocsFile = await fs.readFile(`${hardocsDir}/hardocs.json`, {
+    encoding: 'utf8'
+  });
+  const hardocsJson = JSON.parse(hardocsFile);
+  const docsDir = hardocsJson.docsDir;
+  if (!docsDir || docsDir.trim() === '') {
+    logs.chalk.red('No documentations provided');
+    return;
+  }
+  file.allMarkdownFiles();
 };
 
 const create = async ({ input }: HDS.ICreateProjectOnMutationArguments) => {
@@ -66,7 +74,7 @@ const create = async ({ input }: HDS.ICreateProjectOnMutationArguments) => {
           console.log(err.message);
         }
       });
-      openProject({});
+      openProject({}); // Open project before requiring any files in it
       return result;
     } catch (er) {
       throw new Error(er);

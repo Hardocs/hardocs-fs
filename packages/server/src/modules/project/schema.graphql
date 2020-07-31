@@ -21,6 +21,7 @@ input CreateProjectInput {
   author: AuthorInput!
   contributors: [ContributorInput!]
   docsDir: String! = "docs"
+  entryFile: String! = "index.md"
 }
 
 """
@@ -68,6 +69,7 @@ type Project {
   contributors: [Contributor!]
   docsDir: String!
   allDocsMetadata: [AllDocsMetadata!]!
+  entryFile: String!
 }
 
 type AllDocsMetadata {

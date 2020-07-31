@@ -2,52 +2,52 @@
 // graphql typescript definitions
 
 declare namespace HDS {
-  interface IGraphQLResponseRoot {
-    data?: IQuery | IMutation;
-    errors?: Array<IGraphQLResponseError>;
+  interface IGQLGraphQLResponseRoot {
+    data?: IGQLQuery | IGQLMutation;
+    errors?: Array<IGQLGraphQLResponseError>;
   }
 
-  interface IGraphQLResponseError {
+  interface IGQLGraphQLResponseError {
     /** Required for all errors */
     message: string;
-    locations?: Array<IGraphQLResponseErrorLocation>;
+    locations?: Array<IGQLGraphQLResponseErrorLocation>;
     /** 7.2.2 says 'GraphQL servers may provide additional entries to error' */
     [propName: string]: any;
   }
 
-  interface IGraphQLResponseErrorLocation {
+  interface IGQLGraphQLResponseErrorLocation {
     line: number;
     column: number;
   }
 
-  interface IQuery {
+  interface IGQLQuery {
     __typename: 'Query';
     cwd: string;
-    openFile: IFile;
+    openFile: IGQLFile;
     folderExists: boolean;
-    folderCurrent: IFolder | null;
-    openProject: IProject;
+    folderCurrent: IGQLFolder | null;
+    openProject: IGQLProject;
     isHardocsProject: boolean;
   }
 
-  interface IOpenFileOnQueryArguments {
+  interface IGQLopenFile_On_QueryArguments {
     filePath: string;
   }
 
-  interface IFolderExistsOnQueryArguments {
+  interface IGQLfolderExists_On_QueryArguments {
     path: string;
   }
 
-  interface IOpenProjectOnQueryArguments {
+  interface IGQLopenProject_On_QueryArguments {
     path?: string | null;
     fullPath?: boolean | null;
   }
 
-  interface IIsHardocsProjectOnQueryArguments {
+  interface IGQLisHardocsProject_On_QueryArguments {
     path: string;
   }
 
-  interface IFile {
+  interface IGQLFile {
     __typename: 'File';
     title: string;
     description: string;
@@ -55,20 +55,20 @@ declare namespace HDS {
     content: string;
   }
 
-  interface IFolder {
+  interface IGQLFolder {
     __typename: 'Folder';
     name: string;
     path: string;
     isPackage: boolean | null;
     isHardocsProject: boolean | null;
-    children: Array<IFolder | null> | null;
+    children: Array<IGQLFolder | null> | null;
     hidden: boolean | null;
   }
 
   /**
    * Project schemas
    */
-  interface IProject {
+  interface IGQLProject {
     __typename: 'Project';
     id: string;
     path: string | null;
@@ -76,21 +76,21 @@ declare namespace HDS {
     shortTitle: string;
     nameWithOwner: string;
     longTitle: string;
-    languages: Array<ILanguage> | null;
+    languages: Array<IGQLLanguage> | null;
     projectLink: string;
     intendedUse: string;
     made: boolean;
     madeIndependently: boolean;
-    license: Array<ILicense | null> | null;
+    license: Array<IGQLLicense | null> | null;
     updatedAt: string;
-    author: IAuthor;
-    contributors: Array<IContributor> | null;
+    author: IGQLAuthor;
+    contributors: Array<IGQLContributor> | null;
     docsDir: string;
-    allDocsMetadata: Array<IAllDocsMetadata>;
+    allDocsMetadata: Array<IGQLAllDocsMetadata>;
     entryFile: string;
   }
 
-  interface ILanguage {
+  interface IGQLLanguage {
     __typename: 'Language';
     name: Lang;
     description: string;
@@ -115,7 +115,7 @@ declare namespace HDS {
     CH = 'CH',
   }
 
-  interface ILicense {
+  interface IGQLLicense {
     __typename: 'License';
 
     /**
@@ -125,57 +125,57 @@ declare namespace HDS {
     file: string;
   }
 
-  interface IAuthor {
+  interface IGQLAuthor {
     __typename: 'Author';
     name: string;
     affiliation: string;
   }
 
-  interface IContributor {
+  interface IGQLContributor {
     __typename: 'Contributor';
     name: string;
   }
 
-  interface IAllDocsMetadata {
+  interface IGQLAllDocsMetadata {
     __typename: 'AllDocsMetadata';
     title: string;
     description: string;
     fileName: string;
   }
 
-  interface IMutation {
+  interface IGQLMutation {
     __typename: 'Mutation';
-    folderOpen: IFolder | null;
-    folderOpenParent: IFolder | null;
-    folderCreate: IFolder | null;
-    createProject: IProject;
+    folderOpen: IGQLFolder | null;
+    folderOpenParent: IGQLFolder | null;
+    folderCreate: IGQLFolder | null;
+    createProject: IGQLProject;
   }
 
-  interface IFolderOpenOnMutationArguments {
+  interface IGQLfolderOpen_On_MutationArguments {
     path: string;
   }
 
-  interface IFolderCreateOnMutationArguments {
+  interface IGQLfolderCreate_On_MutationArguments {
     name: string;
   }
 
-  interface ICreateProjectOnMutationArguments {
-    input: ICreateProjectInput;
+  interface IGQLcreateProject_On_MutationArguments {
+    input: IGQLCreateProjectInput;
   }
 
-  interface ICreateProjectInput {
+  interface IGQLCreateProjectInput {
     name: string;
     shortTitle?: string | null;
     nameWithOwner: string;
     longTitle: string;
-    languages?: Array<ILanguageInput> | null;
+    languages?: Array<IGQLLanguageInput> | null;
     projectLink: string;
     intendedUse: string;
     made: boolean;
     madeIndependently: boolean;
-    license?: Array<ILicenseInput | null> | null;
-    author: IAuthorInput;
-    contributors?: Array<IContributorInput> | null;
+    license?: Array<IGQLLicenseInput | null> | null;
+    author: IGQLAuthorInput;
+    contributors?: Array<IGQLContributorInput> | null;
 
     /**
      * @default "docs"
@@ -191,7 +191,7 @@ declare namespace HDS {
   /**
    * Input type for language.
    */
-  interface ILanguageInput {
+  interface IGQLLanguageInput {
     /**
      * The name is a required field and it must be one of EN, FR or CH
      */
@@ -201,7 +201,7 @@ declare namespace HDS {
     keywords?: Array<string> | null;
   }
 
-  interface ILicenseInput {
+  interface IGQLLicenseInput {
     /**
      * Name of license. i.e MIT, ISC, Apache License etc.
      */
@@ -214,12 +214,12 @@ declare namespace HDS {
     file: string;
   }
 
-  interface IAuthorInput {
+  interface IGQLAuthorInput {
     name: string;
     affiliation: string;
   }
 
-  interface IContributorInput {
+  interface IGQLContributorInput {
     name: string;
   }
 }
