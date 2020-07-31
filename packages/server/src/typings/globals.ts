@@ -5,6 +5,11 @@ export interface Options {
   context: Context;
 }
 
+export type Path = Pick<Options, 'path'>;
+export type ContextOnly = {
+  context: Context;
+};
+
 export interface Context {
   redis: Redis;
   req: Express.Request;

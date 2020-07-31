@@ -1,3 +1,4 @@
+import { Options, ContextOnly } from './../../typings/globals';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 
@@ -5,15 +6,15 @@ import cwd from '../cwd/cwd';
 import folder from '../folder';
 import logs from '../../utils/logs';
 import { getHardocsDir } from './../../utils/constants';
-import redis from '../../redis';
 import file from '../file';
 
 const templateDir = path.join(__dirname, '../../../template');
 
 const openProject = async ({
   path,
+  context,
   fullPath = false
-}: HDS.IOpenProjectOnQueryArguments) => {
+}: Partial<Options> & ContextOnly & { fullPath?: boolean }) => {
   let currentDir = cwd.get();
   if (fullPath) {
     if (path) {
@@ -28,7 +29,7 @@ const openProject = async ({
   if (!folder.isDirectory({ path: currentDir })) {
     throw new Error(logs.chalk.red('Not a valid directory'));
   }
-  if (!folder.isHardocsProject(currentDir, redis)) {
+  if (!folder.isHardocsProject({ path: currentDir, context })) {
     throw new Error(logs.chalk.red('Not a valid hardocs project'));
   }
   const hardocsFile = await fs.readFile(`${hardocsDir}/hardocs.json`, {
@@ -40,10 +41,13 @@ const openProject = async ({
     logs.chalk.red('No documentations provided');
     return;
   }
-  file.allMarkdownFiles();
+  file.getEntryFile({ path: currentDir, context });
 };
 
-const create = async ({ input }: HDS.ICreateProjectOnMutationArguments) => {
+const create = async ({
+  input,
+  context
+}: HDS.ICreateProjectOnMutationArguments & ContextOnly) => {
   if (input) {
     const dest = path.join(cwd.get(), input.name);
     await cwd.set(dest);
@@ -74,7 +78,7 @@ const create = async ({ input }: HDS.ICreateProjectOnMutationArguments) => {
           console.log(err.message);
         }
       });
-      openProject({}); // Open project before requiring any files in it
+      openProject({ context }); // Open project before requiring any files in it
       return result;
     } catch (er) {
       throw new Error(er);

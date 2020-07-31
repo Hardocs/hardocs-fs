@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as winattr from 'winattr';
 
-import { Options, GeneratedFolder } from '../../typings/globals';
+import { Options, GeneratedFolder, Path } from '../../typings/globals';
 import logs from '../../utils/logs';
 import cwd from '../cwd/cwd';
 import { getHardocsDir } from './../../utils/constants';
@@ -12,8 +12,6 @@ import { READ_PACKAGE_PREFIX } from './constants';
 const isPlatformWindows =
   process.platform.indexOf('win') === 0 || process.platform.includes('win');
 const hiddenPrefix = '.';
-
-type Path = Pick<Options, 'path'>;
 
 const isDirectory = ({ path: file }: Path) => {
   file = file.replace(/\\/g, path.sep);

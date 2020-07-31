@@ -4,8 +4,11 @@ import folder from '../folder';
 
 export const resolver: ResolverMap = {
   Mutation: {
-    createProject: async (_, input: HDS.ICreateProjectOnMutationArguments) =>
-      await project.create(input)
+    createProject: async (
+      _,
+      { input }: HDS.ICreateProjectOnMutationArguments,
+      context
+    ) => await project.create({ context, input })
   },
   Query: {
     isHardocsProject: async (
