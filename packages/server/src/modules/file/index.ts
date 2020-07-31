@@ -6,8 +6,9 @@ import cwd from '../cwd/cwd';
 // import folder from '../folder';
 import { Context } from '../../typings/globals';
 
-const extractData = ({ filePath }: HDS.IOpenFileOnQueryArguments) => {
+const extractMetaData = ({ filePath }: HDS.IOpenFileOnQueryArguments) => {
   const { data, content } = matter(filePath);
+  console.log({ data, content });
   return { data, content };
 };
 
@@ -31,7 +32,7 @@ const getEntryFile = (projectPath: string, context: Context) => {
 };
 
 export default {
-  extractData,
+  extractMetaData,
   allMarkdownFiles,
   getEntryFile
 };

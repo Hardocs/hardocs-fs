@@ -2,7 +2,6 @@ import {
   generateNamespace,
   ISchemaToInterfaceOptions
 } from '@gql2ts/from-schema';
-import { IFromQueryOptions } from '@gql2ts/types';
 import * as fs from 'fs';
 import * as path from 'path';
 import generateSchema from '../utils/generateSchema';
@@ -11,19 +10,10 @@ const options: Partial<ISchemaToInterfaceOptions> = {
   ignoredTypes: ['BadGraphType']
 };
 
-const overrides: Partial<IFromQueryOptions> = {
-  generateInterfaceName: (name) => `IGQL${name}`
-};
-
-const typescriptTypes = generateNamespace(
-  'HDS',
-  generateSchema(),
-  options,
-  overrides
-);
+const typescriptTypes = generateNamespace('HDS', generateSchema(), options);
 try {
   fs.writeFileSync(
-    path.join(__dirname, '../typings/schema-2.d.ts'),
+    path.join(__dirname, '../typings/schema.d.ts'),
     typescriptTypes
   );
 } catch (err) {

@@ -2,7 +2,7 @@ import { Redis } from 'ioredis';
 
 export interface FolderProjectOptions {
   path: string;
-  redis?: Redis;
+  context: Context;
 }
 
 export interface Context {
