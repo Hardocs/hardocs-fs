@@ -1,10 +1,10 @@
 import * as matter from 'gray-matter';
 import * as glob from 'glob';
-// import * as path from 'path';
+import * as path from 'path';
 
 import cwd from '../cwd/cwd';
-// import folder from '../folder';
-import { Context } from '../../typings/globals';
+import folder from '../folder';
+import { Options } from './../../typings/globals';
 
 const extractMetaData = ({ filePath }: HDS.IOpenFileOnQueryArguments) => {
   const { data, content } = matter(filePath);
@@ -24,11 +24,15 @@ const allMarkdownFiles = (filePath?: string) => {
   return allMarkdowns;
 };
 
-const getEntryFile = (projectPath: string, context: Context) => {
+const getEntryFile = ({ path: projectPath, context }: Options) => {
   console.log(projectPath, context);
-  // if (!folder.isHardocsProject({ file: projectPath })) {
-  // }
-  // const entryFile = allMarkdownFiles().map((file) => path.join());
+  if (!folder.isHardocsProject({ path: projectPath, context })) {
+  }
+
+  const entryFile = allMarkdownFiles().filter((file) =>
+    file.split('/')[file.length - 1].includes('index.md')
+  );
+  console.log(entryFile);
 };
 
 export default {
