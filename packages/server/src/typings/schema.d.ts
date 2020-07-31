@@ -24,8 +24,10 @@ declare namespace HDS {
     __typename: 'Query';
     cwd: string;
     openFile: IFile;
+    getEntryFile: string;
     folderExists: boolean;
     folderCurrent: IFolder | null;
+    docsFolder: string;
     openProject: IProject;
     isHardocsProject: boolean;
   }
@@ -34,7 +36,16 @@ declare namespace HDS {
     filePath: string;
   }
 
+  interface IGetEntryFileOnQueryArguments {
+    path: string;
+    fullPath: boolean;
+  }
+
   interface IFolderExistsOnQueryArguments {
+    path: string;
+  }
+
+  interface IDocsFolderOnQueryArguments {
     path: string;
   }
 
@@ -148,6 +159,7 @@ declare namespace HDS {
     folderOpen: IFolder | null;
     folderOpenParent: IFolder | null;
     folderCreate: IFolder | null;
+    folderDelete: boolean;
     createProject: IProject;
   }
 
@@ -157,6 +169,10 @@ declare namespace HDS {
 
   interface IFolderCreateOnMutationArguments {
     name: string;
+  }
+
+  interface IFolderDeleteOnMutationArguments {
+    path: string;
   }
 
   interface ICreateProjectOnMutationArguments {

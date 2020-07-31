@@ -1,3 +1,4 @@
+import { ContextOnly } from './../../typings/globals';
 import { Redis } from 'ioredis';
 import * as path from 'path';
 import * as fs from 'fs-extra';
@@ -8,6 +9,7 @@ import logs from '../../utils/logs';
 import cwd from '../cwd/cwd';
 import { getHardocsDir } from './../../utils/constants';
 import { READ_PACKAGE_PREFIX } from './constants';
+import file from '../file';
 
 const isPlatformWindows =
   process.platform.indexOf('win') === 0 || process.platform.includes('win');
@@ -103,18 +105,14 @@ const isHidden = ({ path: file }: Path) => {
   }
 };
 
-const readPackage = async (
-  options: Options & {
-    force?: boolean;
-  }
-) => {
+const readPackage = async (options: Partial<Options> & ContextOnly) => {
   const {
-    path: file,
-    force = false,
+    path: file = '',
+    fullPath = false,
     context: { redis }
   } = options;
 
-  if (!force) {
+  if (!fullPath) {
     const cachedValue = await redis.get(`${READ_PACKAGE_PREFIX}${file}`);
     if (cachedValue) {
       return cachedValue;
@@ -151,7 +149,7 @@ const clearCachedValue = async ({
 const isHardocsProject = async ({
   path,
   context
-}: Options): Promise<boolean> => {
+}: Partial<Options> & ContextOnly): Promise<boolean> => {
   try {
     const pkg = await readPackage({ path, context });
     return !!pkg;
@@ -163,6 +161,29 @@ const isHardocsProject = async ({
     }
     return false;
   }
+};
+
+const getDocsFolder = async ({
+  path,
+  context,
+  fullPath
+}: Partial<Options> & ContextOnly) => {
+  let fromBaseDir = cwd.get();
+  if (fullPath) {
+    if (path) {
+      fromBaseDir = path;
+    }
+  }
+  if (!isHardocsProject({ path: fromBaseDir, context })) {
+    throw new Error(logs.chalk.yellow('Not a hardocs project'));
+  }
+
+  const hardocsJson = (
+    await file.getHardocsJsonFile({ path: fromBaseDir, context, fullPath })
+  ).hardocsJson;
+  const { docsDir } = hardocsJson;
+
+  return `${fromBaseDir}/${docsDir}`;
 };
 
 const deleteFolder = async ({ path }: Path): Promise<boolean> => {
@@ -179,7 +200,7 @@ export default {
   createFolder,
   list,
   isHidden,
-  // isPackage,
+  getDocsFolder,
   readPackage,
   clearCachedValue,
   isHardocsProject,

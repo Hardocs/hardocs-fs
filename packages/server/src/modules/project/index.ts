@@ -14,34 +14,18 @@ const openProject = async ({
   path,
   context,
   fullPath = false
-}: Partial<Options> & ContextOnly & { fullPath?: boolean }) => {
-  let currentDir = cwd.get();
-  if (fullPath) {
-    if (path) {
-      currentDir = path;
-    } else {
-      throw new Error(logs.chalk.red('Please specify a valid path'));
-    }
-  }
-
-  const hardocsDir = getHardocsDir(currentDir);
-
-  if (!folder.isDirectory({ path: currentDir })) {
-    throw new Error(logs.chalk.red('Not a valid directory'));
-  }
-  if (!folder.isHardocsProject({ path: currentDir, context })) {
-    throw new Error(logs.chalk.red('Not a valid hardocs project'));
-  }
-  const hardocsFile = await fs.readFile(`${hardocsDir}/hardocs.json`, {
-    encoding: 'utf8'
+}: Partial<Options> & ContextOnly) => {
+  const hardocsJson = await file.getHardocsJsonFile({
+    path,
+    context,
+    fullPath
   });
-  const hardocsJson = JSON.parse(hardocsFile);
-  const docsDir = hardocsJson.docsDir;
+  const docsDir = hardocsJson.hardocsJson.docsDir;
+
   if (!docsDir || docsDir.trim() === '') {
     logs.chalk.red('No documentations provided');
     return;
   }
-  file.getEntryFile({ path: currentDir, context });
 };
 
 const create = async ({
@@ -52,8 +36,12 @@ const create = async ({
     const dest = path.join(cwd.get(), input.name);
     await cwd.set(dest);
     if (!folder.isDirectory({ path: dest })) {
-      await fs.ensureDir(dest);
-      await cwd.set(dest);
+      try {
+        await fs.mkdir(dest);
+        await cwd.set(dest);
+      } catch (er) {
+        throw new Error(logs.chalk.red(er.message));
+      }
     }
     try {
       const result = {

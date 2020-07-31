@@ -3,6 +3,7 @@ import { Redis } from 'ioredis';
 export interface Options {
   path: string;
   context: Context;
+  fullPath?: boolean;
 }
 
 export type Path = Pick<Options, 'path'>;

@@ -1,12 +1,14 @@
 type Query {
   folderExists(path: String!): Boolean!
   folderCurrent: Folder
+  docsFolder(path: String!): String!
 }
 
 type Mutation {
   folderOpen(path: String!): Folder
   folderOpenParent: Folder
   folderCreate(name: String!): Folder
+  folderDelete(path: String!): Boolean!
 }
 
 type Folder {

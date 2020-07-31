@@ -1,5 +1,6 @@
 type Query {
   openFile(filePath: String!): File!
+  getEntryFile(path: String!, fullPath: Boolean!): String!
 }
 
 type File {
