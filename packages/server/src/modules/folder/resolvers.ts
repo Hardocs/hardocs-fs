@@ -22,7 +22,7 @@ export const resolver: ResolverMap = {
   },
 
   Folder: {
-    children: (folder) => folders.list(folder.path)
+    children: (folder) => folders.list({ path: folder.path })
   }
 };
 

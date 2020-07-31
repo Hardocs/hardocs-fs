@@ -24,7 +24,6 @@ const allMarkdownFiles = (filePath?: string) => {
 };
 
 const getEntryFile = ({ path: projectPath, context }: Options) => {
-  console.log(projectPath, context);
   if (!folder.isHardocsProject({ path: projectPath, context })) {
   }
 
