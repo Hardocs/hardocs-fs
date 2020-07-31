@@ -8,7 +8,11 @@ import logs from '../../utils/logs';
 import { getHardocsDir } from './../../utils/constants';
 import file from '../file';
 
-const templateDir = path.join(__dirname, '../../../template');
+const templateDir = path.join(__dirname, '../../../template/template');
+const markdownFile = path.join(
+  __dirname,
+  '../../../template/docsTemplate/index.md'
+);
 
 const openProject = async ({
   path,
@@ -55,6 +59,13 @@ const create = async ({
 
       if (folder.isDirectory({ path: templateDir })) {
         await fs.copy(templateDir, dest);
+        const docsDir = `${dest}/${result.docsDir}`;
+        await fs.ensureDir(docsDir);
+        await file.createMarkdownTemplate(
+          markdownFile,
+          result.entryFile,
+          docsDir
+        );
       }
       const stream = fs.createWriteStream(hardocsJson, {
         encoding: 'utf8',
