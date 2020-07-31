@@ -1,6 +1,6 @@
 import { Redis } from 'ioredis';
 
-export interface FolderProjectOptions {
+export interface Options {
   path: string;
   context: Context;
 }

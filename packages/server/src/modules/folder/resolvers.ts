@@ -15,8 +15,10 @@ export const resolver: ResolverMap = {
     folderOpen: (_root, { path }: HDS.IFolderOpenOnMutationArguments) =>
       folders.open({ path }),
     folderOpenParent: () => folders.openParent({ path: cwd.get() }),
-    folderCreate: (_root, { name }: HDS.IFolderCreateOnMutationArguments) =>
-      folders.createFolder({ name })
+    folderCreate: (
+      _root,
+      { name: path }: HDS.IFolderCreateOnMutationArguments
+    ) => folders.createFolder({ path })
   },
 
   Folder: {

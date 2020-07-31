@@ -1,7 +1,6 @@
 import { ResolverMap } from '../../typings/globals';
 import project from '.';
 import folder from '../folder';
-import redis from '../../redis';
 
 export const resolver: ResolverMap = {
   Mutation: {
@@ -11,7 +10,8 @@ export const resolver: ResolverMap = {
   Query: {
     isHardocsProject: async (
       _root,
-      { path }: HDS.IIsHardocsProjectOnQueryArguments
-    ) => folder.isHardocsProject(path, redis)
+      { path }: HDS.IIsHardocsProjectOnQueryArguments,
+      context
+    ) => folder.isHardocsProject({ path, context })
   }
 };

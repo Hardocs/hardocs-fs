@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as winattr from 'winattr';
 
-import { FolderProjectOptions, GeneratedFolder } from '../../typings/globals';
+import { Options, GeneratedFolder } from '../../typings/globals';
 import logs from '../../utils/logs';
 import cwd from '../cwd/cwd';
 import { getHardocsDir } from './../../utils/constants';
@@ -13,7 +13,7 @@ const isPlatformWindows =
   process.platform.indexOf('win') === 0 || process.platform.includes('win');
 const hiddenPrefix = '.';
 
-type Path = Pick<FolderProjectOptions, 'path'>;
+type Path = Pick<Options, 'path'>;
 
 const isDirectory = ({ path: file }: Path) => {
   file = file.replace(/\\/g, path.sep);
@@ -106,7 +106,7 @@ const isHidden = ({ path: file }: Path) => {
 };
 
 const readPackage = async (
-  options: FolderProjectOptions & {
+  options: Options & {
     force?: boolean;
   }
 ) => {
@@ -153,7 +153,7 @@ const clearCachedValue = async ({
 const isHardocsProject = async ({
   path,
   context
-}: FolderProjectOptions): Promise<boolean> => {
+}: Options): Promise<boolean> => {
   try {
     const pkg = await readPackage({ path, context });
     return !!pkg;
