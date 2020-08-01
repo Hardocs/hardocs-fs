@@ -13,7 +13,6 @@ const extractFrontMatter = async ({
 }: HDS.IOpenFileOnQueryArguments) => {
   const readFile = await fs.readFile(filePath);
   const { data, content } = matter(readFile);
-  console.log({ data, content });
   return { data, content };
 };
 
@@ -94,10 +93,9 @@ const createMarkdownTemplate = async (
 
 const extractEntryFileData = async ({ path, context, force }: Options) => {
   const entryFilePath = await getEntryFilePath({ path, context, force });
-  console.log({ entryFilePath });
 
-  const metadata = extractFrontMatter({ filePath: entryFilePath });
-  console.log({ metadata });
+  const metadata = await extractFrontMatter({ filePath: entryFilePath });
+  return metadata;
 };
 
 export default {

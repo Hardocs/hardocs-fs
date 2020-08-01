@@ -123,7 +123,7 @@ declare namespace HDS {
     /**
      * Chineese
      */
-    CH = 'CH'
+    CH = 'CH',
   }
 
   interface ILicense {
@@ -153,6 +153,7 @@ declare namespace HDS {
     description: string;
     fileName: string;
     content: string | null;
+    path: string;
   }
 
   interface IMutation {

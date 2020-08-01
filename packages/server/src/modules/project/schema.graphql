@@ -77,6 +77,7 @@ type AllDocsMetadata {
   description: String!
   fileName: String!
   content: String
+  path: String!
 }
 
 type Language {

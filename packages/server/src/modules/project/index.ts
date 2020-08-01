@@ -81,7 +81,11 @@ const create = async ({
       });
       const entryFilePath = `${docsDir}/${result.entryFile}`;
 
-      file.extractEntryFileData({ path: entryFilePath, context });
+      const data = await file.extractEntryFileData({
+        path: entryFilePath,
+        context
+      });
+      console.log(data);
 
       openProject({ context }); // Open project before requiring any files in it
       return result;
