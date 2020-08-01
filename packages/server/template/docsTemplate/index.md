@@ -1,7 +1,6 @@
 ---
-description: ''
-sidebar: 'docs'
-next: '/docs/installation/'
+title: 'Open ventilator'
+description: 'This is a test document'
 ---
 
 # Introduction

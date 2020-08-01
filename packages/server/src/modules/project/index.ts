@@ -17,12 +17,12 @@ const markdownFile = path.join(
 const openProject = async ({
   path,
   context,
-  fullPath = false
+  force = false
 }: Partial<Options> & ContextOnly) => {
   const hardocsJson = await file.getHardocsJsonFile({
     path,
     context,
-    fullPath
+    force
   });
   const docsDir = hardocsJson.hardocsJson.docsDir;
 
@@ -57,9 +57,10 @@ const create = async ({
       await fs.ensureDir(hardocsDir);
       const hardocsJson = `${hardocsDir}/hardocs.json`;
 
+      const docsDir = `${dest}/${result.docsDir}`;
+
       if (folder.isDirectory({ path: templateDir })) {
         await fs.copy(templateDir, dest);
-        const docsDir = `${dest}/${result.docsDir}`;
         await fs.ensureDir(docsDir);
         await file.createMarkdownTemplate(
           markdownFile,
@@ -67,6 +68,7 @@ const create = async ({
           docsDir
         );
       }
+
       const stream = fs.createWriteStream(hardocsJson, {
         encoding: 'utf8',
         flags: 'w+'
@@ -77,6 +79,10 @@ const create = async ({
           console.log(err.message);
         }
       });
+      const entryFilePath = `${docsDir}/${result.entryFile}`;
+
+      file.extractEntryFileData({ path: entryFilePath, context });
+
       openProject({ context }); // Open project before requiring any files in it
       return result;
     } catch (er) {

@@ -8,8 +8,11 @@ import logs from '../../utils/logs';
 import { Options, ContextOnly } from './../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 
-const extractMetaData = ({ filePath }: HDS.IOpenFileOnQueryArguments) => {
-  const { data, content } = matter(filePath);
+const extractFrontMatter = async ({
+  filePath
+}: HDS.IOpenFileOnQueryArguments) => {
+  const readFile = await fs.readFile(filePath);
+  const { data, content } = matter(readFile);
   console.log({ data, content });
   return { data, content };
 };
@@ -27,7 +30,7 @@ const allMarkdownFiles = (filePath?: string) => {
 const getEntryFilePath = async ({
   path: projectPath,
   context,
-  fullPath
+  force
 }: Partial<Options> & ContextOnly): Promise<string> => {
   if (!folder.isHardocsProject({ path: projectPath, context })) {
     throw new Error(logs.chalk.yellow('Not a valid hardocs project'));
@@ -36,27 +39,26 @@ const getEntryFilePath = async ({
   const docsDir = await folder.getDocsFolder({
     path: projectPath,
     context,
-    fullPath
+    force
   });
   const entryFileName = (
-    await getHardocsJsonFile({ path: projectPath, context, fullPath })
+    await getHardocsJsonFile({ path: projectPath, context, force })
   ).hardocsJson.entryFile;
 
   const entryFile = `${docsDir}/${entryFileName}`;
-  console.log({ entryFile });
   return entryFile;
 };
 
 const getHardocsJsonFile = async ({
   path,
   context,
-  fullPath = false
+  force = false
 }: Partial<Options> & ContextOnly): Promise<{
   hardocsJson: HDS.IProject;
   currentDir: string;
 }> => {
   let currentDir = cwd.get();
-  if (fullPath) {
+  if (force) {
     if (path) {
       currentDir = path;
     }
@@ -90,10 +92,19 @@ const createMarkdownTemplate = async (
   }
 };
 
+const extractEntryFileData = async ({ path, context, force }: Options) => {
+  const entryFilePath = await getEntryFilePath({ path, context, force });
+  console.log({ entryFilePath });
+
+  const metadata = extractFrontMatter({ filePath: entryFilePath });
+  console.log({ metadata });
+};
+
 export default {
-  extractMetaData,
+  extractFrontMatter,
   allMarkdownFiles,
   getEntryFilePath,
   getHardocsJsonFile,
-  createMarkdownTemplate
+  createMarkdownTemplate,
+  extractEntryFileData
 };

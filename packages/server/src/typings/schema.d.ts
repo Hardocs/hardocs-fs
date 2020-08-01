@@ -38,7 +38,7 @@ declare namespace HDS {
 
   interface IGetEntryFileOnQueryArguments {
     path: string;
-    fullPath: boolean;
+    force: boolean;
   }
 
   interface IFolderExistsOnQueryArguments {
@@ -51,7 +51,7 @@ declare namespace HDS {
 
   interface IOpenProjectOnQueryArguments {
     path?: string | null;
-    fullPath?: boolean | null;
+    force?: boolean | null;
   }
 
   interface IIsHardocsProjectOnQueryArguments {
@@ -123,7 +123,7 @@ declare namespace HDS {
     /**
      * Chineese
      */
-    CH = 'CH',
+    CH = 'CH'
   }
 
   interface ILicense {
@@ -152,6 +152,7 @@ declare namespace HDS {
     title: string;
     description: string;
     fileName: string;
+    content: string | null;
   }
 
   interface IMutation {

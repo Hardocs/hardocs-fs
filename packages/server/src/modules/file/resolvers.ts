@@ -5,8 +5,8 @@ export const resolver: ResolverMap = {
   Query: {
     getEntryFile: async (
       _root,
-      { fullPath, path }: HDS.IGetEntryFileOnQueryArguments,
+      { force, path }: HDS.IGetEntryFileOnQueryArguments,
       context
-    ) => file.getEntryFilePath({ path, fullPath, context })
+    ) => file.getEntryFilePath({ path, force, context })
   }
 };

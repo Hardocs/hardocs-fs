@@ -3,7 +3,7 @@ type Mutation {
 }
 
 type Query {
-  openProject(path: String, fullPath: Boolean): Project!
+  openProject(path: String, force: Boolean): Project!
   isHardocsProject(path: String!): Boolean!
 }
 
@@ -76,6 +76,7 @@ type AllDocsMetadata {
   title: String!
   description: String!
   fileName: String!
+  content: String
 }
 
 type Language {

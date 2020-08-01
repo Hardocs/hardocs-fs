@@ -108,11 +108,11 @@ const isHidden = ({ path: file }: Path) => {
 const readPackage = async (options: Partial<Options> & ContextOnly) => {
   const {
     path: file = '',
-    fullPath = false,
+    force = false,
     context: { redis }
   } = options;
 
-  if (!fullPath) {
+  if (!force) {
     const cachedValue = await redis.get(`${READ_PACKAGE_PREFIX}${file}`);
     if (cachedValue) {
       return cachedValue;
@@ -166,10 +166,10 @@ const isHardocsProject = async ({
 const getDocsFolder = async ({
   path,
   context,
-  fullPath
+  force
 }: Partial<Options> & ContextOnly) => {
   let fromBaseDir = cwd.get();
-  if (fullPath) {
+  if (force) {
     if (path) {
       fromBaseDir = path;
     }
@@ -179,7 +179,7 @@ const getDocsFolder = async ({
   }
 
   const hardocsJson = (
-    await file.getHardocsJsonFile({ path: fromBaseDir, context, fullPath })
+    await file.getHardocsJsonFile({ path: fromBaseDir, context, force })
   ).hardocsJson;
   const { docsDir } = hardocsJson;
 
