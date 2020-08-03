@@ -13,6 +13,7 @@ const markdownFile = path.join(
   __dirname,
   '../../../template/docsTemplate/index.md'
 );
+const docsTemplateDir = path.join(__dirname, '../../../template/docsTemplate');
 
 const openProject = async ({
   path,
@@ -61,6 +62,7 @@ const create = async ({
 
       if (folder.isDirectory({ path: templateDir })) {
         await fs.copy(templateDir, dest);
+        await fs.copy(docsTemplateDir, docsDir);
         await fs.ensureDir(docsDir);
         await file.createMarkdownTemplate(
           markdownFile,
@@ -79,13 +81,16 @@ const create = async ({
           console.log(err.message);
         }
       });
+
       const entryFilePath = `${docsDir}/${result.entryFile}`;
+
+      file.extractAllFileData({ path: docsDir });
 
       const data = await file.extractEntryFileData({
         path: entryFilePath,
         context
       });
-      console.log(data);
+      console.log(data.data);
 
       openProject({ context }); // Open project before requiring any files in it
       return result;

@@ -35,7 +35,7 @@ export default async (): Promise<Server | HTTPSServer> => {
 
   app.use(RedisStore);
   app.use('*', express.static('*'));
-  const port = process.env.PORT || 4000;
+  const port = process.env.PORT || 4001;
   return app.listen(
     {
       port

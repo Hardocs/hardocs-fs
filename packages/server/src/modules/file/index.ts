@@ -5,7 +5,7 @@ import * as fs from 'fs-extra';
 import cwd from '../cwd/cwd';
 import folder from '../folder';
 import logs from '../../utils/logs';
-import { Options, ContextOnly } from './../../typings/globals';
+import { Options, ContextOnly, Path } from './../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 
 const extractFrontMatter = async ({
@@ -21,8 +21,10 @@ const extractFrontMatter = async ({
  * @param filePath <Optional> Specify if you want to read from another directory
  */
 const allMarkdownFiles = (filePath?: string) => {
-  const directory = filePath || cwd.get();
-  const allMarkdowns = glob.sync(`${directory}/**/*.*(md|mdx)`);
+  if (!filePath) {
+    filePath = cwd.get();
+  }
+  const allMarkdowns = glob.sync(`${filePath}/**/*.*(md|mdx)`);
   return allMarkdowns;
 };
 
@@ -98,11 +100,26 @@ const extractEntryFileData = async ({ path, context, force }: Options) => {
   return metadata;
 };
 
+const extractAllFileData = async ({ path }: Path) => {
+  const allMarkdownFilesPath = allMarkdownFiles(path);
+  try {
+    const allData = allMarkdownFilesPath.map(async (f) => {
+      const d = await extractFrontMatter({ filePath: f });
+      console.log(d);
+      return d;
+    });
+
+    console.log({ allData });
+  } catch (er) {
+    console.log(er);
+  }
+};
 export default {
   extractFrontMatter,
   allMarkdownFiles,
   getEntryFilePath,
   getHardocsJsonFile,
   createMarkdownTemplate,
-  extractEntryFileData
+  extractEntryFileData,
+  extractAllFileData
 };
