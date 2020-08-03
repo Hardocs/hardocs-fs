@@ -1,6 +1,7 @@
 import * as matter from 'gray-matter';
 import * as glob from 'glob';
 import * as fs from 'fs-extra';
+// import * as showdown from 'showdown';
 
 import cwd from '../cwd/cwd';
 import folder from '../folder';
@@ -11,16 +12,23 @@ import { getHardocsDir } from './../../utils/constants';
 const extractFrontMatter = async ({
   filePath
 }: HDS.IOpenFileOnQueryArguments) => {
-  const readFile = await fs.readFile(filePath);
-  const { data, content } = matter(readFile);
-  return { data, content };
+  try {
+    const readFile = await fs.readFile(filePath);
+    const { data, content } = matter(readFile);
+    // const converter = new showdown.Converter();
+    // console.log(converter.makeHtml(content));
+
+    return { data, content };
+  } catch (er) {
+    throw new Error(logs.chalk.red(er.message));
+  }
 };
 
 /**
  *
  * @param filePath <Optional> Specify if you want to read from another directory
  */
-const allMarkdownFiles = (filePath?: string) => {
+const allMarkdownFilesPath = (filePath?: string) => {
   if (!filePath) {
     filePath = cwd.get();
   }
@@ -101,25 +109,31 @@ const extractEntryFileData = async ({ path, context, force }: Options) => {
 };
 
 const extractAllFileData = async ({ path }: Path) => {
-  const allMarkdownFilesPath = allMarkdownFiles(path);
-  try {
-    const allData = allMarkdownFilesPath.map(async (f) => {
-      const d = await extractFrontMatter({ filePath: f });
-      console.log(d);
+  const allMarkdownFilesPathPath = allMarkdownFilesPath(path);
+  return allMarkdownFilesPathPath.map(async (f) => {
+    const d = await extractFrontMatter({ filePath: f });
+    if (d) {
+      const filename = getFileName({ path: f });
+      console.log({ fullPath: f, filename, data: d.data });
       return d;
-    });
+    } else {
+      throw new Error(logs.chalk.red('Error occurred :('));
+    }
+  });
+};
 
-    console.log({ allData });
-  } catch (er) {
-    console.log(er);
-  }
+const getFileName = ({ path }: Path) => {
+  const fullPath = path.split(/\//gis);
+  const lastIndex = fullPath[fullPath.length - 1];
+  return lastIndex.toString().includes(`.md`) && lastIndex;
 };
 export default {
   extractFrontMatter,
-  allMarkdownFiles,
+  allMarkdownFilesPath,
   getEntryFilePath,
   getHardocsJsonFile,
   createMarkdownTemplate,
   extractEntryFileData,
-  extractAllFileData
+  extractAllFileData,
+  getFileName
 };
