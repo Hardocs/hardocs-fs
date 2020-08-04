@@ -1,8 +1,8 @@
-import * as Nano from 'nano';
+import Nano from 'nano';
 
 export default (async () => {
   const dbName = 'hello';
-  const nano = Nano(process.env.DB_HOST_AUTH);
+  const nano = Nano(process.env.DB_HOST_AUTH as string);
 
   const dbList = await nano.db.list(); // Returns a list of database
 

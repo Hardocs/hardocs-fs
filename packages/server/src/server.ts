@@ -1,9 +1,9 @@
 import { ApolloServer } from 'apollo-server-express';
-import * as express from 'express';
+import express from 'express';
 import { Server } from 'http';
 import { Server as HTTPSServer } from 'https';
-import * as RateLimit from 'express-rate-limit';
-import * as RateLimitRedisStore from 'rate-limit-redis';
+import RateLimit from 'express-rate-limit';
+import RateLimitRedisStore from 'rate-limit-redis';
 
 import redis from './redis';
 import generateSchema from './utils/generateSchema';

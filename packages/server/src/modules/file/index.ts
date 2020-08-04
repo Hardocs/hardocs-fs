@@ -1,7 +1,6 @@
-import * as matter from 'gray-matter';
-import * as glob from 'glob';
-import * as fs from 'fs-extra';
-// import * as showdown from 'showdown';
+import matter from 'gray-matter';
+import glob from 'glob';
+import fs from 'fs-extra';
 
 import cwd from '../cwd/cwd';
 import folder from '../folder';
