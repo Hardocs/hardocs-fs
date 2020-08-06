@@ -7,7 +7,8 @@
       "packages/*"
     ],
     "noHoist": [
-      "**/*vue"
+      "./**/*vue*",
+      "./**/*gridsome*"
     ]
   },
   "description": "Hardocs project with couchdb and a plugin based approach",
