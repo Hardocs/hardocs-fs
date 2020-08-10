@@ -1,6 +1,7 @@
 import matter from 'gray-matter';
 import glob from 'glob';
 import fs from 'fs-extra';
+// import showdown from 'showdown';
 
 import cwd from '../cwd/cwd';
 import folder from '../folder';
@@ -15,7 +16,7 @@ const extractFrontMatter = async ({
     const readFile = await fs.readFile(filePath);
     const { data, content } = matter(readFile);
     // const converter = new showdown.Converter();
-    // console.log(converter.makeHtml(content));
+    // const c = converter.makeHtml(content);
 
     return { data, content };
   } catch (er) {
@@ -113,7 +114,12 @@ const extractAllFileData = async ({ path }: Path) => {
     const d = await extractFrontMatter({ filePath: f });
     if (d) {
       const filename = getFileName({ path: f });
-      console.log({ fullPath: f, filename, data: d.data });
+      console.log({
+        // fullPath: f,
+        filename
+        // data: d.data,
+        // content: JSON.stringify(d.content, null, 2)
+      });
       return d;
     } else {
       throw new Error(logs.chalk.red('Error occurred :('));

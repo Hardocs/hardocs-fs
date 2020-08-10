@@ -97,7 +97,7 @@ declare namespace HDS {
     author: IAuthor;
     contributors: Array<IContributor> | null;
     docsDir: string;
-    allDocsMetadata: Array<IAllDocsMetadata>;
+    allDocsMetadata: Array<IAllDocsMetadata | null> | null;
     entryFile: string;
   }
 
@@ -149,11 +149,11 @@ declare namespace HDS {
 
   interface IAllDocsMetadata {
     __typename: 'AllDocsMetadata';
-    title: string;
-    description: string;
-    fileName: string;
+    title: string | null;
+    description: string | null;
+    fileName: string | null;
     content: string | null;
-    path: string;
+    fullPath: string | null;
   }
 
   interface IMutation {

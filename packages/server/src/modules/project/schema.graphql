@@ -68,16 +68,16 @@ type Project {
   author: Author!
   contributors: [Contributor!]
   docsDir: String!
-  allDocsMetadata: [AllDocsMetadata!]!
+  allDocsMetadata: [AllDocsMetadata]
   entryFile: String!
 }
 
 type AllDocsMetadata {
-  title: String!
-  description: String!
-  fileName: String!
+  title: String
+  description: String
+  fileName: String
   content: String
-  fullPath: String!
+  fullPath: String
 }
 
 type Language {

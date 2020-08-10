@@ -93,7 +93,18 @@ const create = async ({
       console.log(data.data);
 
       openProject({ context }); // Open project before requiring any files in it
-      return result;
+      return {
+        ...result,
+        allDocsMetadata: [
+          {
+            title: data.data.title,
+            description: data.data.description,
+            content: data.content,
+            fileName: 'index.md',
+            fullPath: entryFilePath
+          }
+        ]
+      };
     } catch (er) {
       throw new Error(er);
     }
