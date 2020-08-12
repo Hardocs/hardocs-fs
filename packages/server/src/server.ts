@@ -5,6 +5,7 @@ import { Server } from 'http';
 import { Server as HTTPSServer } from 'https';
 import RateLimit from 'express-rate-limit';
 import RateLimitRedisStore from 'rate-limit-redis';
+import cors, { CorsOptions } from 'cors';
 
 import redis from './redis';
 import generateSchema from './utils/generateSchema';
@@ -36,6 +37,14 @@ export default async (): Promise<Server | HTTPSServer> => {
 
   app.use(RedisStore);
   app.use('*', express.static('*'));
+
+  const corsOptions: CorsOptions = {
+    origin:
+      process.env.NODE_ENV === 'development' ? '*' : 'http://localhost:8000',
+    optionsSuccessStatus: 200
+  };
+
+  app.use(cors(corsOptions));
   const port = process.env.PORT || 4001;
   return app.listen(
     {
