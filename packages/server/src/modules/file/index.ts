@@ -9,7 +9,7 @@ import logs from '../../utils/logs';
 import { Options, ContextOnly, Path } from './../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 
-const extractFrontMatter = ({ filePath }: HDS.IOpenFileOnQueryArguments) => {
+const openFile = ({ filePath }: HDS.IOpenFileOnQueryArguments) => {
   try {
     const readFile = fs.readFileSync(filePath);
     const { data, content } = matter(readFile);
@@ -102,7 +102,7 @@ const createMarkdownTemplate = async (
 const openEntryFile = async ({ path, context, force }: Options) => {
   const entryFilePath = await getEntryFilePath({ path, context, force });
 
-  const metadata = await extractFrontMatter({ filePath: entryFilePath });
+  const metadata = openFile({ filePath: entryFilePath });
   return metadata;
 };
 
@@ -110,8 +110,8 @@ const extractAllFileData = async ({ path }: Path) => {
   const allMarkdownFilesPathPath = allMarkdownFilesPath(path);
   try {
     return allMarkdownFilesPathPath.map((f) => {
-      const d = extractFrontMatter({ filePath: f });
-      // const d = await extractFrontMatter({ filePath: f });
+      const d = openFile({ filePath: f });
+      // const d = await openFile({ filePath: f });
       const data = {
         title: d.data.title,
         description: d.data.description,
@@ -132,7 +132,7 @@ const getFileName = ({ path }: Path) => {
   return lastIndex.toString().includes(`.md`) && lastIndex;
 };
 export default {
-  extractFrontMatter,
+  openFile,
   allMarkdownFilesPath,
   getEntryFilePath,
   getHardocsJsonFile,
