@@ -84,26 +84,27 @@ const create = async ({
 
       const entryFilePath = `${docsDir}/${result.entryFile}`;
 
-      file.extractAllFileData({ path: docsDir });
+      const allFileData = await file.extractAllFileData({ path: docsDir });
+      // console.log(allFileData);
+      // const data = allFileData.find((val) => val.fileName === 'index.md');
 
-      const data = await file.extractEntryFileData({
+      const entry = await file.extractEntryFileData({
         path: entryFilePath,
         context
       });
-      console.log(data.data);
+
+      const allDocsData = allFileData.map((f) => {
+        if (f.fileName === file.getFileName({ path: entryFilePath })) {
+          f.content = entry.content;
+        }
+        return f;
+      });
 
       openProject({ context }); // Open project before requiring any files in it
+
       return {
         ...result,
-        allDocsData: [
-          {
-            title: data.data.title,
-            description: data.data.description,
-            content: data.content,
-            fileName: 'index.md',
-            fullPath: entryFilePath
-          }
-        ]
+        allDocsData
       };
     } catch (er) {
       throw new Error(er);

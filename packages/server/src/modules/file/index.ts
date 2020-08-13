@@ -9,11 +9,9 @@ import logs from '../../utils/logs';
 import { Options, ContextOnly, Path } from './../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 
-const extractFrontMatter = async ({
-  filePath
-}: HDS.IOpenFileOnQueryArguments) => {
+const extractFrontMatter = ({ filePath }: HDS.IOpenFileOnQueryArguments) => {
   try {
-    const readFile = await fs.readFile(filePath);
+    const readFile = fs.readFileSync(filePath);
     const { data, content } = matter(readFile);
     // const converter = new showdown.Converter();
     // const c = converter.makeHtml(content);
@@ -110,21 +108,22 @@ const extractEntryFileData = async ({ path, context, force }: Options) => {
 
 const extractAllFileData = async ({ path }: Path) => {
   const allMarkdownFilesPathPath = allMarkdownFilesPath(path);
-  return allMarkdownFilesPathPath.map(async (f) => {
-    const d = await extractFrontMatter({ filePath: f });
-    if (d) {
-      const filename = getFileName({ path: f });
-      console.log({
-        // fullPath: f,
-        filename
-        // data: d.data,
-        // content: JSON.stringify(d.content, null, 2)
-      });
-      return d;
-    } else {
-      throw new Error(logs.chalk.red('Error occurred :('));
-    }
-  });
+  try {
+    return allMarkdownFilesPathPath.map((f) => {
+      const d = extractFrontMatter({ filePath: f });
+      // const d = await extractFrontMatter({ filePath: f });
+      const data = {
+        title: d.data.title,
+        description: d.data.description,
+        fileName: getFileName({ path: f }),
+        fullPath: f,
+        content: ''
+      };
+      return data;
+    });
+  } catch (er) {
+    throw new Error(logs.chalk.red('Error occurred :('));
+  }
 };
 
 const getFileName = ({ path }: Path) => {
