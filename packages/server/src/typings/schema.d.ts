@@ -33,7 +33,7 @@ declare namespace HDS {
   }
 
   interface IOpenFileOnQueryArguments {
-    filePath: string;
+    filePath?: string | null;
   }
 
   interface IGetEntryFileOnQueryArguments {
@@ -97,7 +97,7 @@ declare namespace HDS {
     author: IAuthor;
     contributors: Array<IContributor> | null;
     docsDir: string;
-    allDocsData: Array<IallDocsData | null> | null;
+    allDocsData: Array<IAllDocsData | null> | null;
     entryFile: string;
   }
 
@@ -123,7 +123,7 @@ declare namespace HDS {
     /**
      * Chineese
      */
-    CH = 'CH'
+    CH = 'CH',
   }
 
   interface ILicense {
@@ -147,7 +147,7 @@ declare namespace HDS {
     name: string;
   }
 
-  interface IallDocsData {
+  interface IAllDocsData {
     __typename: 'allDocsData';
     title: string | null;
     description: string | null;

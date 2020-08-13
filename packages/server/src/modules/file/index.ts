@@ -11,6 +11,9 @@ import { getHardocsDir } from './../../utils/constants';
 
 const openFile = ({ filePath }: HDS.IOpenFileOnQueryArguments) => {
   try {
+    if (!filePath) {
+      filePath = cwd.get();
+    }
     const readFile = fs.readFileSync(filePath);
     const { data, content } = matter(readFile);
     // const converter = new showdown.Converter();
