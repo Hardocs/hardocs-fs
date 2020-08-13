@@ -95,7 +95,7 @@ const create = async ({
       openProject({ context }); // Open project before requiring any files in it
       return {
         ...result,
-        allDocsMetadata: [
+        allDocsData: [
           {
             title: data.data.title,
             description: data.data.description,
