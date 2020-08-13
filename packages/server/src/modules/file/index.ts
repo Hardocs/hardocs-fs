@@ -76,10 +76,10 @@ const getHardocsJsonFile = async ({
   if (!folder.isHardocsProject({ path: currentDir, context })) {
     throw new Error(logs.chalk.red('Not a valid hardocs project'));
   }
-  const hardocsFile = await fs.readFile(`${hardocsDir}/hardocs.json`, {
+  const hardocsFile: string = await fs.readFile(`${hardocsDir}/hardocs.json`, {
     encoding: 'utf8'
   });
-  const hardocsJson = JSON.parse(hardocsFile);
+  const hardocsJson = await JSON.parse(hardocsFile);
   return { hardocsJson, currentDir };
 };
 
@@ -99,7 +99,7 @@ const createMarkdownTemplate = async (
   }
 };
 
-const extractEntryFileData = async ({ path, context, force }: Options) => {
+const openEntryFile = async ({ path, context, force }: Options) => {
   const entryFilePath = await getEntryFilePath({ path, context, force });
 
   const metadata = await extractFrontMatter({ filePath: entryFilePath });
@@ -137,7 +137,7 @@ export default {
   getEntryFilePath,
   getHardocsJsonFile,
   createMarkdownTemplate,
-  extractEntryFileData,
+  openEntryFile,
   extractAllFileData,
   getFileName
 };

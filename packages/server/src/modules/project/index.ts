@@ -31,6 +31,26 @@ const openProject = async ({
     logs.chalk.red('No documentations provided');
     return;
   }
+
+  const entryFilePath = `${docsDir}/${hardocsJson.hardocsJson.entryFile}`;
+  const allFileData = await file.extractAllFileData({ path: docsDir });
+
+  const entry = await file.openEntryFile({
+    path: entryFilePath,
+    context
+  });
+  const allDocsData = allFileData.map((f) => {
+    if (f.fileName === file.getFileName({ path: entryFilePath })) {
+      f.content = entry.content;
+    }
+    return f;
+  });
+
+  const response = {
+    ...hardocsJson.hardocsJson,
+    allDocsData
+  };
+  return response;
 };
 
 const create = async ({
@@ -82,30 +102,9 @@ const create = async ({
         }
       });
 
-      const entryFilePath = `${docsDir}/${result.entryFile}`;
+      const response = openProject({ context }); // Open project before requiring any files in it
 
-      const allFileData = await file.extractAllFileData({ path: docsDir });
-      // console.log(allFileData);
-      // const data = allFileData.find((val) => val.fileName === 'index.md');
-
-      const entry = await file.extractEntryFileData({
-        path: entryFilePath,
-        context
-      });
-
-      const allDocsData = allFileData.map((f) => {
-        if (f.fileName === file.getFileName({ path: entryFilePath })) {
-          f.content = entry.content;
-        }
-        return f;
-      });
-
-      openProject({ context }); // Open project before requiring any files in it
-
-      return {
-        ...result,
-        allDocsData
-      };
+      return response;
     } catch (er) {
       throw new Error(er);
     }
@@ -114,5 +113,6 @@ const create = async ({
 };
 
 export default {
-  create
+  create,
+  open: openProject
 };
