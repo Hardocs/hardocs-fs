@@ -16,12 +16,17 @@ const markdownFile = path.join(
 const docsTemplateDir = path.join(__dirname, '../../../template/docsTemplate');
 
 const openProject = async ({
-  path,
+  path: fullPath,
   context,
   force = false
 }: Partial<Options> & ContextOnly) => {
+  if (!fullPath) {
+    fullPath = cwd.get();
+  }
+  cwd.set(fullPath);
+
   const hardocsJson = await file.getHardocsJsonFile({
-    path,
+    path: fullPath,
     context,
     force
   });
