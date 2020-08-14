@@ -5,9 +5,9 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "ts-node src/index.ts",
-    "dev": "clear; NODE_ENV=development nodemon --exec ts-node --files src/index.ts",
+    "dev": "nodemon --exec ts-node --files src/index.ts",
     "lint": "eslint './**/*.{js,ts}' --quiet --fix",
-    "test": "clear; NODE_ENV=test jest",
+    "test": "NODE_ENV=test jest",
     "gen:types": "ts-node --files ./src/scripts/createTypes.ts",
     "build": "rimraf -fr ./dist && tsc && copyfiles -u 1 src/**/*.graphql dist"
   },
@@ -51,6 +51,7 @@
     "merge-graphql-schemas": "^1.7.8",
     "nano": "^8.2.2",
     "rate-limit-redis": "^2.0.0",
+    "redis": "^3.0.2",
     "request": "^2.88.2",
     "showdown": "^1.9.1",
     "winattr": "^3.0.0"
