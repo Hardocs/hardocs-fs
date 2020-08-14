@@ -9,11 +9,12 @@ import logs from '../../utils/logs';
 import { Options, ContextOnly, Path } from './../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 
-const extractFrontMatter = async ({
-  filePath
-}: HDS.IOpenFileOnQueryArguments) => {
+const openFile = ({ filePath }: HDS.IOpenFileOnQueryArguments) => {
   try {
-    const readFile = await fs.readFile(filePath);
+    if (!filePath) {
+      filePath = cwd.get();
+    }
+    const readFile = fs.readFileSync(filePath);
     const { data, content } = matter(readFile);
     // const converter = new showdown.Converter();
     // const c = converter.makeHtml(content);
@@ -78,10 +79,10 @@ const getHardocsJsonFile = async ({
   if (!folder.isHardocsProject({ path: currentDir, context })) {
     throw new Error(logs.chalk.red('Not a valid hardocs project'));
   }
-  const hardocsFile = await fs.readFile(`${hardocsDir}/hardocs.json`, {
+  const hardocsFile: string = await fs.readFile(`${hardocsDir}/hardocs.json`, {
     encoding: 'utf8'
   });
-  const hardocsJson = JSON.parse(hardocsFile);
+  const hardocsJson = await JSON.parse(hardocsFile);
   return { hardocsJson, currentDir };
 };
 
@@ -101,30 +102,31 @@ const createMarkdownTemplate = async (
   }
 };
 
-const extractEntryFileData = async ({ path, context, force }: Options) => {
+const openEntryFile = async ({ path, context, force }: Options) => {
   const entryFilePath = await getEntryFilePath({ path, context, force });
 
-  const metadata = await extractFrontMatter({ filePath: entryFilePath });
+  const metadata = openFile({ filePath: entryFilePath });
   return metadata;
 };
 
 const extractAllFileData = async ({ path }: Path) => {
   const allMarkdownFilesPathPath = allMarkdownFilesPath(path);
-  return allMarkdownFilesPathPath.map(async (f) => {
-    const d = await extractFrontMatter({ filePath: f });
-    if (d) {
-      const filename = getFileName({ path: f });
-      console.log({
-        // fullPath: f,
-        filename
-        // data: d.data,
-        // content: JSON.stringify(d.content, null, 2)
-      });
-      return d;
-    } else {
-      throw new Error(logs.chalk.red('Error occurred :('));
-    }
-  });
+  try {
+    return allMarkdownFilesPathPath.map((f) => {
+      const d = openFile({ filePath: f });
+      // const d = await openFile({ filePath: f });
+      const data = {
+        title: d.data.title,
+        description: d.data.description,
+        fileName: getFileName({ path: f }),
+        fullPath: f,
+        content: ''
+      };
+      return data;
+    });
+  } catch (er) {
+    throw new Error(logs.chalk.red('Error occurred :('));
+  }
 };
 
 const getFileName = ({ path }: Path) => {
@@ -133,12 +135,12 @@ const getFileName = ({ path }: Path) => {
   return lastIndex.toString().includes(`.md`) && lastIndex;
 };
 export default {
-  extractFrontMatter,
+  openFile,
   allMarkdownFilesPath,
   getEntryFilePath,
   getHardocsJsonFile,
   createMarkdownTemplate,
-  extractEntryFileData,
+  openEntryFile,
   extractAllFileData,
   getFileName
 };

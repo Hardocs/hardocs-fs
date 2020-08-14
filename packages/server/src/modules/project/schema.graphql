@@ -68,11 +68,11 @@ type Project {
   author: Author!
   contributors: [Contributor!]
   docsDir: String!
-  allDocsMetadata: [AllDocsMetadata]
+  allDocsData: [allDocsData]
   entryFile: String!
 }
 
-type AllDocsMetadata {
+type allDocsData {
   title: String
   description: String
   fileName: String
