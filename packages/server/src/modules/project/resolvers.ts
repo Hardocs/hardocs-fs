@@ -15,6 +15,16 @@ export const resolver: ResolverMap = {
       _root,
       { path }: HDS.IIsHardocsProjectOnQueryArguments,
       context
-    ) => folder.isHardocsProject({ path, context })
+    ) => folder.isHardocsProject({ path, context }),
+    openProject: (
+      _root,
+      { path }: HDS.IOpenProjectOnQueryArguments,
+      context
+    ) => {
+      if (!path) {
+        throw new Error('Path must not be empty');
+      }
+      return project.open({ path, context });
+    }
   }
 };

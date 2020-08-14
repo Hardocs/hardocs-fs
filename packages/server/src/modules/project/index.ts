@@ -16,12 +16,17 @@ const markdownFile = path.join(
 const docsTemplateDir = path.join(__dirname, '../../../template/docsTemplate');
 
 const openProject = async ({
-  path,
+  path: fullPath,
   context,
   force = false
 }: Partial<Options> & ContextOnly) => {
+  if (!fullPath) {
+    fullPath = cwd.get();
+  }
+  cwd.set(fullPath);
+
   const hardocsJson = await file.getHardocsJsonFile({
-    path,
+    path: fullPath,
     context,
     force
   });
@@ -31,6 +36,26 @@ const openProject = async ({
     logs.chalk.red('No documentations provided');
     return;
   }
+
+  const entryFilePath = `${docsDir}/${hardocsJson.hardocsJson.entryFile}`;
+  const allFileData = await file.extractAllFileData({ path: docsDir });
+
+  const entry = await file.openEntryFile({
+    path: entryFilePath,
+    context
+  });
+  const allDocsData = allFileData.map((f) => {
+    if (f.fileName === file.getFileName({ path: entryFilePath })) {
+      f.content = entry.content;
+    }
+    return f;
+  });
+
+  const response = {
+    ...hardocsJson.hardocsJson,
+    allDocsData
+  };
+  return response;
 };
 
 const create = async ({
@@ -82,29 +107,9 @@ const create = async ({
         }
       });
 
-      const entryFilePath = `${docsDir}/${result.entryFile}`;
+      const response = openProject({ context }); // Open project before requiring any files in it
 
-      file.extractAllFileData({ path: docsDir });
-
-      const data = await file.extractEntryFileData({
-        path: entryFilePath,
-        context
-      });
-      console.log(data.data);
-
-      openProject({ context }); // Open project before requiring any files in it
-      return {
-        ...result,
-        allDocsMetadata: [
-          {
-            title: data.data.title,
-            description: data.data.description,
-            content: data.content,
-            fileName: 'index.md',
-            fullPath: entryFilePath
-          }
-        ]
-      };
+      return response;
     } catch (er) {
       throw new Error(er);
     }
@@ -113,5 +118,6 @@ const create = async ({
 };
 
 export default {
-  create
+  create,
+  open: openProject
 };
