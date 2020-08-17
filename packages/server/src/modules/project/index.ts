@@ -53,6 +53,7 @@ const openProject = async ({
 
   const response = {
     ...hardocsJson.hardocsJson,
+    path: fullPath,
     allDocsData
   };
   return response;
