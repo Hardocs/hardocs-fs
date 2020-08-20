@@ -8,6 +8,7 @@ import folder from '../folder';
 import logs from '../../utils/logs';
 import { Options, ContextOnly, Path } from './../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
+import showdown from 'showdown';
 
 const openFile = ({ filePath }: HDS.IOpenFileOnQueryArguments) => {
   try {
@@ -16,10 +17,10 @@ const openFile = ({ filePath }: HDS.IOpenFileOnQueryArguments) => {
     }
     const readFile = fs.readFileSync(filePath);
     const { data, content } = matter(readFile);
-    // const converter = new showdown.Converter();
-    // const c = converter.makeHtml(content);
+    const converter = new showdown.Converter();
+    const c = converter.makeHtml(content);
 
-    return { data, content };
+    return { data, content: c };
   } catch (er) {
     throw new Error(logs.chalk.red(er.message));
   }

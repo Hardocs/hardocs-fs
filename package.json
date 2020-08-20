@@ -30,5 +30,7 @@
     "eslint-plugin-prettier": "^3.1.4",
     "prettier": "^2.0.5"
   },
-  "dependencies": {}
+  "dependencies": {
+    "babel": "^6.23.0"
+  }
 }
