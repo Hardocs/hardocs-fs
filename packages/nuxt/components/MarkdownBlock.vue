@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import yamljs from 'yamljs';
+import yamljs from 'yaml';
 
 export default {
   data: function () {
@@ -41,7 +41,7 @@ description: Just a basic description`
       const description = f
         .find((val) => val.includes('description: '))
         .replace('description: ', '');
-      console.log(yamljs.parse(`${title}${description}`));
+      console.log(yamljs.stringify(this.yaml));
       console.log({ title, description });
     }
   }

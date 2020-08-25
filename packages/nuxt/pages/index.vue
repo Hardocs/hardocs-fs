@@ -11,7 +11,7 @@
 
       <br />
       <br />
-      <MarkdownBlock />
+      <MarkdownEditor />
     </div>
   </section>
 </template>
@@ -19,11 +19,13 @@
 <script>
 import AppLogo from '~/components/AppLogo.vue';
 import MarkdownBlock from '~/components/MarkdownBlock.vue';
+import MarkdownEditor from '~/components/MarkdownEditor.vue';
 
 export default {
   components: {
     AppLogo,
-    MarkdownBlock
+    // MarkdownBlock
+    MarkdownEditor
   }
 };
 </script>
