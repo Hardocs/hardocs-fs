@@ -10,7 +10,7 @@ import { Options, ContextOnly, Path } from './../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 import showdown from 'showdown';
 
-const openFile = ({ filePath }: HDS.IOpenFileOnQueryArguments) => {
+const openFile = ({ filePath }: HDS.IOpenFileOnMutationArguments) => {
   try {
     if (!filePath) {
       filePath = cwd.get();
@@ -20,7 +20,12 @@ const openFile = ({ filePath }: HDS.IOpenFileOnQueryArguments) => {
     const converter = new showdown.Converter();
     const c = converter.makeHtml(content);
 
-    return { data, content: c };
+    return {
+      title: data.title,
+      description: data.description,
+      content: c,
+      path: filePath
+    };
   } catch (er) {
     throw new Error(logs.chalk.red(er.message));
   }
@@ -117,8 +122,8 @@ const extractAllFileData = async ({ path }: Path) => {
       const d = openFile({ filePath: f });
       // const d = await openFile({ filePath: f });
       const data = {
-        title: d.data.title,
-        description: d.data.description,
+        title: d.title,
+        description: d.description,
         fileName: getFileName({ path: f }),
         fullPath: f,
         content: ''

@@ -23,17 +23,12 @@ declare namespace HDS {
   interface IQuery {
     __typename: 'Query';
     cwd: string;
-    openFile: IFile;
     getEntryFile: string;
     folderExists: boolean;
     folderCurrent: IFolder | null;
     docsFolder: string;
     openProject: IProject;
     isHardocsProject: boolean;
-  }
-
-  interface IOpenFileOnQueryArguments {
-    filePath?: string | null;
   }
 
   interface IGetEntryFileOnQueryArguments {
@@ -56,14 +51,6 @@ declare namespace HDS {
 
   interface IIsHardocsProjectOnQueryArguments {
     path: string;
-  }
-
-  interface IFile {
-    __typename: 'File';
-    title: string;
-    description: string;
-    path: string;
-    content: string;
   }
 
   interface IFolder {
@@ -158,11 +145,16 @@ declare namespace HDS {
 
   interface IMutation {
     __typename: 'Mutation';
+    openFile: IFile;
     folderOpen: IFolder | null;
     folderOpenParent: IFolder | null;
     folderCreate: IFolder | null;
     folderDelete: boolean;
     createProject: IProject;
+  }
+
+  interface IOpenFileOnMutationArguments {
+    filePath?: string | null;
   }
 
   interface IFolderOpenOnMutationArguments {
@@ -179,6 +171,14 @@ declare namespace HDS {
 
   interface ICreateProjectOnMutationArguments {
     input: ICreateProjectInput;
+  }
+
+  interface IFile {
+    __typename: 'File';
+    title: string;
+    description: string;
+    path: string;
+    content: string;
   }
 
   interface ICreateProjectInput {
