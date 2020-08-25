@@ -1,5 +1,4 @@
 type Query {
-  openFile(filePath: String): File!
   getEntryFile(path: String!, force: Boolean!): String!
 }
 
@@ -8,4 +7,10 @@ type File {
   description: String!
   path: String!
   content: String!
+  # fullPath: String!
+  fileName: String!
+}
+
+type Mutation {
+  openFile(filePath: String): File!
 }

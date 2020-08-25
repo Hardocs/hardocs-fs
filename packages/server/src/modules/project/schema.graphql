@@ -68,16 +68,8 @@ type Project {
   author: Author!
   contributors: [Contributor!]
   docsDir: String!
-  allDocsData: [allDocsData]
+  allDocsData: [File]
   entryFile: String!
-}
-
-type allDocsData {
-  title: String
-  description: String
-  fileName: String
-  content: String
-  fullPath: String
 }
 
 type Language {
