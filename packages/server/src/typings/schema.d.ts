@@ -84,7 +84,7 @@ declare namespace HDS {
     author: IAuthor;
     contributors: Array<IContributor> | null;
     docsDir: string;
-    allDocsData: Array<IAllDocsData | null> | null;
+    allDocsData: Array<IFile | null> | null;
     entryFile: string;
   }
 
@@ -134,13 +134,17 @@ declare namespace HDS {
     name: string;
   }
 
-  interface IAllDocsData {
-    __typename: 'allDocsData';
-    title: string | null;
-    description: string | null;
-    fileName: string | null;
-    content: string | null;
-    fullPath: string | null;
+  interface IFile {
+    __typename: 'File';
+    title: string;
+    description: string;
+    path: string;
+    content: string;
+
+    /**
+     * fullPath: String!
+     */
+    fileName: string;
   }
 
   interface IMutation {
@@ -171,14 +175,6 @@ declare namespace HDS {
 
   interface ICreateProjectOnMutationArguments {
     input: ICreateProjectInput;
-  }
-
-  interface IFile {
-    __typename: 'File';
-    title: string;
-    description: string;
-    path: string;
-    content: string;
   }
 
   interface ICreateProjectInput {

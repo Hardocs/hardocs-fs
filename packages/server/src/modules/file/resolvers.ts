@@ -11,6 +11,6 @@ export const resolver: ResolverMap = {
   },
   Mutation: {
     openFile: (_root, { filePath }: HDS.IOpenFileOnMutationArguments) =>
-      file.openFile({ filePath })
+      file.openFile({ filePath, isFull: true })
   }
 };

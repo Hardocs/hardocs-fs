@@ -44,12 +44,14 @@ const openProject = async ({
     path: entryFilePath,
     context
   });
-  const allDocsData = allFileData.map((f) => {
-    if (f.fileName === file.getFileName({ path: entryFilePath })) {
-      f.content = entry.content;
-    }
-    return f;
-  });
+  const allDocsData = allFileData
+    .map((f) => {
+      if (f.fileName === file.getFileName({ path: entryFilePath })) {
+        f.content = entry.content;
+      }
+      return f;
+    })
+    .sort((a) => (a.fileName === entry.fileName ? -1 : 1));
 
   const response = {
     ...hardocsJson.hardocsJson,
