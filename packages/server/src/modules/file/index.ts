@@ -8,18 +8,30 @@ import folder from '../folder';
 import logs from '../../utils/logs';
 import { Options, ContextOnly, Path } from './../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
+import showdown from 'showdown';
 
-const openFile = ({ filePath }: HDS.IOpenFileOnQueryArguments) => {
+const openFile = ({
+  filePath,
+  isFull = false
+}: HDS.IOpenFileOnMutationArguments & {
+  isFull: boolean;
+}) => {
   try {
     if (!filePath) {
       filePath = cwd.get();
     }
     const readFile = fs.readFileSync(filePath);
     const { data, content } = matter(readFile);
-    // const converter = new showdown.Converter();
-    // const c = converter.makeHtml(content);
+    const converter = new showdown.Converter();
+    const c = converter.makeHtml(content);
 
-    return { data, content };
+    return {
+      title: data.title,
+      description: data.description,
+      content: c,
+      fileName: getFileName({ path: filePath }),
+      path: isFull ? filePath : `${cwd.get()}/${filePath}`
+    };
   } catch (er) {
     throw new Error(logs.chalk.red(er.message));
   }
@@ -105,7 +117,7 @@ const createMarkdownTemplate = async (
 const openEntryFile = async ({ path, context, force }: Options) => {
   const entryFilePath = await getEntryFilePath({ path, context, force });
 
-  const metadata = openFile({ filePath: entryFilePath });
+  const metadata = openFile({ filePath: entryFilePath, isFull: false });
   return metadata;
 };
 
@@ -113,13 +125,15 @@ const extractAllFileData = async ({ path }: Path) => {
   const allMarkdownFilesPathPath = allMarkdownFilesPath(path);
   try {
     return allMarkdownFilesPathPath.map((f) => {
-      const d = openFile({ filePath: f });
+      const d = openFile({ filePath: f, isFull: false });
       // const d = await openFile({ filePath: f });
+
       const data = {
-        title: d.data.title,
-        description: d.data.description,
-        fileName: getFileName({ path: f }),
-        fullPath: f,
+        // title: d.title,
+        // description: d.description,
+        // fileName: getFileName({ path: f }),
+        // fullPath: `${cwd.get()}/${d.path}`,
+        ...d,
         content: ''
       };
       return data;

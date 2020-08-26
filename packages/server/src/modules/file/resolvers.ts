@@ -8,5 +8,9 @@ export const resolver: ResolverMap = {
       { force, path }: HDS.IGetEntryFileOnQueryArguments,
       context
     ) => file.getEntryFilePath({ path, force, context })
+  },
+  Mutation: {
+    openFile: (_root, { filePath }: HDS.IOpenFileOnMutationArguments) =>
+      file.openFile({ filePath, isFull: true })
   }
 };
