@@ -150,6 +150,7 @@ declare namespace HDS {
   interface IMutation {
     __typename: 'Mutation';
     openFile: IFile;
+    writeToFile: IFile | null;
     folderOpen: IFolder | null;
     folderOpenParent: IFolder | null;
     folderCreate: IFolder | null;
@@ -159,6 +160,10 @@ declare namespace HDS {
 
   interface IOpenFileOnMutationArguments {
     filePath?: string | null;
+  }
+
+  interface IWriteToFileOnMutationArguments {
+    input: IFileInput;
   }
 
   interface IFolderOpenOnMutationArguments {
@@ -175,6 +180,14 @@ declare namespace HDS {
 
   interface ICreateProjectOnMutationArguments {
     input: ICreateProjectInput;
+  }
+
+  interface IFileInput {
+    title: string;
+    description: string;
+    path: string;
+    content: string;
+    fileName: string;
   }
 
   interface ICreateProjectInput {

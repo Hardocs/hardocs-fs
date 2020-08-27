@@ -1,7 +1,7 @@
 import matter from 'gray-matter';
 import glob from 'glob';
 import fs from 'fs-extra';
-// import showdown from 'showdown';
+// import yaml from 'yaml';
 
 import cwd from '../cwd/cwd';
 import folder from '../folder';
@@ -9,6 +9,9 @@ import logs from '../../utils/logs';
 import { Options, ContextOnly, Path } from './../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 import showdown from 'showdown';
+import jsdom from 'jsdom';
+const converter = new showdown.Converter();
+const dom = new jsdom.JSDOM();
 
 const openFile = ({
   filePath,
@@ -22,7 +25,6 @@ const openFile = ({
     }
     const readFile = fs.readFileSync(filePath);
     const { data, content } = matter(readFile);
-    const converter = new showdown.Converter();
     const c = converter.makeHtml(content);
 
     return {
@@ -35,6 +37,34 @@ const openFile = ({
   } catch (er) {
     throw new Error(logs.chalk.red(er.message));
   }
+};
+
+const writeToFile = (input: HDS.IFileInput) => {
+  const { path, title, description, content, fileName } = input;
+  if (!input) {
+    throw new Error('Input all fields');
+  }
+  const yml = `---
+title: ${title}
+description: ${description}
+---
+`;
+
+  fs.writeFileSync(path + `test.yaml`, yml, { encoding: 'utf8' });
+  const mdContent = converter.makeMarkdown(content, dom.window.document);
+  const markdown = `
+${yml}
+${mdContent}
+  `;
+  fs.writeFileSync(path + fileName, markdown, { encoding: 'utf8' });
+  const result = {
+    path,
+    title,
+    description,
+    content,
+    fileName
+  };
+  return result;
 };
 
 /**
@@ -156,5 +186,6 @@ export default {
   createMarkdownTemplate,
   openEntryFile,
   extractAllFileData,
-  getFileName
+  getFileName,
+  writeToFile
 };
