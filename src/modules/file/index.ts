@@ -161,8 +161,8 @@ const extractAllFileData = async ({ path }: Path) => {
         // description: d.description,
         // fileName: getFileName({ path: f }),
         // fullPath: `${cwd.get()}/${d.path}`,
-        ...d,
-        content: ''
+        ...d
+        // content: '' TODO: return only entry file contents
       };
       return data;
     });
