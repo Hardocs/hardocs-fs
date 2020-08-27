@@ -50,10 +50,8 @@ description: ${description}
 ---
 `;
 
-  fs.writeFileSync(path + `test.yaml`, yml, { encoding: 'utf8' });
   const mdContent = converter.makeMarkdown(content, dom.window.document);
-  const markdown = `
-${yml}
+  const markdown = `${yml}
 ${mdContent}
   `;
   fs.writeFileSync(path + fileName, markdown, { encoding: 'utf8' });
@@ -163,8 +161,8 @@ const extractAllFileData = async ({ path }: Path) => {
         // description: d.description,
         // fileName: getFileName({ path: f }),
         // fullPath: `${cwd.get()}/${d.path}`,
-        ...d,
-        content: ''
+        ...d
+        // content: '' TODO: return only entry file contents
       };
       return data;
     });
