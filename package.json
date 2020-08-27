@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Hardocs project with couchdb and a plugin based approach",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "ts-node --files src",
     "dev": "env NODE_ENV=development nodemon --exec ts-node --files src/index.ts",
     "lint": "eslint './**/*.{js,ts}' --quiet --fix",
     "test": "env NODE_ENV=test jest",

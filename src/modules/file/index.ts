@@ -5,7 +5,6 @@ import fs from 'fs-extra';
 
 import cwd from '../cwd/cwd';
 import folder from '../folder';
-import logs from '../../utils/logs';
 import { Options, ContextOnly, Path } from './../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 import showdown from 'showdown';
@@ -35,7 +34,7 @@ const openFile = ({
       path: isFull ? filePath : `${cwd.get()}/${filePath}`
     };
   } catch (er) {
-    throw new Error(logs.chalk.red(er.message));
+    throw new Error(er.message);
   }
 };
 
@@ -83,7 +82,7 @@ const getEntryFilePath = async ({
   force
 }: Partial<Options> & ContextOnly): Promise<string> => {
   if (!folder.isHardocsProject({ path: projectPath, context })) {
-    throw new Error(logs.chalk.yellow('Not a valid hardocs project'));
+    throw new Error('Not a valid hardocs project');
   }
 
   const docsDir = await folder.getDocsFolder({
@@ -117,7 +116,7 @@ const getHardocsJsonFile = async ({
   const hardocsDir = getHardocsDir(currentDir);
 
   if (!folder.isHardocsProject({ path: currentDir, context })) {
-    throw new Error(logs.chalk.red('Not a valid hardocs project'));
+    throw new Error('Not a valid hardocs project');
   }
   const hardocsFile: string = await fs.readFile(`${hardocsDir}/hardocs.json`, {
     encoding: 'utf8'
@@ -138,7 +137,7 @@ const createMarkdownTemplate = async (
     });
     return newFile;
   } catch (er) {
-    throw new Error(logs.chalk.red('there was a problem: ', er));
+    throw new Error('there was a problem: ' + er);
   }
 };
 
@@ -167,7 +166,7 @@ const extractAllFileData = async ({ path }: Path) => {
       return data;
     });
   } catch (er) {
-    throw new Error(logs.chalk.red('Error occurred :('));
+    throw new Error('Error occurred :(');
   }
 };
 

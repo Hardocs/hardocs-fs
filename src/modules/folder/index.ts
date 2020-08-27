@@ -5,7 +5,6 @@ import * as fs from 'fs-extra';
 import * as winattr from 'winattr';
 
 import { Options, GeneratedFolder, Path } from '../../typings/globals';
-import logs from '../../utils/logs';
 import cwd from '../cwd/cwd';
 import { getHardocsDir } from './../../utils/constants';
 import { READ_PACKAGE_PREFIX } from './constants';
@@ -20,7 +19,7 @@ const isDirectory = ({ path: file }: Path) => {
   try {
     return fs.existsSync(file) && fs.statSync(file).isDirectory();
   } catch (err) {
-    logs.Warn(err.message);
+    console.log(err.message);
   }
   return false;
 };
@@ -50,7 +49,7 @@ const openParent = ({ path: file }: Path) => {
 
 const createFolder = ({ path: name }: Path) => {
   if (isDirectory({ path: name })) {
-    logs.Warn(`Folder already exist.`);
+    console.log(`Folder already exist.`);
     return false;
   }
 
@@ -99,8 +98,8 @@ const isHidden = ({ path: file }: Path) => {
     );
   } catch (er) {
     if (process.env.HARDOCS_DEV_MODE) {
-      logs.Warn('File: ' + file);
-      return logs.Err(er);
+      console.log('File: ' + file);
+      return console.log(er);
     }
   }
 };
@@ -129,7 +128,7 @@ const readPackage = async (options: Partial<Options> & ContextOnly) => {
       await redis.set(file, pkg, 'EX', 60 * 60);
       return pkg;
     } else {
-      logs.Warn('Not a hardocs directory');
+      console.log('Not a hardocs directory');
       return false;
     }
   }
@@ -155,9 +154,7 @@ const isHardocsProject = async ({
     return !!pkg;
   } catch (er) {
     if (process.env.HARDOCS_DEV_MODE) {
-      logs.Warn(`${er}
-      ${logs.chalk.blue('This is not a HARDOCS projects')}
-      `);
+      console.log(`${er} This is not a HARDOCS projects`);
     }
     return false;
   }
@@ -175,7 +172,7 @@ const getDocsFolder = async ({
     }
   }
   if (!isHardocsProject({ path: fromBaseDir, context })) {
-    throw new Error(logs.chalk.yellow('Not a hardocs project'));
+    throw new Error('Not a hardocs project');
   }
 
   const hardocsJson = (

@@ -4,7 +4,6 @@ import * as fs from 'fs-extra';
 
 import cwd from '../cwd/cwd';
 import folder from '../folder';
-import logs from '../../utils/logs';
 import { getHardocsDir } from './../../utils/constants';
 import file from '../file';
 
@@ -33,7 +32,7 @@ const openProject = async ({
   const docsDir = hardocsJson.hardocsJson.docsDir;
 
   if (!docsDir || docsDir.trim() === '') {
-    logs.chalk.red('No documentations provided');
+    ('No documentations provided');
     return;
   }
 
@@ -66,14 +65,15 @@ const create = async ({
   context
 }: HDS.ICreateProjectOnMutationArguments & ContextOnly) => {
   if (input) {
-    const dest = path.join(cwd.get(), input.name);
+    const projectPath = input.path || cwd.get();
+    const dest = path.join(projectPath, input.name);
     await cwd.set(dest);
     if (!folder.isDirectory({ path: dest })) {
       try {
         await fs.mkdir(dest);
         await cwd.set(dest);
       } catch (er) {
-        throw new Error(logs.chalk.red(er.message));
+        throw new Error(er.message);
       }
     }
     try {

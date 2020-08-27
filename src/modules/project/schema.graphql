@@ -8,6 +8,7 @@ type Query {
 }
 
 input CreateProjectInput {
+  path: String
   name: String!
   shortTitle: String
   nameWithOwner: String!
