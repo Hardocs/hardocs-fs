@@ -11,6 +11,15 @@ type File {
   fileName: String!
 }
 
+input FileInput {
+  title: String!
+  description: String!
+  path: String!
+  content: String!
+  fileName: String!
+}
+
 type Mutation {
   openFile(filePath: String): File!
+  writeToFile(input: FileInput): File
 }

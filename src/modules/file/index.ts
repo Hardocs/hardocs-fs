@@ -1,7 +1,7 @@
 import matter from 'gray-matter';
 import glob from 'glob';
 import fs from 'fs-extra';
-// import showdown from 'showdown';
+import yaml from 'yaml';
 
 import cwd from '../cwd/cwd';
 import folder from '../folder';
@@ -9,6 +9,7 @@ import logs from '../../utils/logs';
 import { Options, ContextOnly, Path } from './../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 import showdown from 'showdown';
+const converter = new showdown.Converter();
 
 const openFile = ({
   filePath,
@@ -22,7 +23,6 @@ const openFile = ({
     }
     const readFile = fs.readFileSync(filePath);
     const { data, content } = matter(readFile);
-    const converter = new showdown.Converter();
     const c = converter.makeHtml(content);
 
     return {
@@ -35,6 +35,37 @@ const openFile = ({
   } catch (er) {
     throw new Error(logs.chalk.red(er.message));
   }
+};
+
+const writeToFile = ({
+  path,
+  title,
+  description,
+  content,
+  fileName
+}: HDS.IFileInput) => {
+  const yml = yaml.stringify(`
+---
+title: ${title}
+description: ${description},
+---
+  `);
+
+  fs.writeFileSync(path + `test.yaml`, yml);
+  const mdContent = converter.makeMarkdown(content);
+  const markdown = `
+${yaml}
+${mdContent}
+  `;
+  fs.writeFileSync(path + fileName, markdown);
+  const result = {
+    path,
+    title,
+    description,
+    content: markdown,
+    fileName
+  };
+  return result;
 };
 
 /**
@@ -156,5 +187,6 @@ export default {
   createMarkdownTemplate,
   openEntryFile,
   extractAllFileData,
-  getFileName
+  getFileName,
+  writeToFile
 };
