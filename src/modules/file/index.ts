@@ -50,10 +50,8 @@ description: ${description}
 ---
 `;
 
-  fs.writeFileSync(path + `test.yaml`, yml, { encoding: 'utf8' });
   const mdContent = converter.makeMarkdown(content, dom.window.document);
-  const markdown = `
-${yml}
+  const markdown = `${yml}
 ${mdContent}
   `;
   fs.writeFileSync(path + fileName, markdown, { encoding: 'utf8' });
