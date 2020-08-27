@@ -163,7 +163,7 @@ declare namespace HDS {
   }
 
   interface IWriteToFileOnMutationArguments {
-    input?: IFileInput | null;
+    input: IFileInput;
   }
 
   interface IFolderOpenOnMutationArguments {
