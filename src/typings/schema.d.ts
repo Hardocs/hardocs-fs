@@ -191,6 +191,7 @@ declare namespace HDS {
   }
 
   interface ICreateProjectInput {
+    path?: string | null;
     name: string;
     shortTitle?: string | null;
     nameWithOwner: string;
