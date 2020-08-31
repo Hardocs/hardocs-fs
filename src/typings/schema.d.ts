@@ -161,6 +161,7 @@ declare namespace HDS {
     folderCreate: IFolder | null;
     folderDelete: boolean;
     createProject: IProject;
+    createProjectFromExisting: IProject;
   }
 
   interface IOpenFileOnMutationArguments {
@@ -188,6 +189,10 @@ declare namespace HDS {
   }
 
   interface ICreateProjectOnMutationArguments {
+    input: ICreateProjectInput;
+  }
+
+  interface ICreateProjectFromExistingOnMutationArguments {
     input: ICreateProjectInput;
   }
 

@@ -1,5 +1,6 @@
 type Mutation {
   createProject(input: CreateProjectInput!): Project!
+  createProjectFromExisting(input: CreateProjectInput!): Project!
 }
 
 type Query {

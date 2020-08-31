@@ -8,7 +8,12 @@ export const resolver: ResolverMap = {
       _,
       { input }: HDS.ICreateProjectOnMutationArguments,
       context
-    ) => await project.create({ context, input })
+    ) => await project.create({ context, input }),
+    createProjectFromExisting: async (
+      _,
+      { input }: HDS.ICreateProjectOnMutationArguments,
+      context
+    ) => await project.createFromExisting({ context, input })
   },
   Query: {
     isHardocsProject: async (
