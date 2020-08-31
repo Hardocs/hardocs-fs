@@ -175,6 +175,24 @@ const getFileName = ({ path }: Path) => {
   const lastIndex = fullPath[fullPath.length - 1];
   return lastIndex.toString().includes(`.md`) && lastIndex;
 };
+
+const deleteFile = ({
+  filePath
+}: HDS.IDeleteFileOnMutationArguments): boolean => {
+  if (folder.isDirectory({ path: filePath })) {
+    throw new Error('File path must point to a valid file and not a directory');
+  }
+
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      throw new Error(err.message);
+    }
+    console.log(`${filePath} deleted successfully`);
+    return true;
+  });
+
+  return true;
+};
 export default {
   openFile,
   allMarkdownFilesPath,
@@ -184,5 +202,6 @@ export default {
   openEntryFile,
   extractAllFileData,
   getFileName,
-  writeToFile
+  writeToFile,
+  delete: deleteFile
 };

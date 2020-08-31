@@ -71,18 +71,22 @@ declare namespace HDS {
     id: string;
     path: string | null;
     name: string;
-    shortTitle: string;
-    nameWithOwner: string;
-    longTitle: string;
+    shortTitle: string | null;
+
+    /**
+     * description: String
+     */
+    nameWithOwner: string | null;
+    longTitle: string | null;
     languages: Array<ILanguage> | null;
     projectLink: string;
     intendedUse: string;
-    made: boolean;
-    madeIndependently: boolean;
+    made: boolean | null;
+    madeIndependently: boolean | null;
     license: Array<ILicense | null> | null;
-    updatedAt: string;
-    author: IAuthor;
-    contributors: Array<IContributor> | null;
+    updatedAt: string | null;
+    author: IAuthor | null;
+    contributors: Array<IContributor | null> | null;
     docsDir: string;
     allDocsData: Array<IFile | null> | null;
     entryFile: string;
@@ -150,7 +154,8 @@ declare namespace HDS {
   interface IMutation {
     __typename: 'Mutation';
     openFile: IFile;
-    writeToFile: IFile | null;
+    writeToFile: IFile;
+    deleteFile: boolean | null;
     folderOpen: IFolder | null;
     folderOpenParent: IFolder | null;
     folderCreate: IFolder | null;
@@ -159,11 +164,15 @@ declare namespace HDS {
   }
 
   interface IOpenFileOnMutationArguments {
-    filePath?: string | null;
+    filePath: string;
   }
 
   interface IWriteToFileOnMutationArguments {
     input: IFileInput;
+  }
+
+  interface IDeleteFileOnMutationArguments {
+    filePath: string;
   }
 
   interface IFolderOpenOnMutationArguments {
@@ -194,16 +203,20 @@ declare namespace HDS {
     path?: string | null;
     name: string;
     shortTitle?: string | null;
-    nameWithOwner: string;
-    longTitle: string;
-    languages?: Array<ILanguageInput> | null;
-    projectLink: string;
-    intendedUse: string;
-    made: boolean;
-    madeIndependently: boolean;
+    nameWithOwner?: string | null;
+
+    /**
+     * description: String!
+     */
+    longTitle?: string | null;
+    languages?: Array<ILanguageInput | null> | null;
+    projectLink?: string | null;
+    intendedUse?: string | null;
+    made?: boolean | null;
+    madeIndependently?: boolean | null;
     license?: Array<ILicenseInput | null> | null;
-    author: IAuthorInput;
-    contributors?: Array<IContributorInput> | null;
+    author?: IAuthorInput | null;
+    contributors?: Array<IContributorInput | null> | null;
 
     /**
      * @default "docs"
