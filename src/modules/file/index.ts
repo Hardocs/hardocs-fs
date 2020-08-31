@@ -190,12 +190,21 @@ const deleteFile = ({
   if (!exists(filePath)) {
     throw new Error('File does not exist');
   }
-
-  fs.unlink(filePath, (err) => {
+  fs.stat(filePath, (err, stat) => {
     if (err) {
-      throw new Error(err.message);
+      console.log(err);
     }
-    console.log(`${filePath} deleted successfully`);
+    if (stat.isDirectory()) {
+      console.log(`${filePath} is a Directory`);
+      return false;
+    }
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        throw new Error(err.message);
+      }
+      console.log(`${filePath} deleted successfully`);
+      return true;
+    });
     return true;
   });
 
