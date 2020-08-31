@@ -176,11 +176,19 @@ const getFileName = ({ path }: Path) => {
   return lastIndex.toString().includes(`.md`) && lastIndex;
 };
 
+const exists = (path: string): boolean => {
+  return fs.existsSync(path);
+};
+
 const deleteFile = ({
   filePath
 }: HDS.IDeleteFileOnMutationArguments): boolean => {
   if (folder.isDirectory({ path: filePath })) {
     throw new Error('File path must point to a valid file and not a directory');
+  }
+
+  if (!exists(filePath)) {
+    throw new Error('File does not exist');
   }
 
   fs.unlink(filePath, (err) => {
@@ -203,5 +211,6 @@ export default {
   extractAllFileData,
   getFileName,
   writeToFile,
-  delete: deleteFile
+  delete: deleteFile,
+  exists
 };
