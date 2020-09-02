@@ -5,7 +5,7 @@ import * as fs from 'fs-extra';
 import * as winattr from 'winattr';
 
 import { Options, GeneratedFolder, Path } from '../../typings/globals';
-import cwd from '../cwd/cwd';
+import cwd from '../cwd';
 import { getHardocsDir } from './../../utils/constants';
 import { READ_PACKAGE_PREFIX } from './constants';
 import file from '../file';

@@ -3,7 +3,7 @@ import glob from 'glob';
 import fs from 'fs-extra';
 // import yaml from 'yaml';
 
-import cwd from '../cwd/cwd';
+import cwd from '../cwd';
 import folder from '../folder';
 import { Options, ContextOnly, Path } from './../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';

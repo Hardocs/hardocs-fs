@@ -2,7 +2,7 @@ import { Options, ContextOnly } from './../../typings/globals';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 
-import cwd from '../cwd/cwd';
+import cwd from '../cwd';
 import folder from '../folder';
 import { getHardocsDir } from './../../utils/constants';
 import file from '../file';

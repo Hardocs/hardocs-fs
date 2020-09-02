@@ -1,6 +1,6 @@
 import folders from '.';
 import { ResolverMap } from '../../typings/globals';
-import cwd from '../cwd/cwd';
+import cwd from '../cwd';
 
 export const resolver: ResolverMap = {
   Query: {

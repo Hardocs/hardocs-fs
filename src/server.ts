@@ -9,6 +9,9 @@ import cors, { CorsOptions } from 'cors';
 
 import redis from './redis';
 import generateSchema from './utils/generateSchema';
+import cwd from './modules/cwd';
+// FIXME: Remove path module because it's not needed.
+import * as path from 'path';
 
 const RedisStore = RateLimit({
   store: new RateLimitRedisStore({
@@ -36,7 +39,12 @@ export default async (): Promise<Server | HTTPSServer> => {
   server.applyMiddleware({ app, path: graphqlPath });
 
   app.use(RedisStore);
-  app.use('*', express.static('*'));
+  app.use(express.static(cwd.get()));
+  app.use('/new', express.static(cwd.get()));
+  app.use('/docs', express.static(cwd.get()));
+  app.use('/docs', express.static(path.join(__dirname, '/new'))); // FIXME: Remove this
+  app.use('/new', express.static(path.join(__dirname, '/new'))); // FIXME: Remove this
+  app.use(express.static(path.join(__dirname, '/new'))); // FIXME: Remove this
 
   const corsOptions: CorsOptions = {
     origin:
