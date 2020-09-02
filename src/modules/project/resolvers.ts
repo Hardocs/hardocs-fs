@@ -13,17 +13,10 @@ export const resolver: ResolverMap = {
       _,
       { input }: HDS.ICreateProjectOnMutationArguments,
       context
-    ) => await project.createFromExisting({ context, input })
-  },
-  Query: {
-    isHardocsProject: async (
-      _root,
-      { path }: HDS.IIsHardocsProjectOnQueryArguments,
-      context
-    ) => folder.isHardocsProject({ path, context }),
+    ) => await project.createFromExisting({ context, input }),
     openProject: (
       _root,
-      { path }: HDS.IOpenProjectOnQueryArguments,
+      { path }: HDS.IOpenProjectOnMutationArguments,
       context
     ) => {
       if (!path) {
@@ -31,5 +24,12 @@ export const resolver: ResolverMap = {
       }
       return project.open({ path, context });
     }
+  },
+  Query: {
+    isHardocsProject: async (
+      _root,
+      { path }: HDS.IIsHardocsProjectOnQueryArguments,
+      context
+    ) => folder.isHardocsProject({ path, context })
   }
 };

@@ -27,7 +27,6 @@ declare namespace HDS {
     folderExists: boolean;
     folderCurrent: IFolder | null;
     docsFolder: string;
-    openProject: IProject;
     isHardocsProject: boolean;
   }
 
@@ -44,11 +43,6 @@ declare namespace HDS {
     path: string;
   }
 
-  interface IOpenProjectOnQueryArguments {
-    path?: string | null;
-    force?: boolean | null;
-  }
-
   interface IIsHardocsProjectOnQueryArguments {
     path: string;
   }
@@ -63,94 +57,6 @@ declare namespace HDS {
     hidden: boolean | null;
   }
 
-  /**
-   * Project schemas
-   */
-  interface IProject {
-    __typename: 'Project';
-    id: string;
-    path: string | null;
-    name: string;
-    shortTitle: string | null;
-
-    /**
-     * description: String
-     */
-    nameWithOwner: string | null;
-    longTitle: string | null;
-    languages: Array<ILanguage> | null;
-    projectLink: string;
-    intendedUse: string;
-    made: boolean | null;
-    madeIndependently: boolean | null;
-    license: Array<ILicense | null> | null;
-    updatedAt: string | null;
-    author: IAuthor | null;
-    contributors: Array<IContributor | null> | null;
-    docsDir: string;
-    allDocsData: Array<IFile | null> | null;
-    entryFile: string;
-  }
-
-  interface ILanguage {
-    __typename: 'Language';
-    name: Lang;
-    description: string;
-    longDescription: string;
-    keywords: Array<string> | null;
-  }
-
-  const enum Lang {
-    /**
-     * English
-     */
-    EN = 'EN',
-
-    /**
-     * French
-     */
-    FR = 'FR',
-
-    /**
-     * Chineese
-     */
-    CH = 'CH',
-  }
-
-  interface ILicense {
-    __typename: 'License';
-
-    /**
-     * Name of license. i.e MIT, ISC, Apache License etc.
-     */
-    name: string;
-    file: string;
-  }
-
-  interface IAuthor {
-    __typename: 'Author';
-    name: string;
-    affiliation: string;
-  }
-
-  interface IContributor {
-    __typename: 'Contributor';
-    name: string;
-  }
-
-  interface IFile {
-    __typename: 'File';
-    title: string;
-    description: string;
-    path: string;
-    content: string;
-
-    /**
-     * fullPath: String!
-     */
-    fileName: string;
-  }
-
   interface IMutation {
     __typename: 'Mutation';
     openFile: IFile;
@@ -162,6 +68,7 @@ declare namespace HDS {
     folderDelete: boolean;
     createProject: IProject;
     createProjectFromExisting: IProject;
+    openProject: IProject;
   }
 
   interface IOpenFileOnMutationArguments {
@@ -194,6 +101,24 @@ declare namespace HDS {
 
   interface ICreateProjectFromExistingOnMutationArguments {
     input: ICreateProjectInput;
+  }
+
+  interface IOpenProjectOnMutationArguments {
+    path?: string | null;
+    force?: boolean | null;
+  }
+
+  interface IFile {
+    __typename: 'File';
+    title: string;
+    description: string;
+    path: string;
+    content: string;
+
+    /**
+     * fullPath: String!
+     */
+    fileName: string;
   }
 
   interface IFileInput {
@@ -247,6 +172,23 @@ declare namespace HDS {
     keywords?: Array<string> | null;
   }
 
+  const enum Lang {
+    /**
+     * English
+     */
+    EN = 'EN',
+
+    /**
+     * French
+     */
+    FR = 'FR',
+
+    /**
+     * Chineese
+     */
+    CH = 'CH',
+  }
+
   interface ILicenseInput {
     /**
      * Name of license. i.e MIT, ISC, Apache License etc.
@@ -266,6 +208,64 @@ declare namespace HDS {
   }
 
   interface IContributorInput {
+    name: string;
+  }
+
+  /**
+   * Project schemas
+   */
+  interface IProject {
+    __typename: 'Project';
+    id: string;
+    path: string | null;
+    name: string;
+    shortTitle: string | null;
+
+    /**
+     * description: String
+     */
+    nameWithOwner: string | null;
+    longTitle: string | null;
+    languages: Array<ILanguage> | null;
+    projectLink: string;
+    intendedUse: string;
+    made: boolean | null;
+    madeIndependently: boolean | null;
+    license: Array<ILicense | null> | null;
+    updatedAt: string | null;
+    author: IAuthor | null;
+    contributors: Array<IContributor | null> | null;
+    docsDir: string;
+    allDocsData: Array<IFile | null> | null;
+    entryFile: string;
+  }
+
+  interface ILanguage {
+    __typename: 'Language';
+    name: Lang;
+    description: string;
+    longDescription: string;
+    keywords: Array<string> | null;
+  }
+
+  interface ILicense {
+    __typename: 'License';
+
+    /**
+     * Name of license. i.e MIT, ISC, Apache License etc.
+     */
+    name: string;
+    file: string;
+  }
+
+  interface IAuthor {
+    __typename: 'Author';
+    name: string;
+    affiliation: string;
+  }
+
+  interface IContributor {
+    __typename: 'Contributor';
     name: string;
   }
 }

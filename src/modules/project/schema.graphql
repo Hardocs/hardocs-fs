@@ -1,10 +1,10 @@
 type Mutation {
   createProject(input: CreateProjectInput!): Project!
   createProjectFromExisting(input: CreateProjectInput!): Project!
+  openProject(path: String, force: Boolean): Project!
 }
 
 type Query {
-  openProject(path: String, force: Boolean): Project!
   isHardocsProject(path: String!): Boolean!
 }
 
