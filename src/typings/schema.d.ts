@@ -45,7 +45,7 @@ declare namespace HDS {
   }
 
   interface IGetImagesOnQueryArguments {
-    path: string;
+    path?: string | null;
   }
 
   interface IIsHardocsProjectOnQueryArguments {

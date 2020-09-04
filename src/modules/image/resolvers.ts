@@ -4,6 +4,6 @@ import image from '.';
 export const resolver: ResolverMap = {
   Query: {
     getImages: (_root, { path }: HDS.IGetImagesOnQueryArguments) =>
-      image.getImages(path)
+      image.getImages(path as string)
   }
 };
