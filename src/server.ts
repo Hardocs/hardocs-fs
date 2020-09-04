@@ -47,17 +47,14 @@ export default async (): Promise<Server | HTTPSServer> => {
   server.applyMiddleware({ app, cors: corsOptions });
   app.use(RedisStore);
 
-  const currentDir = cwd.get();
-
   app.use('/images', express.static('images'));
-  app.use(express.static(currentDir));
+  app.use(express.static(cwd.get()));
   app.get('*', (req, res) => {
     const file = path.join(cwd.get(), req.path.replace(/\/$/, '/index.html'));
     if (file.indexOf(cwd.get() + path.sep) !== 0) {
       return res.status(403).end('Forbidden');
     }
     const type = mime.types[path.extname(file).slice(1)] || 'text/plain';
-    console.log({ type, file });
 
     const s = fs.createReadStream(file);
     s.on('open', () => {
