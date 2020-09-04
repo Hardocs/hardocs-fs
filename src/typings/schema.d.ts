@@ -27,6 +27,7 @@ declare namespace HDS {
     folderExists: boolean;
     folderCurrent: IFolder | null;
     docsFolder: string;
+    getImages: Array<string> | null;
     isHardocsProject: boolean;
   }
 
@@ -41,6 +42,10 @@ declare namespace HDS {
 
   interface IDocsFolderOnQueryArguments {
     path: string;
+  }
+
+  interface IGetImagesOnQueryArguments {
+    path?: string | null;
   }
 
   interface IIsHardocsProjectOnQueryArguments {

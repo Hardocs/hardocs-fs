@@ -6,7 +6,7 @@ import { Server as HTTPSServer } from 'https';
 import RateLimit from 'express-rate-limit';
 import RateLimitRedisStore from 'rate-limit-redis';
 import * as path from 'path';
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import mime from 'mime-types';
 
 import redis from './redis';
