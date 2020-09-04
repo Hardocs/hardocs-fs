@@ -44,6 +44,7 @@ export default async (): Promise<Server | HTTPSServer> => {
     optionsSuccessStatus: 200
   };
 
+  server.applyMiddleware({ app, cors: corsOptions });
   app.use(RedisStore);
 
   app.use('/images', express.static('images'));
@@ -66,7 +67,6 @@ export default async (): Promise<Server | HTTPSServer> => {
       res.status(404).end('Not Found');
     });
   });
-  server.applyMiddleware({ app, cors: corsOptions });
 
   const port = process.env.PORT || 4001;
   return app.listen(
