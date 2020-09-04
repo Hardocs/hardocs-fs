@@ -1,17 +1,18 @@
 require('dotenv').config();
-import { ApolloServer } from 'apollo-server-express';
+import { ApolloServer, CorsOptions } from 'apollo-server-express';
 import express from 'express';
 import { Server } from 'http';
 import { Server as HTTPSServer } from 'https';
 import RateLimit from 'express-rate-limit';
 import RateLimitRedisStore from 'rate-limit-redis';
-import cors, { CorsOptions } from 'cors';
+import * as path from 'path';
+import * as fs from 'fs';
+import mime from 'mime-types';
 
 import redis from './redis';
 import generateSchema from './utils/generateSchema';
 import cwd from './modules/cwd';
 // FIXME: Remove path module because it's not needed.
-import * as path from 'path';
 
 const RedisStore = RateLimit({
   store: new RateLimitRedisStore({
@@ -31,33 +32,53 @@ export default async (): Promise<Server | HTTPSServer> => {
       redis,
       req,
       res
-    })
+    }),
+    introspection: true
   });
 
   const app = express();
-  const graphqlPath = '/';
-  server.applyMiddleware({ app, path: graphqlPath });
-
-  app.use(RedisStore);
-  app.use(express.static(cwd.get()));
-  app.use('/new', express.static(cwd.get()));
-  app.use('/docs', express.static(cwd.get()));
-  app.use('/docs', express.static(path.join(__dirname, '/new'))); // FIXME: Remove this
-  app.use('/new', express.static(path.join(__dirname, '/new'))); // FIXME: Remove this
-  app.use(express.static(path.join(__dirname, '/new'))); // FIXME: Remove this
-
+  // const graphqlPath = '/';
   const corsOptions: CorsOptions = {
     origin:
       process.env.NODE_ENV === 'development' ? '*' : 'http://localhost:8000',
     optionsSuccessStatus: 200
   };
 
-  app.use(cors(corsOptions));
+  server.applyMiddleware({ app, cors: corsOptions });
+  app.use(RedisStore);
+
+  const currentDir = cwd.get();
+
+  app.use('/images', express.static('images'));
+  app.use(express.static(currentDir));
+  app.get('*', (req, res) => {
+    const file = path.join(cwd.get(), req.path.replace(/\/$/, '/index.html'));
+    if (file.indexOf(cwd.get() + path.sep) !== 0) {
+      return res.status(403).end('Forbidden');
+    }
+    const type = mime.types[path.extname(file).slice(1)] || 'text/plain';
+    console.log({ type, file });
+
+    const s = fs.createReadStream(file);
+    s.on('open', () => {
+      res.set('Content-Type', type);
+      s.pipe(res);
+    });
+
+    s.on('error', () => {
+      res.set('Content-Type', 'text/plain');
+      res.status(404).end('Not Found');
+    });
+  });
+
   const port = process.env.PORT || 4001;
   return app.listen(
     {
       port
     },
-    () => console.log(`server is running on http://localhost:${port}`)
+    () =>
+      console.log(
+        `server is running on http://localhost:${port}${server.graphqlPath}`
+      )
   );
 };
