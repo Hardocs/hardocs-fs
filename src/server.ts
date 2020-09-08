@@ -31,7 +31,8 @@ export default async (): Promise<Server | HTTPSServer> => {
     context: ({ req, res }) => ({
       redis,
       req,
-      res
+      res,
+      url: req.protocol + '://' + req.get('host')
     }),
     introspection: true
   });

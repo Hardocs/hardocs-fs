@@ -15,6 +15,7 @@ export interface Context {
   redis: Redis;
   req: Express.Request;
   res: Express.Response;
+  url: string;
 }
 
 export type Resolver = (
