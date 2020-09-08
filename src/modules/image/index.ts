@@ -1,4 +1,4 @@
-import { Context } from './../../typings/globals';
+import { Context } from '../../typings/globals';
 import cwd from '../cwd';
 import mime from 'mime-types';
 import * as fs from 'fs-extra';
@@ -34,10 +34,8 @@ const handleImagePaths = (markdown: string, context: Context) => {
       newUrl = [`${host}/`, ...imgObject.groups.filename].join('');
     }
     const alt = imgObject.groups.alt;
-    console.log({ imgObject });
     return `${alt}(${newUrl})`;
   });
-  console.log({ result });
   return result;
 };
 

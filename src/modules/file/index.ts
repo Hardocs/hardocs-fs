@@ -5,33 +5,30 @@ import fs from 'fs-extra';
 
 import cwd from '../cwd';
 import folder from '../folder';
-import { Options, ContextOnly, Path } from './../../typings/globals';
+import { Options, Path } from '../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 import showdown from 'showdown';
 import jsdom from 'jsdom';
+import image from '../image';
 const converter = new showdown.Converter();
 const dom = new jsdom.JSDOM();
 
-const openFile = ({
-  filePath,
-  isFull = false
-}: HDS.IOpenFileOnMutationArguments & {
-  isFull: boolean;
-}) => {
+const openFile = ({ path: filePath, force = false, context }: Options) => {
   try {
     if (!filePath) {
       filePath = cwd.get();
     }
     const readFile = fs.readFileSync(filePath);
     const { data, content } = matter(readFile);
-    const c = converter.makeHtml(content);
+    const parsedContent = image.handleImagePaths(content, context);
+    const c = converter.makeHtml(parsedContent);
 
     return {
       title: data.title,
       description: data.description,
       content: c,
       fileName: getFileName({ path: filePath }),
-      path: isFull ? filePath : `${cwd.get()}/${filePath}`
+      path: force ? filePath : `${cwd.get()}/${filePath}`
     };
   } catch (er) {
     throw new Error(er.message);
@@ -80,7 +77,7 @@ const getEntryFilePath = async ({
   path: projectPath,
   context,
   force
-}: Partial<Options> & ContextOnly): Promise<string> => {
+}: Options): Promise<string> => {
   if (!folder.isHardocsProject({ path: projectPath, context })) {
     throw new Error('Not a valid hardocs project');
   }
@@ -102,7 +99,7 @@ const getHardocsJsonFile = async ({
   path,
   context,
   force = false
-}: Partial<Options> & ContextOnly): Promise<{
+}: Options): Promise<{
   hardocsJson: HDS.IProject;
   currentDir: string;
 }> => {
@@ -144,15 +141,15 @@ const createMarkdownTemplate = async (
 const openEntryFile = async ({ path, context, force }: Options) => {
   const entryFilePath = await getEntryFilePath({ path, context, force });
 
-  const metadata = openFile({ filePath: entryFilePath, isFull: false });
+  const metadata = openFile({ path: entryFilePath, force: false, context });
   return metadata;
 };
 
-const extractAllFileData = async ({ path }: Path) => {
+const extractAllFileData = async ({ path, context }: Options) => {
   const allMarkdownFilesPathPath = allMarkdownFilesPath(path);
   try {
     return allMarkdownFilesPathPath.map((f) => {
-      const d = openFile({ filePath: f, isFull: false });
+      const d = openFile({ path: f, force: false, context });
       // const d = await openFile({ filePath: f });
 
       const data = {
