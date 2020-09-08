@@ -3,9 +3,11 @@ import cwd from '../cwd';
 import mime from 'mime-types';
 import * as fs from 'fs-extra';
 
+// FIXME: Omit images with URL type of src
 const handleImagePaths = (markdown: string, context: Context) => {
-  const regex = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)(?=\"|\))\)/gi;
-  const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)(?=\"|\))\)/i;
+  const regex = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/gi;
+  const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/i;
+  // const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)(?=\"|\))\)/i;
 
   /**
    *
