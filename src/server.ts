@@ -12,7 +12,6 @@ import mime from 'mime-types';
 import redis from './redis';
 import generateSchema from './utils/generateSchema';
 import cwd from './modules/cwd';
-// FIXME: Remove path module because it's not needed.
 
 const RedisStore = RateLimit({
   store: new RateLimitRedisStore({
@@ -31,7 +30,8 @@ export default async (): Promise<Server | HTTPSServer> => {
     context: ({ req, res }) => ({
       redis,
       req,
-      res
+      res,
+      url: req.protocol + '://' + req.get('host')
     }),
     introspection: true
   });

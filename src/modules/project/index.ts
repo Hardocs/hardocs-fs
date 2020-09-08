@@ -18,7 +18,7 @@ const openProject = async ({
   path: fullPath,
   context,
   force = false
-}: Partial<Options> & ContextOnly) => {
+}: Options) => {
   if (!fullPath) {
     fullPath = cwd.get();
   }
@@ -37,7 +37,7 @@ const openProject = async ({
   }
 
   const entryFilePath = `${docsDir}/${hardocsJson.hardocsJson.entryFile}`;
-  const allFileData = await file.extractAllFileData({ path: docsDir });
+  const allFileData = await file.extractAllFileData({ path: docsDir, context });
 
   const entry = await file.openEntryFile({
     path: entryFilePath,
@@ -110,7 +110,7 @@ const create = async ({
         }
       });
 
-      const response = openProject({ context }); // Open project before requiring any files in it
+      const response = openProject({ context, path: cwd.get() }); // Open project before requiring any files in it
 
       return response;
     } catch (er) {
@@ -165,7 +165,7 @@ const createFromExisting = async ({
         }
       });
 
-      const response = openProject({ context }); // Open project before requiring any files in it
+      const response = openProject({ context, path: dest }); // Open project before requiring any files in it
 
       return response;
     } catch (er) {
