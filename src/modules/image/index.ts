@@ -30,10 +30,19 @@ const handleImagePaths = (markdown: string, context: Context) => {
     ) {
       return v;
     }
-    if (startsWith(imgObject.groups.filename, '/')) {
-      newUrl = [host, ...imgObject.groups.filename].join('');
+
+    if (
+      imgObject.groups.filename.startsWith(`http://`) ||
+      imgObject.groups.filename.startsWith(`www.`) ||
+      imgObject.groups.filename.startsWith(`https://`)
+    ) {
+      newUrl = imgObject.groups.filename;
     } else {
-      newUrl = [`${host}/`, ...imgObject.groups.filename].join('');
+      if (startsWith(imgObject.groups.filename, '/')) {
+        newUrl = [host, ...imgObject.groups.filename].join('');
+      } else {
+        newUrl = [`${host}/`, ...imgObject.groups.filename].join('');
+      }
     }
     const alt = imgObject.groups.alt;
     return `${alt}(${newUrl})`;
