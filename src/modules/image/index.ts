@@ -1,7 +1,7 @@
 import { Context } from '../../typings/globals';
 import cwd from '../cwd';
 import mime from 'mime-types';
-import * as fs from 'fs-extra';
+import glob from 'glob';
 
 const handleImagePaths = (markdown: string, context: Context) => {
   const regex = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/gi;
@@ -55,12 +55,18 @@ const getImages = (path?: string) => {
   }
   path ||= cwd.get();
 
-  const allFiles = fs.readdirSync(path);
+  const allFiles = glob.sync(`${path}/**/*`);
 
-  const images = allFiles.filter((file) => {
-    const f = mime.lookup(file).toString().includes('image');
-    return f && file;
-  });
+  const images = allFiles
+    .filter((file) => {
+      if (!path) return;
+      const f = mime.lookup(file).toString().startsWith('image');
+      return f;
+    })
+    .map((file) => {
+      if (!path) return file;
+      return file.split(path)[1];
+    });
   return images;
 };
 
