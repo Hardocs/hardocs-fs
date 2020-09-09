@@ -1,6 +1,5 @@
 import { Context, Options } from '../../typings/globals';
 import cwd from '../cwd';
-import folder from '../folder';
 import file from '../file';
 import mime from 'mime-types';
 import glob from 'glob';
