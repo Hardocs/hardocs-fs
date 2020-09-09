@@ -162,6 +162,11 @@ declare namespace HDS {
      * @default "index.md"
      */
     entryFile: string;
+
+    /**
+     * @default "assets"
+     */
+    assets?: string | null;
   }
 
   /**
@@ -243,6 +248,7 @@ declare namespace HDS {
     docsDir: string;
     allDocsData: Array<IFile | null> | null;
     entryFile: string;
+    assets: string | null;
   }
 
   interface ILanguage {
