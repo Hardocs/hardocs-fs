@@ -112,7 +112,7 @@ const getHardocsJsonFile = async ({
 
   const hardocsDir = getHardocsDir(currentDir);
 
-  if (!folder.isHardocsProject({ path: currentDir, context })) {
+  if (!folder.isHardocsProject({ path: currentDir, context }) || !hardocsDir) {
     throw new Error('Not a valid hardocs project');
   }
   const hardocsFile: string = await fs.readFile(`${hardocsDir}/hardocs.json`, {

@@ -75,9 +75,9 @@ const getImagesInHardocsProject = async ({
   path,
   context
 }: Options): Promise<string[] | string> => {
+  cwd.set(path);
   const hardocsJson = await file.getHardocsJsonFile({ path, context });
   if (hardocsJson) {
-    cwd.set(path);
     const assetsDir = hardocsJson.hardocsJson.assets;
     if (assetsDir) {
       return getImages(`${path}/${assetsDir}`);
