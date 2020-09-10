@@ -25,6 +25,7 @@ input CreateProjectInput {
   contributors: [ContributorInput]
   docsDir: String! = "docs"
   entryFile: String! = "index.md"
+  assets: String = "assets"
 }
 
 """
@@ -74,6 +75,7 @@ type Project {
   docsDir: String!
   allDocsData: [File]
   entryFile: String!
+  assets: String
 }
 
 type Language {

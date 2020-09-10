@@ -1,5 +1,6 @@
-import { Context } from '../../typings/globals';
+import { Context, Options } from '../../typings/globals';
 import cwd from '../cwd';
+import file from '../file';
 import mime from 'mime-types';
 import glob from 'glob';
 
@@ -70,4 +71,22 @@ const getImages = (path?: string) => {
   return images;
 };
 
-export default { getImages, handleImagePaths };
+const getImagesInHardocsProject = async ({
+  path,
+  context
+}: Options): Promise<string[] | string> => {
+  cwd.set(path);
+  const hardocsJson = await file.getHardocsJsonFile({ path, context });
+  if (hardocsJson) {
+    const assetsDir = hardocsJson.hardocsJson.assets;
+    if (assetsDir) {
+      return getImages(`${path}/${assetsDir}`);
+    } else {
+      return getImages(path);
+    }
+  } else {
+    throw new Error(`${path} is Not a valid hardocs project`);
+  }
+};
+
+export default { getImages, handleImagePaths, getImagesInHardocsProject };
