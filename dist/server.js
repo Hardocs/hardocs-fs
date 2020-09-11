@@ -66,7 +66,7 @@ exports.server = () => __awaiter(void 0, void 0, void 0, function* () {
     });
     const app = express_1.default();
     const corsOptions = {
-        origin: process.env.NODE_ENV === 'development' ? '*' : 'http://localhost:8000',
+        origin: '*',
         optionsSuccessStatus: 200
     };
     server.applyMiddleware({ app, cors: corsOptions });
