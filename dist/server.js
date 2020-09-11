@@ -31,6 +31,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.server = void 0;
 require('dotenv').config();
 const apollo_server_express_1 = require("apollo-server-express");
 const express_1 = __importDefault(require("express"));
@@ -51,7 +52,7 @@ const RedisStore = express_rate_limit_1.default({
     max: 100,
     message: 'Too many accounts created from this IP, please try again after an hour'
 });
-exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
+exports.server = () => __awaiter(void 0, void 0, void 0, function* () {
     const schema = generateSchema_1.default();
     const server = new apollo_server_express_1.ApolloServer({
         schema,

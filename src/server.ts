@@ -24,7 +24,7 @@ const RedisStore = RateLimit({
     'Too many accounts created from this IP, please try again after an hour'
 });
 
-export default async (): Promise<Server | HTTPSServer> => {
+export const server = async (): Promise<Server | HTTPSServer> => {
   const schema = generateSchema();
   const server = new ApolloServer({
     schema,
