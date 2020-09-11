@@ -41,7 +41,7 @@ export const server = async (): Promise<Server | HTTPSServer> => {
   // const graphqlPath = '/';
   const corsOptions: CorsOptions = {
     origin:
-      process.env.NODE_ENV === 'development' ? '*' : 'http://localhost:8000',
+      process.env.NODE_ENV === 'development' ? '*' : 'http://localhost:8008',
     optionsSuccessStatus: 200
   };
 
