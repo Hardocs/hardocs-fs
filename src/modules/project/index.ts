@@ -2,7 +2,7 @@ import { Options, ContextOnly } from './../../typings/globals';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 
-import cwd from '../cwd/cwd';
+import cwd from '../cwd';
 import folder from '../folder';
 import { getHardocsDir } from './../../utils/constants';
 import file from '../file';
@@ -18,7 +18,7 @@ const openProject = async ({
   path: fullPath,
   context,
   force = false
-}: Partial<Options> & ContextOnly) => {
+}: Options) => {
   if (!fullPath) {
     fullPath = cwd.get();
   }
@@ -37,7 +37,7 @@ const openProject = async ({
   }
 
   const entryFilePath = `${docsDir}/${hardocsJson.hardocsJson.entryFile}`;
-  const allFileData = await file.extractAllFileData({ path: docsDir });
+  const allFileData = await file.extractAllFileData({ path: docsDir, context });
 
   const entry = await file.openEntryFile({
     path: entryFilePath,
@@ -110,7 +110,62 @@ const create = async ({
         }
       });
 
-      const response = openProject({ context }); // Open project before requiring any files in it
+      const response = openProject({ context, path: cwd.get() }); // Open project before requiring any files in it
+
+      return response;
+    } catch (er) {
+      throw new Error(er);
+    }
+  }
+  return false;
+};
+
+const createFromExisting = async ({
+  input,
+  context
+}: HDS.ICreateProjectFromExistingOnMutationArguments & ContextOnly) => {
+  if (input) {
+    const projectPath = input.path || cwd.get();
+    const dest = projectPath;
+    if (!folder.isDirectory({ path: dest })) {
+      throw new Error(`${dest} is Not a valid path`);
+    }
+    await cwd.set(dest);
+    try {
+      const result = {
+        id: Math.round(Math.abs(Math.random() * new Date().getTime())),
+        ...input,
+        updatedAt: new Date().toISOString()
+      };
+      const hardocsDir = getHardocsDir(dest);
+      await fs.ensureDir(hardocsDir);
+      const hardocsJson = `${hardocsDir}/hardocs.json`;
+
+      const docsDir = `${dest}/${result.docsDir}`;
+
+      if (folder.isDirectory({ path: templateDir })) {
+        // await fs.copy(templateDir, dest);
+        // await fs.copy(docsTemplateDir, docsDir);
+        await fs.ensureDir(docsDir);
+        await file.createMarkdownTemplate(
+          markdownFile,
+          result.entryFile,
+          docsDir
+        );
+      }
+
+      const stream = fs.createWriteStream(hardocsJson, {
+        encoding: 'utf8',
+        flags: 'w+'
+      });
+
+      stream.write(JSON.stringify(result, null, 2), (err) => {
+        if (err) {
+          console.log(err.message);
+        }
+      });
+
+      const response = openProject({ context, path: dest }); // Open project before requiring any files in it
 
       return response;
     } catch (er) {
@@ -122,5 +177,6 @@ const create = async ({
 
 export default {
   create,
-  open: openProject
+  open: openProject,
+  createFromExisting
 };

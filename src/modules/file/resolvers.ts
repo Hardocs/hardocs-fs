@@ -10,9 +10,14 @@ export const resolver: ResolverMap = {
     ) => file.getEntryFilePath({ path, force, context })
   },
   Mutation: {
-    openFile: (_root, { filePath }: HDS.IOpenFileOnMutationArguments) =>
-      file.openFile({ filePath, isFull: true }),
+    openFile: (
+      _root,
+      { filePath: path }: HDS.IOpenFileOnMutationArguments,
+      context
+    ) => file.openFile({ path, force: true, context }),
     writeToFile: (_root, { input }: HDS.IWriteToFileOnMutationArguments) =>
-      file.writeToFile(input)
+      file.writeToFile(input),
+    deleteFile: (_root, { filePath }: HDS.IDeleteFileOnMutationArguments) =>
+      file.delete({ filePath })
   }
 };

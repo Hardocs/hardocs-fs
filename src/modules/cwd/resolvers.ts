@@ -1,5 +1,5 @@
 import { ResolverMap } from '../../typings/globals';
-import cwd from './cwd';
+import cwd from '.';
 
 export const resolver: ResolverMap = {
   Query: {

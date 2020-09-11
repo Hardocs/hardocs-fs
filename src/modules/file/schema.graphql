@@ -20,6 +20,7 @@ input FileInput {
 }
 
 type Mutation {
-  openFile(filePath: String): File!
-  writeToFile(input: FileInput!): File
+  openFile(filePath: String!): File!
+  writeToFile(input: FileInput!): File!
+  deleteFile(filePath: String!): Boolean
 }

@@ -3,35 +3,32 @@ import glob from 'glob';
 import fs from 'fs-extra';
 // import yaml from 'yaml';
 
-import cwd from '../cwd/cwd';
+import cwd from '../cwd';
 import folder from '../folder';
-import { Options, ContextOnly, Path } from './../../typings/globals';
+import { Options, Path } from '../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 import showdown from 'showdown';
 import jsdom from 'jsdom';
+import image from '../image';
 const converter = new showdown.Converter();
 const dom = new jsdom.JSDOM();
 
-const openFile = ({
-  filePath,
-  isFull = false
-}: HDS.IOpenFileOnMutationArguments & {
-  isFull: boolean;
-}) => {
+const openFile = ({ path: filePath, force = false, context }: Options) => {
   try {
     if (!filePath) {
       filePath = cwd.get();
     }
     const readFile = fs.readFileSync(filePath);
     const { data, content } = matter(readFile);
-    const c = converter.makeHtml(content);
+    const parsedContent = image.handleImagePaths(content, context);
+    const c = converter.makeHtml(parsedContent);
 
     return {
       title: data.title,
       description: data.description,
       content: c,
       fileName: getFileName({ path: filePath }),
-      path: isFull ? filePath : `${cwd.get()}/${filePath}`
+      path: force ? filePath : `${cwd.get()}/${filePath}`
     };
   } catch (er) {
     throw new Error(er.message);
@@ -80,7 +77,7 @@ const getEntryFilePath = async ({
   path: projectPath,
   context,
   force
-}: Partial<Options> & ContextOnly): Promise<string> => {
+}: Options): Promise<string> => {
   if (!folder.isHardocsProject({ path: projectPath, context })) {
     throw new Error('Not a valid hardocs project');
   }
@@ -102,7 +99,7 @@ const getHardocsJsonFile = async ({
   path,
   context,
   force = false
-}: Partial<Options> & ContextOnly): Promise<{
+}: Options): Promise<{
   hardocsJson: HDS.IProject;
   currentDir: string;
 }> => {
@@ -115,7 +112,7 @@ const getHardocsJsonFile = async ({
 
   const hardocsDir = getHardocsDir(currentDir);
 
-  if (!folder.isHardocsProject({ path: currentDir, context })) {
+  if (!folder.isHardocsProject({ path: currentDir, context }) || !hardocsDir) {
     throw new Error('Not a valid hardocs project');
   }
   const hardocsFile: string = await fs.readFile(`${hardocsDir}/hardocs.json`, {
@@ -144,15 +141,15 @@ const createMarkdownTemplate = async (
 const openEntryFile = async ({ path, context, force }: Options) => {
   const entryFilePath = await getEntryFilePath({ path, context, force });
 
-  const metadata = openFile({ filePath: entryFilePath, isFull: false });
+  const metadata = openFile({ path: entryFilePath, force: false, context });
   return metadata;
 };
 
-const extractAllFileData = async ({ path }: Path) => {
+const extractAllFileData = async ({ path, context }: Options) => {
   const allMarkdownFilesPathPath = allMarkdownFilesPath(path);
   try {
     return allMarkdownFilesPathPath.map((f) => {
-      const d = openFile({ filePath: f, isFull: false });
+      const d = openFile({ path: f, force: false, context });
       // const d = await openFile({ filePath: f });
 
       const data = {
@@ -175,6 +172,41 @@ const getFileName = ({ path }: Path) => {
   const lastIndex = fullPath[fullPath.length - 1];
   return lastIndex.toString().includes(`.md`) && lastIndex;
 };
+
+const exists = (path: string): boolean => {
+  return fs.existsSync(path);
+};
+
+const deleteFile = ({
+  filePath
+}: HDS.IDeleteFileOnMutationArguments): boolean => {
+  if (folder.isDirectory({ path: filePath })) {
+    throw new Error('File path must point to a valid file and not a directory');
+  }
+
+  if (!exists(filePath)) {
+    throw new Error('File does not exist');
+  }
+  fs.stat(filePath, (err, stat) => {
+    if (err) {
+      console.log(err);
+    }
+    if (stat.isDirectory()) {
+      console.log(`${filePath} is a Directory`);
+      return false;
+    }
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        throw new Error(err.message);
+      }
+      console.log(`${filePath} deleted successfully`);
+      return true;
+    });
+    return true;
+  });
+
+  return true;
+};
 export default {
   openFile,
   allMarkdownFilesPath,
@@ -184,5 +216,7 @@ export default {
   openEntryFile,
   extractAllFileData,
   getFileName,
-  writeToFile
+  writeToFile,
+  delete: deleteFile,
+  exists
 };
