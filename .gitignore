@@ -13,6 +13,5 @@ push.sh
 .cache
 .DS_Store
 src/.temp
-dist
 /nuxt
 .history

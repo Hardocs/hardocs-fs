@@ -1,0 +1,41 @@
+type Query {
+  folderExists(path: String!): Boolean!
+  folderCurrent: Folder
+  docsFolder(path: String!): String!
+}
+
+type Mutation {
+  folderOpen(path: String!): Folder
+  folderOpenParent: Folder
+  folderCreate(name: String!): Folder
+  folderDelete(path: String!): Boolean!
+}
+
+type Folder {
+  name: String!
+  path: String!
+  isPackage: Boolean
+  isHardocsProject: Boolean
+  children: [Folder]
+  hidden: Boolean
+}
+
+# fragment folderCurrent on Folder {
+#   name
+#   path
+#   isPackage
+#   isHardocsProject
+#   children {
+#     name
+#     path
+#     isPackage
+#     isHardocsProject
+#     hidden
+#   }
+# }
+
+# mutation folderOpen($name: String!) {
+#   folderOpen(path: $path) {
+#     ...folderCurrent
+#   }
+# }
