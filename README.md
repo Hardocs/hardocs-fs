@@ -48,3 +48,4 @@ yarn dev
 # or
 npm run dev
 ```
+## Testing dist automation
