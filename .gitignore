@@ -16,3 +16,4 @@ src/.temp
 dist
 /nuxt
 .history
+dist
