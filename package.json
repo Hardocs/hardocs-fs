@@ -1,6 +1,6 @@
 {
   "name": "@hardocs/graphQL-api",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "An API that allows to do mutations meant to be used in an electron app.",
   "scripts": {
     "start": "ts-node --files src",
@@ -68,5 +68,8 @@
     "showdown": "^1.9.1",
     "winattr": "^3.0.0",
     "yaml": "^1.10.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
