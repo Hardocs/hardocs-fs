@@ -1,5 +1,5 @@
 {
-  "name": "hardocs-graphql-api",
+  "name": "@hardocs/graphQL-api",
   "version": "1.0.0",
   "description": "Hardocs project with couchdb and a plugin based approach",
   "scripts": {
