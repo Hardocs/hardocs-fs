@@ -1,7 +1,7 @@
 {
   "name": "@hardocs/graphQL-api",
   "version": "1.0.0",
-  "description": "Hardocs project with couchdb and a plugin based approach",
+  "description": "An API that allows to do mutations meant to be used in an electron app.",
   "scripts": {
     "start": "ts-node --files src",
     "dev": "env NODE_ENV=development nodemon --exec ts-node --files src/index.ts",
