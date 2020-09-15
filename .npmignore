@@ -1,3 +1,8 @@
 src
 /*.jpg
+/*.jpeg
 /*.png
+.prettierrc
+.eslintignore
+.eslintrc
+images
