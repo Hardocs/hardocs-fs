@@ -43,7 +43,6 @@ const mime_types_1 = __importDefault(require("mime-types"));
 const redis_1 = __importDefault(require("./redis"));
 const generateSchema_1 = __importDefault(require("./utils/generateSchema"));
 const cwd_1 = __importDefault(require("./modules/cwd"));
-const constants_1 = require("./utils/constants");
 const RedisStore = express_rate_limit_1.default({
     store: new rate_limit_redis_1.default({
         client: redis_1.default
@@ -94,7 +93,4 @@ exports.server = () => __awaiter(void 0, void 0, void 0, function* () {
         port
     }, () => console.log(`server is running on http://localhost:${port}${server.graphqlPath}`));
 });
-if (constants_1.__PROD__) {
-    console.log = () => { };
-}
 //# sourceMappingURL=server.js.map

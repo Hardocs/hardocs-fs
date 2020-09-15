@@ -14,7 +14,7 @@
     "Hardocs"
   ],
   "main": "dist/index.js",
-  "author": "Divine Hycenth",
+  "author": "Divine Hycenth <divinehycenth8@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "@types/connect-redis": "^0.0.14",
