@@ -1,4 +1,4 @@
-import { Redis } from 'ioredis';
+// import { Redis } from 'ioredis';
 
 export interface Options {
   path: string;
@@ -12,7 +12,7 @@ export type ContextOnly = {
 };
 
 export interface Context {
-  redis: Redis;
+  // redis: Redis;
   req: Express.Request;
   res: Express.Response;
   url: string;

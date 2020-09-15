@@ -1,5 +1,5 @@
 import { ContextOnly } from './../../typings/globals';
-import { Redis } from 'ioredis';
+// import { Redis } from 'ioredis';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as winattr from 'winattr';
@@ -105,17 +105,13 @@ const isHidden = ({ path: file }: Path) => {
 };
 
 const readPackage = async (options: Partial<Options> & ContextOnly) => {
-  const {
-    path: file = '',
-    force = false,
-    context: { redis }
-  } = options;
+  const { path: file = '', force = false } = options;
 
   if (!force) {
-    const cachedValue = await redis.get(`${READ_PACKAGE_PREFIX}${file}`);
-    if (cachedValue) {
-      return cachedValue;
-    }
+    // const cachedValue = await redis.get(`${READ_PACKAGE_PREFIX}${file}`);
+    // if (cachedValue) {
+    //   return cachedValue;
+    // }
   }
 
   // Hardocs hidden folder
@@ -125,24 +121,13 @@ const readPackage = async (options: Partial<Options> & ContextOnly) => {
   if (isDirectory({ path: hardocsDir })) {
     if (fs.existsSync(hardocsPkg)) {
       const pkg = fs.readJsonSync(hardocsPkg);
-      await redis.set(file, pkg, 'EX', 60 * 60);
+      // await redis.set(file, pkg, 'EX', 60 * 60);
       return pkg;
     } else {
       console.log('Not a hardocs directory');
       return false;
     }
   }
-};
-
-const clearCachedValue = async ({
-  file,
-  redis
-}: {
-  file: string;
-  redis: Redis;
-}): Promise<boolean> => {
-  await redis.del(`${READ_PACKAGE_PREFIX}${file}`);
-  return true;
 };
 
 const isHardocsProject = async ({
@@ -199,7 +184,6 @@ export default {
   isHidden,
   getDocsFolder,
   readPackage,
-  clearCachedValue,
   isHardocsProject,
   deleteFolder
 };
