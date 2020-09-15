@@ -36,7 +36,6 @@ const fs = __importStar(require("fs-extra"));
 const winattr = __importStar(require("winattr"));
 const cwd_1 = __importDefault(require("../cwd"));
 const constants_1 = require("./../../utils/constants");
-const constants_2 = require("./constants");
 const file_1 = __importDefault(require("../file"));
 const isPlatformWindows = process.platform.indexOf('win') === 0 || process.platform.includes('win');
 const hiddenPrefix = '.';
@@ -119,19 +118,14 @@ const isHidden = ({ path: file }) => {
     }
 };
 const readPackage = (options) => __awaiter(void 0, void 0, void 0, function* () {
-    const { path: file = '', force = false, context: { redis } } = options;
+    const { path: file = '', force = false } = options;
     if (!force) {
-        const cachedValue = yield redis.get(`${constants_2.READ_PACKAGE_PREFIX}${file}`);
-        if (cachedValue) {
-            return cachedValue;
-        }
     }
     const hardocsDir = constants_1.getHardocsDir(file);
     const hardocsPkg = path.join(hardocsDir, 'hardocs.json');
     if (isDirectory({ path: hardocsDir })) {
         if (fs.existsSync(hardocsPkg)) {
             const pkg = fs.readJsonSync(hardocsPkg);
-            yield redis.set(file, pkg, 'EX', 60 * 60);
             return pkg;
         }
         else {
@@ -139,10 +133,6 @@ const readPackage = (options) => __awaiter(void 0, void 0, void 0, function* () 
             return false;
         }
     }
-});
-const clearCachedValue = ({ file, redis }) => __awaiter(void 0, void 0, void 0, function* () {
-    yield redis.del(`${constants_2.READ_PACKAGE_PREFIX}${file}`);
-    return true;
 });
 const isHardocsProject = ({ path, context }) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -185,7 +175,6 @@ exports.default = {
     isHidden,
     getDocsFolder,
     readPackage,
-    clearCachedValue,
     isHardocsProject,
     deleteFolder
 };

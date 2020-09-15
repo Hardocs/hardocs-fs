@@ -35,28 +35,16 @@ exports.server = void 0;
 require('dotenv').config();
 const apollo_server_express_1 = require("apollo-server-express");
 const express_1 = __importDefault(require("express"));
-const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
-const rate_limit_redis_1 = __importDefault(require("rate-limit-redis"));
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs-extra"));
 const mime_types_1 = __importDefault(require("mime-types"));
-const redis_1 = __importDefault(require("./redis"));
 const generateSchema_1 = __importDefault(require("./utils/generateSchema"));
 const cwd_1 = __importDefault(require("./modules/cwd"));
-const RedisStore = express_rate_limit_1.default({
-    store: new rate_limit_redis_1.default({
-        client: redis_1.default
-    }),
-    windowMs: 15 * 60 * 100,
-    max: 100,
-    message: 'Too many accounts created from this IP, please try again after an hour'
-});
 exports.server = () => __awaiter(void 0, void 0, void 0, function* () {
     const schema = generateSchema_1.default();
     const server = new apollo_server_express_1.ApolloServer({
         schema,
         context: ({ req, res }) => ({
-            redis: redis_1.default,
             req,
             res,
             url: req.protocol + '://' + req.get('host')
@@ -69,7 +57,6 @@ exports.server = () => __awaiter(void 0, void 0, void 0, function* () {
         optionsSuccessStatus: 200
     };
     server.applyMiddleware({ app, cors: corsOptions });
-    app.use(RedisStore);
     app.use('/images', express_1.default.static('images'));
     app.use(express_1.default.static(cwd_1.default.get()));
     app.get('*', (req, res) => {

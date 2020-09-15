@@ -7,15 +7,4 @@
   "bracketSpacing": true,
   "arrowParens": "always",
   "endOfLine": "lf",
-  "editor.formatOnSave": true,
-  "editor.formatOnPaste": true,
-  "[typescriptreact]": {
-    "editor.formatOnSave": true
-  },
-  "[javascriptreact]": {
-    "editor.formatOnSave": true
-  },
-  "[jsx-tags]": {
-    "editor.formatOnSave": true
-  }
 }
