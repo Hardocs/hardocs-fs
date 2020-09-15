@@ -1,7 +1,16 @@
 # Hardocs graphQL api module
-An API that allows to do mutations meant to be used in an electron app.
-Current mutations:
-1. Create a project
+
+An api in graphQL that enables to do the following mutation:
+
+1. Create a new project
 2. Create project from existing folder
-3. Save files
-4. Delete files
+3. Saving files
+4. Deleting files
+5. Serving images
+
+## Usage
+
+```js
+const { server } = require('hardocs-graphql-api');
+server();
+```
