@@ -3,32 +3,32 @@ import { ApolloServer, CorsOptions } from 'apollo-server-express';
 import express from 'express';
 import { Server } from 'http';
 import { Server as HTTPSServer } from 'https';
-import RateLimit from 'express-rate-limit';
-import RateLimitRedisStore from 'rate-limit-redis';
+// import RateLimit from 'express-rate-limit';
+// import RateLimitRedisStore from 'rate-limit-redis';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import mime from 'mime-types';
 
-import redis from './redis';
+// import redis from './redis';
 import generateSchema from './utils/generateSchema';
 import cwd from './modules/cwd';
 
-const RedisStore = RateLimit({
-  store: new RateLimitRedisStore({
-    client: redis
-  }),
-  windowMs: 15 * 60 * 100,
-  max: 100,
-  message:
-    'Too many accounts created from this IP, please try again after an hour'
-});
+// const RedisStore = RateLimit({
+//   store: new RateLimitRedisStore({
+//     client: redis
+//   }),
+//   windowMs: 15 * 60 * 100,
+//   max: 100,
+//   message:
+//     'Too many accounts created from this IP, please try again after an hour'
+// });
 
 export const server = async (): Promise<Server | HTTPSServer> => {
   const schema = generateSchema();
   const server = new ApolloServer({
     schema,
     context: ({ req, res }) => ({
-      redis,
+      // redis,
       req,
       res,
       url: req.protocol + '://' + req.get('host')
@@ -45,7 +45,7 @@ export const server = async (): Promise<Server | HTTPSServer> => {
   };
 
   server.applyMiddleware({ app, cors: corsOptions });
-  app.use(RedisStore);
+  // app.use(RedisStore);
 
   app.use('/images', express.static('images'));
   app.use(express.static(cwd.get()));
