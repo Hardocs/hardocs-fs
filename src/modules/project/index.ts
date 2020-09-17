@@ -147,11 +147,13 @@ const createFromExisting = async ({
         // await fs.copy(templateDir, dest);
         // await fs.copy(docsTemplateDir, docsDir);
         await fs.ensureDir(docsDir);
-        await file.createMarkdownTemplate(
-          markdownFile,
-          result.entryFile,
-          docsDir
-        );
+        if (!file.exists(`${docsDir}/${result.entryFile}`)) {
+          await file.createMarkdownTemplate(
+            markdownFile,
+            result.entryFile,
+            docsDir
+          );
+        }
       }
 
       const stream = fs.createWriteStream(hardocsJson, {
