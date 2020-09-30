@@ -1,6 +1,6 @@
 ---
-title: 'Open ventilator'
-description: 'This is a test document'
+title: Open ventilator
+description: This is a test document
 ---
 
 # Open ventilator
@@ -18,4 +18,5 @@ Docc is a starter theme for [Gridsome](https://gridsome.org/) which is a static 
 
 
 Dark Mode
+
 
