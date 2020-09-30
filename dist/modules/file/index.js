@@ -12,7 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const gray_matter_1 = __importDefault(require("gray-matter"));
 const glob_1 = __importDefault(require("glob"));
 const fs_extra_1 = __importDefault(require("fs-extra"));
 const cwd_1 = __importDefault(require("../cwd"));
@@ -21,7 +20,7 @@ const constants_1 = require("./../../utils/constants");
 const showdown_1 = __importDefault(require("showdown"));
 const jsdom_1 = __importDefault(require("jsdom"));
 const image_1 = __importDefault(require("../image"));
-const converter = new showdown_1.default.Converter();
+const converter = new showdown_1.default.Converter({ metadata: true });
 const dom = new jsdom_1.default.JSDOM();
 const openFile = ({ path: filePath, force = false, context }) => {
     try {
@@ -29,7 +28,8 @@ const openFile = ({ path: filePath, force = false, context }) => {
             filePath = cwd_1.default.get();
         }
         const readFile = fs_extra_1.default.readFileSync(filePath);
-        const { data, content } = gray_matter_1.default(readFile);
+        const content = converter.makeHtml(String(readFile));
+        const data = converter.getMetadata();
         const parsedContent = image_1.default.handleImagePaths(content, context);
         const c = converter.makeHtml(parsedContent);
         return {

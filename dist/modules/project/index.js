@@ -39,7 +39,6 @@ const constants_1 = require("./../../utils/constants");
 const file_1 = __importDefault(require("../file"));
 const templateDir = path.join(__dirname, '../../../template/template');
 const markdownFile = path.join(__dirname, '../../../template/docsTemplate/index.md');
-const docsTemplateDir = path.join(__dirname, '../../../template/docsTemplate');
 const openProject = ({ path: fullPath, context, force = false }) => __awaiter(void 0, void 0, void 0, function* () {
     if (!fullPath) {
         fullPath = cwd_1.default.get();
@@ -94,7 +93,6 @@ const create = ({ input, context }) => __awaiter(void 0, void 0, void 0, functio
             const docsDir = `${dest}/${result.docsDir}`;
             if (folder_1.default.isDirectory({ path: templateDir })) {
                 yield fs.copy(templateDir, dest);
-                yield fs.copy(docsTemplateDir, docsDir);
                 yield fs.ensureDir(docsDir);
                 yield file_1.default.createMarkdownTemplate(markdownFile, result.entryFile, docsDir);
             }
@@ -132,7 +130,9 @@ const createFromExisting = ({ input, context }) => __awaiter(void 0, void 0, voi
             const docsDir = `${dest}/${result.docsDir}`;
             if (folder_1.default.isDirectory({ path: templateDir })) {
                 yield fs.ensureDir(docsDir);
-                yield file_1.default.createMarkdownTemplate(markdownFile, result.entryFile, docsDir);
+                if (!file_1.default.exists(`${docsDir}/${result.entryFile}`)) {
+                    yield file_1.default.createMarkdownTemplate(markdownFile, result.entryFile, docsDir);
+                }
             }
             const stream = fs.createWriteStream(hardocsJson, {
                 encoding: 'utf8',
