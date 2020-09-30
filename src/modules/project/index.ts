@@ -12,7 +12,7 @@ const markdownFile = path.join(
   __dirname,
   '../../../template/docsTemplate/index.md'
 );
-const docsTemplateDir = path.join(__dirname, '../../../template/docsTemplate');
+// const docsTemplateDir = path.join(__dirname, '../../../template/docsTemplate');
 
 const openProject = async ({
   path: fullPath,
@@ -90,7 +90,7 @@ const create = async ({
 
       if (folder.isDirectory({ path: templateDir })) {
         await fs.copy(templateDir, dest);
-        await fs.copy(docsTemplateDir, docsDir);
+        // await fs.copy(docsTemplateDir, docsDir); // TODO: Copy docs template if provided
         await fs.ensureDir(docsDir);
         await file.createMarkdownTemplate(
           markdownFile,
