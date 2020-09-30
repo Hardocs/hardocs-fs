@@ -1,7 +1,5 @@
-import matter from 'gray-matter';
 import glob from 'glob';
 import fs from 'fs-extra';
-// import yaml from 'yaml';
 
 import cwd from '../cwd';
 import folder from '../folder';
@@ -10,7 +8,7 @@ import { getHardocsDir } from './../../utils/constants';
 import showdown from 'showdown';
 import jsdom from 'jsdom';
 import image from '../image';
-const converter = new showdown.Converter();
+const converter = new showdown.Converter({ metadata: true });
 const dom = new jsdom.JSDOM();
 
 const openFile = ({ path: filePath, force = false, context }: Options) => {
@@ -19,7 +17,8 @@ const openFile = ({ path: filePath, force = false, context }: Options) => {
       filePath = cwd.get();
     }
     const readFile = fs.readFileSync(filePath);
-    const { data, content } = matter(readFile);
+    const content = converter.makeHtml(String(readFile));
+    const data: any = converter.getMetadata();
     const parsedContent = image.handleImagePaths(content, context);
     const c = converter.makeHtml(parsedContent);
 
