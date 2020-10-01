@@ -93,9 +93,9 @@ const create = ({ input, context }) => __awaiter(void 0, void 0, void 0, functio
             const docsDir = `${dest}/${result.docsDir}`;
             if (folder_1.default.isDirectory({ path: templateDir })) {
                 yield fs.copy(templateDir, dest);
-                yield fs.ensureDir(docsDir);
-                yield file_1.default.createMarkdownTemplate(markdownFile, result.entryFile, docsDir);
             }
+            yield fs.ensureDir(docsDir);
+            yield file_1.default.createMarkdownTemplate(markdownFile, result.entryFile, docsDir);
             const stream = fs.createWriteStream(hardocsJson, {
                 encoding: 'utf8',
                 flags: 'w+'
