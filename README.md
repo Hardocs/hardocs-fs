@@ -8,9 +8,9 @@ An api in graphQL that enables to do the following mutation:
 4. Deleting files
 5. Serving images
 
-## Usage
+## Usage Example
 
 ```js
-const { server } = require('hardocs-graphql-api');
-server();
+const { cwd } = require('hardocs-fs');
+cwd.get(); // Returns current working directory.
 ```
