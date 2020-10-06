@@ -6,3 +6,4 @@ if (__DEV__) {
   // because we're gonna need the connection during test that is why i exported it to this
 }
 export * from './server';
+export * from './modules';
