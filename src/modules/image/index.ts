@@ -1,10 +1,10 @@
-import { Context, Options } from '../../typings/globals';
+import { Options } from '../../typings/globals';
 import cwd from '../cwd';
 import file from '../file';
 import mime from 'mime-types';
 import glob from 'glob';
 
-const handleImagePaths = (markdown: string, context: Context) => {
+const handleImagePaths = (markdown: string, host: URL) => {
   const regex = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/gi;
   const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/i;
   // const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)(?=\"|\))\)/i;
@@ -21,7 +21,6 @@ const handleImagePaths = (markdown: string, context: Context) => {
   const result = markdown.replace(regex, (v) => {
     const imgObject = v.match(regex2);
     let newUrl = '';
-    const host = context.url;
     if (
       !imgObject ||
       !imgObject.groups ||
@@ -73,10 +72,9 @@ const getImages = (path?: string) => {
 
 const getImagesInHardocsProject = async ({
   path,
-  context
 }: Options): Promise<string[] | string> => {
   cwd.set(path);
-  const hardocsJson = await file.getHardocsJsonFile({ path, context });
+  const hardocsJson = await file.getHardocsJsonFile({ path });
   if (hardocsJson) {
     const assetsDir = hardocsJson.hardocsJson.assets;
     if (assetsDir) {

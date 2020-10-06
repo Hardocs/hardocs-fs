@@ -1,5 +1,3 @@
-import { ContextOnly } from './../../typings/globals';
-// import { Redis } from 'ioredis';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as winattr from 'winattr';
@@ -103,7 +101,7 @@ const isHidden = ({ path: file }: Path) => {
   }
 };
 
-const readPackage = async (options: Partial<Options> & ContextOnly) => {
+const readPackage = async (options: Partial<Options>) => {
   const { path: file = '', force = false } = options;
 
   if (!force) {
@@ -120,7 +118,6 @@ const readPackage = async (options: Partial<Options> & ContextOnly) => {
   if (isDirectory({ path: hardocsDir })) {
     if (fs.existsSync(hardocsPkg)) {
       const pkg = fs.readJsonSync(hardocsPkg);
-      // await redis.set(file, pkg, 'EX', 60 * 60);
       return pkg;
     } else {
       console.log('Not a hardocs directory');
@@ -130,11 +127,10 @@ const readPackage = async (options: Partial<Options> & ContextOnly) => {
 };
 
 const isHardocsProject = async ({
-  path,
-  context
-}: Partial<Options> & ContextOnly): Promise<boolean> => {
+  path
+}: Partial<Options>): Promise<boolean> => {
   try {
-    const pkg = await readPackage({ path, context });
+    const pkg = await readPackage({ path });
     return !!pkg;
   } catch (er) {
     if (process.env.HARDOCS_DEV_MODE) {
@@ -144,23 +140,19 @@ const isHardocsProject = async ({
   }
 };
 
-const getDocsFolder = async ({
-  path,
-  context,
-  force
-}: Partial<Options> & ContextOnly) => {
+const getDocsFolder = async ({ path, force }: Partial<Options>) => {
   let fromBaseDir = cwd.get();
   if (force) {
     if (path) {
       fromBaseDir = path;
     }
   }
-  if (!isHardocsProject({ path: fromBaseDir, context })) {
+  if (!isHardocsProject({ path: fromBaseDir })) {
     throw new Error('Not a hardocs project');
   }
 
   const hardocsJson = (
-    await file.getHardocsJsonFile({ path: fromBaseDir, context, force })
+    await file.getHardocsJsonFile({ path: fromBaseDir, force })
   ).hardocsJson;
   const { docsDir } = hardocsJson;
 

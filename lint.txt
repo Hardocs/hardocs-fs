@@ -1,0 +1,36 @@
+[0m[0m
+[0m[4m/home/divine/Documents/projects/hardocs/hardocs-fs/src/modules/cwd/index.ts[24m[0m
+[0m  [2m1:1[22m  [31merror[39m  Parsing error: The keyword 'import' is reserved[0m
+[0m[0m
+[0m[4m/home/divine/Documents/projects/hardocs/hardocs-fs/src/modules/file/index.ts[24m[0m
+[0m  [2m1:1[22m  [31merror[39m  Parsing error: The keyword 'import' is reserved[0m
+[0m[0m
+[0m[4m/home/divine/Documents/projects/hardocs/hardocs-fs/src/modules/folder/constants.ts[24m[0m
+[0m  [2m1:1[22m  [31merror[39m  Parsing error: The keyword 'export' is reserved[0m
+[0m[0m
+[0m[4m/home/divine/Documents/projects/hardocs/hardocs-fs/src/modules/folder/index.ts[24m[0m
+[0m  [2m1:1[22m  [31merror[39m  Parsing error: The keyword 'import' is reserved[0m
+[0m[0m
+[0m[4m/home/divine/Documents/projects/hardocs/hardocs-fs/src/modules/image/index.ts[24m[0m
+[0m  [2m1:1[22m  [31merror[39m  Parsing error: The keyword 'import' is reserved[0m
+[0m[0m
+[0m[4m/home/divine/Documents/projects/hardocs/hardocs-fs/src/modules/index.ts[24m[0m
+[0m  [2m1:1[22m  [31merror[39m  Parsing error: The keyword 'export' is reserved[0m
+[0m[0m
+[0m[4m/home/divine/Documents/projects/hardocs/hardocs-fs/src/modules/project/index.ts[24m[0m
+[0m  [2m1:1[22m  [31merror[39m  Parsing error: The keyword 'import' is reserved[0m
+[0m[0m
+[0m[4m/home/divine/Documents/projects/hardocs/hardocs-fs/src/typings/declarations.d.ts[24m[0m
+[0m  [2m1:9[22m  [31merror[39m  Parsing error: Unexpected token module[0m
+[0m[0m
+[0m[4m/home/divine/Documents/projects/hardocs/hardocs-fs/src/typings/globals.ts[24m[0m
+[0m  [2m3:1[22m  [31merror[39m  Parsing error: The keyword 'export' is reserved[0m
+[0m[0m
+[0m[4m/home/divine/Documents/projects/hardocs/hardocs-fs/src/typings/schema.d.ts[24m[0m
+[0m  [2m4:9[22m  [31merror[39m  Parsing error: Unexpected token namespace[0m
+[0m[0m
+[0m[4m/home/divine/Documents/projects/hardocs/hardocs-fs/src/utils/constants.ts[24m[0m
+[0m  [2m1:1[22m  [31merror[39m  Parsing error: The keyword 'import' is reserved[0m
+[0m[0m
+[0m[31m[1m✖ 11 problems (11 errors, 0 warnings)[22m[39m[0m
+[0m[31m[1m[22m[39m[0m

@@ -1,4 +1,4 @@
-import { Options, ContextOnly } from './../../typings/globals';
+import { Options } from './../../typings/globals';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 
@@ -15,9 +15,7 @@ const markdownFile = path.join(
 // const docsTemplateDir = path.join(__dirname, '../../../template/docsTemplate');
 
 const openProject = async ({
-  path: fullPath,
-  context,
-  force = false
+  path: fullPath,  force = false
 }: Options) => {
   if (!fullPath) {
     fullPath = cwd.get();
@@ -26,7 +24,6 @@ const openProject = async ({
 
   const hardocsJson = await file.getHardocsJsonFile({
     path: fullPath,
-    context,
     force
   });
   const docsDir = hardocsJson.hardocsJson.docsDir;
@@ -37,12 +34,10 @@ const openProject = async ({
   }
 
   const entryFilePath = `${docsDir}/${hardocsJson.hardocsJson.entryFile}`;
-  const allFileData = await file.extractAllFileData({ path: docsDir, context });
+  const allFileData = await file.extractAllFileData({ path: docsDir });
 
   const entry = await file.openEntryFile({
-    path: entryFilePath,
-    context
-  });
+    path: entryFilePath  });
   const allDocsData = allFileData
     .map((f) => {
       if (f.fileName === file.getFileName({ path: entryFilePath })) {
@@ -61,9 +56,7 @@ const openProject = async ({
 };
 
 const create = async ({
-  input,
-  context
-}: HDS.ICreateProjectOnMutationArguments & ContextOnly) => {
+  input}: HDS.ICreateProjectOnMutationArguments ) => {
   if (input) {
     const projectPath = input.path || cwd.get();
     const dest = path.join(projectPath, input.name);
@@ -111,7 +104,7 @@ const create = async ({
         }
       });
 
-      const response = openProject({ context, path: cwd.get() }); // Open project before requiring any files in it
+      const response = openProject({ path: cwd.get() }); // Open project before requiring any files in it
 
       return response;
     } catch (er) {
@@ -122,9 +115,8 @@ const create = async ({
 };
 
 const createFromExisting = async ({
-  input,
-  context
-}: HDS.ICreateProjectFromExistingOnMutationArguments & ContextOnly) => {
+  input
+}: HDS.ICreateProjectFromExistingOnMutationArguments) => {
   if (input) {
     const projectPath = input.path || cwd.get();
     const dest = projectPath;
@@ -168,7 +160,7 @@ const createFromExisting = async ({
         }
       });
 
-      const response = openProject({ context, path: dest }); // Open project before requiring any files in it
+      const response = openProject({ path: dest }); // Open project before requiring any files in it
 
       return response;
     } catch (er) {

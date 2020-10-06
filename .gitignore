@@ -16,3 +16,4 @@ src/.temp
 /nuxt
 .history
 dist
+test.js

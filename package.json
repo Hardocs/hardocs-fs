@@ -1,17 +1,18 @@
 {
-  "name": "hardocs-graphql-api",
-  "version": "0.0.6",
-  "description": "An API that allows to do mutations meant to be used in an electron app.",
+  "name": "hardocs-fs",
+  "version": "0.0.1",
+  "description": "Helper functions to perform most file/folder operations meant to be used in an electron app.",
   "scripts": {
     "start": "ts-node --files src",
     "dev": "env NODE_ENV=development nodemon --exec ts-node --files src/index.ts",
     "lint": "eslint './**/*.{tsx,ts}' --quiet --fix",
     "test": "env NODE_ENV=test jest",
     "gen:types": "ts-node --files ./src/scripts/createTypes.ts",
-    "build": "rimraf -fr ./dist && tsc && copyfiles -u 1 src/**/*.graphql dist"
+    "build": "rimraf -fr ./dist && tsc"
   },
   "keywords": [
-    "Hardocs"
+    "Hardocs",
+    "fs"
   ],
   "main": "dist/index.js",
   "author": "Divine Hycenth <divinehycenth8@gmail.com>",

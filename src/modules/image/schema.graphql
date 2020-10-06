@@ -1,4 +1,0 @@
-type Query {
-  getImages(path: String): [String!]
-  getImagesInHardocsProject(path: String!): [String]
-}
