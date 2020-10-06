@@ -7,11 +7,12 @@ import { Options, Path } from '../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 import showdown from 'showdown';
 import jsdom from 'jsdom';
-import image from '../image';
+// import image from '../image'; // FIXME: Handle images
+
 const converter = new showdown.Converter({ metadata: true });
 const dom = new jsdom.JSDOM();
 
-const openFile = ({ path: filePath, force = false, context }: Options) => {
+const openFile = ({ path: filePath, force = false }: Options) => {
   try {
     if (!filePath) {
       filePath = cwd.get();
@@ -19,8 +20,8 @@ const openFile = ({ path: filePath, force = false, context }: Options) => {
     const readFile = fs.readFileSync(filePath);
     const content = converter.makeHtml(String(readFile));
     const data: any = converter.getMetadata();
-    const parsedContent = image.handleImagePaths(content, context);
-    const c = converter.makeHtml(parsedContent);
+    // const parsedContent = image.handleImagePaths(content, context);
+    const c = converter.makeHtml(content);
 
     return {
       title: data.title,
@@ -74,20 +75,19 @@ const allMarkdownFilesPath = (filePath?: string) => {
 
 const getEntryFilePath = async ({
   path: projectPath,
-  context,
+  
   force
 }: Options): Promise<string> => {
-  if (!folder.isHardocsProject({ path: projectPath, context })) {
+  if (!folder.isHardocsProject({ path: projectPath })) {
     throw new Error('Not a valid hardocs project');
   }
 
   const docsDir = await folder.getDocsFolder({
     path: projectPath,
-    context,
     force
   });
   const entryFileName = (
-    await getHardocsJsonFile({ path: projectPath, context, force })
+    await getHardocsJsonFile({ path: projectPath, force })
   ).hardocsJson.entryFile;
 
   const entryFile = `${docsDir}/${entryFileName}`;
@@ -96,7 +96,6 @@ const getEntryFilePath = async ({
 
 const getHardocsJsonFile = async ({
   path,
-  context,
   force = false
 }: Options): Promise<{
   hardocsJson: HDS.IProject;
@@ -111,7 +110,7 @@ const getHardocsJsonFile = async ({
 
   const hardocsDir = getHardocsDir(currentDir);
 
-  if (!folder.isHardocsProject({ path: currentDir, context }) || !hardocsDir) {
+  if (!folder.isHardocsProject({ path: currentDir }) || !hardocsDir) {
     throw new Error('Not a valid hardocs project');
   }
   const hardocsFile: string = await fs.readFile(`${hardocsDir}/hardocs.json`, {
@@ -137,18 +136,18 @@ const createMarkdownTemplate = async (
   }
 };
 
-const openEntryFile = async ({ path, context, force }: Options) => {
-  const entryFilePath = await getEntryFilePath({ path, context, force });
+const openEntryFile = async ({ path, force }: Options) => {
+  const entryFilePath = await getEntryFilePath({ path, force });
 
-  const metadata = openFile({ path: entryFilePath, force: false, context });
+  const metadata = openFile({ path: entryFilePath, force: false });
   return metadata;
 };
 
-const extractAllFileData = async ({ path, context }: Options) => {
+const extractAllFileData = async ({ path }: Options) => {
   const allMarkdownFilesPathPath = allMarkdownFilesPath(path);
   try {
     return allMarkdownFilesPathPath.map((f) => {
-      const d = openFile({ path: f, force: false, context });
+      const d = openFile({ path: f, force: false });
       // const d = await openFile({ filePath: f });
 
       const data = {
