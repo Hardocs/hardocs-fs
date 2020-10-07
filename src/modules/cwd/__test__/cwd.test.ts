@@ -2,8 +2,8 @@ import cwd from '../';
 
 describe('Current working Directory: -', () => {
   it('returns a path `string` to your current directory', () => {
-    const currentDir = cwd.get();
+    const currentDir = process.cwd();
 
-    expect(currentDir).toBeTruthy();
+    expect(cwd.get()).toBe(currentDir)
   });
 });
