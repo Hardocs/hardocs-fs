@@ -15,5 +15,5 @@ push.sh
 src/.temp
 /nuxt
 .history
-dist
+dist/
 test.js
