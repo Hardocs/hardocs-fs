@@ -1,6 +1,5 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
-// import * as winattr from 'winattr';
 
 import { Options, GeneratedFolder, Path } from '../../typings/globals';
 import cwd from '../cwd';
