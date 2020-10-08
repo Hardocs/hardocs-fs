@@ -20,8 +20,6 @@ describe('Test for file operations: ', () => {
 
     const sortedFileKeys = Object.keys(openFile).sort();
     const sortedFileTest = Object.keys(openFileKeys).sort();
-
-    console.log({ sortedFileKeys, sortedFileTest });
     expect(sortedFileKeys).toEqual(sortedFileTest);
   });
 });
