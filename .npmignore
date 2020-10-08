@@ -6,3 +6,6 @@ src
 .eslintignore
 .eslintrc
 images
+!dist
+!dist/
+./**/__test__/

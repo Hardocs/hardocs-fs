@@ -1,10 +1,11 @@
 {
   "name": "hardocs-fs",
-  "version": "0.0.1-beta",
+  "version": "0.0.11-beta",
   "description": "Helper functions to perform most file/folder operations meant to be used in an electron app.",
   "scripts": {
     "lint": "eslint './**/*.{tsx,ts}' --quiet --fix",
     "test": "env NODE_ENV=test jest",
+    "v:pub": "npm publish --registry http://localhost:4873",
     "gen:types": "ts-node --files ./src/scripts/createTypes.ts",
     "build": "rimraf -fr ./dist && tsc"
   },
