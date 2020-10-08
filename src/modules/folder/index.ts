@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import * as winattr from 'winattr';
+// import * as winattr from 'winattr';
 
 import { Options, GeneratedFolder, Path } from '../../typings/globals';
 import cwd from '../cwd';
@@ -86,7 +86,9 @@ const isHidden = ({ path: file }: Path) => {
 
     if (isPlatformWindows) {
       const windowsFile = file.replace(/\\/g, '\\\\');
-      result.windows = winattr.getSync(windowsFile).hidden;
+
+      console.log({ windowsFile });
+      // result.windows = winattr.getSync(windowsFile).hidden;
     }
 
     return (

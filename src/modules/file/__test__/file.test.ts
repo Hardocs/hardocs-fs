@@ -22,4 +22,9 @@ describe('Test for file operations: ', () => {
     const sortedFileTest = Object.keys(openFileKeys).sort();
     expect(sortedFileKeys).toEqual(sortedFileTest);
   });
+
+  it('returns an array of strings of paths to markdown files', () => {
+    const paths = file.allMarkdownFilesPath(__dirname + '../folder');
+    console.log({ paths });
+  });
 });

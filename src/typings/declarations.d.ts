@@ -1,1 +1,1 @@
-declare module 'winattr';
+// declare module 'winattr';
