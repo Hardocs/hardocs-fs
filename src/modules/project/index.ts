@@ -15,8 +15,9 @@ const markdownFile = path.join(
 // const docsTemplateDir = path.join(__dirname, '../../../template/docsTemplate');
 
 const openProject = async ({
-  path: fullPath,  force = false
-}: Options) => {
+  path: fullPath,
+  force = false
+}: Options): Promise<HDS.IProject | HDS.IError> => {
   if (!fullPath) {
     fullPath = cwd.get();
   }
@@ -29,15 +30,18 @@ const openProject = async ({
   const docsDir = hardocsJson.hardocsJson.docsDir;
 
   if (!docsDir || docsDir.trim() === '') {
-    ('No documentations provided');
-    return;
+    return {
+      error: true,
+      message: 'No Docs directory specified in ".hardocs/hardocs.json"'
+    };
   }
 
   const entryFilePath = `${docsDir}/${hardocsJson.hardocsJson.entryFile}`;
   const allFileData = await file.extractAllFileData({ path: docsDir });
 
   const entry = await file.openEntryFile({
-    path: entryFilePath  });
+    path: entryFilePath
+  });
   const allDocsData = allFileData
     .map((f) => {
       if (f.fileName === file.getFileName({ path: entryFilePath })) {
@@ -50,30 +54,29 @@ const openProject = async ({
   const response = {
     ...hardocsJson.hardocsJson,
     path: fullPath,
-    allDocsData
-  };
+    allDocsData,
+    __typename: 'Project'
+  } as HDS.IProject;
+
   return response;
 };
 
-const create = async ({
-  input}: HDS.ICreateProjectOnMutationArguments ) => {
+const create = async (
+  input: HDS.ICreateProjectInput
+): Promise<HDS.IProject | HDS.IError> => {
   if (input) {
     const projectPath = input.path || cwd.get();
     const dest = path.join(projectPath, input.name);
     await cwd.set(dest);
     if (!folder.isDirectory({ path: dest })) {
-      try {
-        await fs.mkdir(dest);
-        await cwd.set(dest);
-      } catch (er) {
-        throw new Error(er.message);
-      }
+      fs.mkdirSync(dest);
+      await cwd.set(dest);
     }
     try {
       const result = {
         id: Math.round(Math.abs(Math.random() * new Date().getTime())),
         ...input,
-        updatedAt: new Date().toISOString()
+        updatedAt: 'new Date().toISOString()'
       };
       const hardocsDir = getHardocsDir(dest);
       await fs.ensureDir(hardocsDir);
@@ -104,14 +107,20 @@ const create = async ({
         }
       });
 
-      const response = openProject({ path: cwd.get() }); // Open project before requiring any files in it
+      const response = await openProject({ path: cwd.get() }); // Open project before requiring any files in it
 
       return response;
     } catch (er) {
-      throw new Error(er);
+      return {
+        error: true,
+        message: er.message
+      };
     }
   }
-  return false;
+  return {
+    error: true,
+    message: 'Please specify a project path'
+  };
 };
 
 const createFromExisting = async ({
@@ -126,10 +135,10 @@ const createFromExisting = async ({
     await cwd.set(dest);
     try {
       const result = {
-        id: Math.round(Math.abs(Math.random() * new Date().getTime())),
+        id: String(Math.round(Math.abs(Math.random() * new Date().getTime()))),
         ...input,
-        updatedAt: new Date().toISOString()
-      };
+        updatedAt: 'new Date().toISOString()'
+      } as HDS.IProject;
       const hardocsDir = getHardocsDir(dest);
       await fs.ensureDir(hardocsDir);
       const hardocsJson = `${hardocsDir}/hardocs.json`;

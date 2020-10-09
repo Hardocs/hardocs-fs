@@ -284,6 +284,11 @@ declare namespace HDS {
     __typename: 'Contributor';
     name: string;
   }
+
+  interface IError {
+    error: boolean;
+    message: string;
+  }
 }
 
 // tslint:enable
