@@ -1,5 +1,5 @@
 import * as path from 'path';
-import * as fs from 'fs-extra';
+import * as fs from 'fs';
 
 import { Options, GeneratedFolder, Path } from '../../typings/globals';
 import cwd from '../cwd';
@@ -9,6 +9,22 @@ import file from '../file';
 const isPlatformWindows =
   process.platform.indexOf('win') === 0 || process.platform.includes('win');
 const hiddenPrefix = '.';
+
+/**
+ * 
+ * @param src `from`. folder or file you whish to copy 
+ * @param dest `to`. destination where you want to copy files/folder to
+ */
+const copy = (src: string, dest: string) => {
+  fs.mkdirSync(dest);
+  fs.readdirSync(src).forEach(element => {
+      if (fs.lstatSync(path.join(src, element)).isFile()) {
+          fs.copyFileSync(path.join(src, element), path.join(dest, element));
+      } else {
+          copy(path.join(src, element), path.join(dest, element));
+      }
+  });
+}
 
 const isDirectory = ({ path: file }: Path) => {
   file = file.replace(/\\/g, path.sep);
@@ -50,7 +66,7 @@ const createFolder = ({ path: name }: Path) => {
   }
 
   const folder = path.join(cwd.get(), name);
-  fs.ensureDirSync(folder);
+  fs.mkdirSync(folder);
   return generateFolder({ path: folder });
 };
 
@@ -114,12 +130,12 @@ const readPackage = async (options: Partial<Options>) => {
 
   // Hardocs hidden folder
   const hardocsDir = getHardocsDir(file);
-  const hardocsPkg = path.join(hardocsDir, 'hardocs.json');
+  const hardocsPkg = path.join(hardocsDir, 'hardocs.json')
 
   if (isDirectory({ path: hardocsDir })) {
     if (fs.existsSync(hardocsPkg)) {
-      const pkg = fs.readJsonSync(hardocsPkg);
-      return pkg;
+      const pkg = fs.readFileSync(hardocsPkg);
+      return JSON.parse(pkg as any);
     } else {
       console.log('Not a hardocs directory');
       return false;
@@ -160,8 +176,10 @@ const getDocsFolder = async ({ path, force }: Partial<Options>) => {
   return `${fromBaseDir}/${docsDir}`;
 };
 
-const deleteFolder = async ({ path }: Path): Promise<boolean> => {
-  await fs.remove(path);
+const deleteFolder = ({ path }: Path): boolean => {
+  if(isDirectory({path})){
+    fs.rmdirSync(path, {recursive: true});
+  }
   return true;
 };
 
@@ -177,5 +195,6 @@ export default {
   getDocsFolder,
   readPackage,
   isHardocsProject,
-  deleteFolder
+  deleteFolder,
+  copy
 };

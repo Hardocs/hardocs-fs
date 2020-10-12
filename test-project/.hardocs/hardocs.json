@@ -1,0 +1,8 @@
+{
+  "id": 1205769192853,
+  "name": "test-project",
+  "path": "/home/divine/Documents/projects/hardocs/hardocs-fs",
+  "docsDir": "docs",
+  "entryFile": "index.md",
+  "updatedAt": "new Date().toISOString()"
+}

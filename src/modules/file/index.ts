@@ -1,5 +1,5 @@
 import glob from 'glob';
-import fs from 'fs-extra';
+import * as fs from 'fs';
 
 import cwd from '../cwd';
 import folder from '../folder';
@@ -118,8 +118,8 @@ const getHardocsJsonFile = async ({
   if (!folder.isHardocsProject({ path: currentDir }) || !hardocsDir) {
     throw new Error('Not a valid hardocs project');
   }
-  const hardocsFile: string = await fs.readFile(`${hardocsDir}/hardocs.json`, {
-    encoding: 'utf8'
+  const hardocsFile: string = fs.readFileSync(`${hardocsDir}/hardocs.json`, {
+    encoding: 'utf-8'
   });
   const hardocsJson = await JSON.parse(hardocsFile);
   return { hardocsJson, currentDir };
@@ -131,8 +131,8 @@ const createMarkdownTemplate = async (
   path: string
 ) => {
   try {
-    const data = await fs.readFile(entryPath, 'utf8');
-    const newFile = await fs.writeFile(`${path}/${filename}`, data, {
+    const data = await fs.readFileSync(entryPath, 'utf-8');
+    const newFile = await fs.writeFileSync(`${path}/${filename}`, data, {
       flag: 'w+'
     });
     return newFile;
