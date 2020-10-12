@@ -7,5 +7,6 @@ module.exports = {
     }
   },
   collectCoverageFrom: ["**/*.{ts, tsx, js}", "!**/node_modules/**", "!**/dist/**"],
-  roots: ["./src"]
+  roots: ["./src"],
+  verbose: true
 };

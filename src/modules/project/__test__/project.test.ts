@@ -1,5 +1,5 @@
 import path from 'path';
-// import fs from 'fs';
+import fs from 'fs';
 
 import project from '../';
 import mockData from './test.json';
@@ -26,15 +26,16 @@ describe('Hardocs project test: ', () => {
     //   path.join(__dirname, './test.json'),
     //   JSON.stringify(_hardocsProject)
     // );
-    expect(_hardocsProject).toEqual(expect.objectContaining(mockData));
+
     /**
-     * Clean-up
-     *
-     * Delete created hardocs project
+     * Ensure that the created project matches a valid hardocs project
      */
-    // fs.rmdirSync(_hardocsProject.path as string, {
-    //   recursive: true
-    // });
+    expect(_hardocsProject).toEqual(expect.objectContaining(mockData));
+
+    /**
+     * Ensure that the current working directory is equal to the project.path
+     */
+    expect(_hardocsProject.path).toEqual(process.cwd());
   });
 
   it('opens a hardocs project', async () => {
@@ -45,5 +46,14 @@ describe('Hardocs project test: ', () => {
     _openedProject.id = '1';
 
     expect(_openedProject).toEqual(expect.objectContaining(mockData));
+
+    /**
+     * Clean-up
+     *
+     * Delete created hardocs project
+     */
+    fs.rmdirSync(projectPath, {
+      recursive: true
+    });
   });
 });
