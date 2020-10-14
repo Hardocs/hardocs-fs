@@ -1,6 +1,7 @@
 import { Options } from './../../typings/globals';
 import * as path from 'path';
-import * as fs from 'fs-extra';
+import * as fs from 'fs';
+import { v4 as UUIDv4 } from 'uuid';
 
 import cwd from '../cwd';
 import folder from '../folder';
@@ -17,16 +18,27 @@ const markdownFile = path.join(
 const openProject = async ({
   path: fullPath,
   force = false
-}: Options): Promise<HDS.IProject | HDS.IError> => {
+}: Partial<Options>): Promise<HDS.IProject | HDS.IError> => {
+  if (force && !fullPath) {
+    return {
+      error: true,
+      message: 'Please specify path when using `force: true` option..'
+    };
+  }
+
   if (!fullPath) {
     fullPath = cwd.get();
   }
-  cwd.set(fullPath);
 
-  const hardocsJson = await file.getHardocsJsonFile({
+  await cwd.set(fullPath);
+
+  const hardocsJson = file.getHardocsJsonFile({
     path: fullPath,
     force
   });
+
+  console.log({ fullPath, hardocsJson });
+
   const docsDir = hardocsJson.hardocsJson.docsDir;
 
   if (!docsDir || docsDir.trim() === '') {
@@ -61,6 +73,27 @@ const openProject = async ({
   return response;
 };
 
+/**
+ *
+ * @param path file path you want to write to
+ * @param data the content you want to write into the file
+ */
+const writeToJson = (path: string, data: any) => {
+  const stream = fs.createWriteStream(path, {
+    encoding: 'utf8',
+    flags: 'w+'
+  });
+
+  stream.once('ready', () => {
+    stream.write(JSON.stringify(data, null, 2), (err) => {
+      if (err) {
+        console.error(err.message);
+      }
+    });
+    // console.log('Finished stream');
+  });
+};
+
 const create = async (
   input: HDS.ICreateProjectInput
 ): Promise<HDS.IProject | HDS.IError> => {
@@ -72,42 +105,43 @@ const create = async (
       fs.mkdirSync(dest);
       await cwd.set(dest);
     }
+
     try {
       const result = {
-        id: Math.round(Math.abs(Math.random() * new Date().getTime())),
+        id: UUIDv4(),
         ...input,
         updatedAt: 'new Date().toISOString()'
       };
       const hardocsDir = getHardocsDir(dest);
-      await fs.ensureDir(hardocsDir);
+
+      if (!fs.existsSync(hardocsDir)) {
+        fs.mkdirSync(hardocsDir);
+      }
       const hardocsJson = `${hardocsDir}/hardocs.json`;
+
+      setTimeout(async () => {
+        writeToJson(hardocsJson, result);
+      }, 0);
+
+      // Promise.resolve(writeToJson(hardocsJson, result));
 
       const docsDir = `${dest}/${result.docsDir}`;
 
       if (folder.isDirectory({ path: templateDir })) {
-        await fs.copy(templateDir, dest);
+        folder.copy(templateDir, dest);
         // await fs.copy(docsTemplateDir, docsDir); // TODO: Copy docs template if provided
       }
 
-      await fs.ensureDir(docsDir);
+      if (!fs.existsSync(docsDir)) {
+        fs.mkdirSync(docsDir);
+      }
       await file.createMarkdownTemplate(
         markdownFile,
         result.entryFile,
         docsDir
       );
 
-      const stream = fs.createWriteStream(hardocsJson, {
-        encoding: 'utf8',
-        flags: 'w+'
-      });
-
-      stream.write(JSON.stringify(result, null, 2), (err) => {
-        if (err) {
-          console.log(err.message);
-        }
-      });
-
-      const response = await openProject({ path: cwd.get() }); // Open project before requiring any files in it
+      const response = await openProject({ path: dest, force: true }); // Open project before requiring any files in it
 
       return response;
     } catch (er) {
@@ -135,12 +169,14 @@ const createFromExisting = async ({
     await cwd.set(dest);
     try {
       const result = {
-        id: String(Math.round(Math.abs(Math.random() * new Date().getTime()))),
+        id: UUIDv4(),
         ...input,
         updatedAt: 'new Date().toISOString()'
       } as HDS.IProject;
       const hardocsDir = getHardocsDir(dest);
-      await fs.ensureDir(hardocsDir);
+      if (!fs.existsSync(hardocsDir)) {
+        fs.mkdirSync(hardocsDir);
+      }
       const hardocsJson = `${hardocsDir}/hardocs.json`;
 
       const docsDir = `${dest}/${result.docsDir}`;
@@ -148,7 +184,9 @@ const createFromExisting = async ({
       if (folder.isDirectory({ path: templateDir })) {
         // await fs.copy(templateDir, dest);
         // await fs.copy(docsTemplateDir, docsDir);
-        await fs.ensureDir(docsDir);
+        if (!fs.existsSync(docsDir)) {
+          fs.mkdirSync(docsDir);
+        }
         if (!file.exists(`${docsDir}/${result.entryFile}`)) {
           await file.createMarkdownTemplate(
             markdownFile,

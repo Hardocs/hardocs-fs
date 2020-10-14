@@ -46,4 +46,11 @@ describe('Test for file operations: ', () => {
     const paths = file.allMarkdownFilesPath(emptyDir);
     expect(paths).toEqual([]);
   });
+
+
+  it("parses hardocs json file", () => {
+    const jsonFile = file.getHardocsJsonFile({path: '/home/divine/Documents/projects/hardocs/hardocs-fs/test-project', force: true})
+
+    console.log({jsonFile})
+  })
 });

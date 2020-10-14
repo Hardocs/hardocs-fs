@@ -70,11 +70,11 @@ const getImages = (path?: string) => {
   return images;
 };
 
-const getImagesInHardocsProject = async ({
+const getImagesInHardocsProject = ({
   path,
-}: Options): Promise<string[] | string> => {
+}: Options): string[] | string => {
   cwd.set(path);
-  const hardocsJson = await file.getHardocsJsonFile({ path });
+  const hardocsJson = file.getHardocsJsonFile({ path });
   if (hardocsJson) {
     const assetsDir = hardocsJson.hardocsJson.assets;
     if (assetsDir) {

@@ -1,9 +1,9 @@
+import { getHardocsDir } from './../../utils/constants';
 import * as path from 'path';
 import * as fs from 'fs';
 
 import { Options, GeneratedFolder, Path } from '../../typings/globals';
 import cwd from '../cwd';
-import { getHardocsDir } from './../../utils/constants';
 import file from '../file';
 
 const isPlatformWindows =
@@ -16,7 +16,9 @@ const hiddenPrefix = '.';
  * @param dest `to`. destination where you want to copy files/folder to
  */
 const copy = (src: string, dest: string) => {
-  fs.mkdirSync(dest);
+  if(!fs.existsSync(dest)){
+    fs.mkdirSync(dest);
+  }
   fs.readdirSync(src).forEach(element => {
       if (fs.lstatSync(path.join(src, element)).isFile()) {
           fs.copyFileSync(path.join(src, element), path.join(dest, element));
@@ -32,8 +34,8 @@ const isDirectory = ({ path: file }: Path) => {
     return fs.existsSync(file) && fs.statSync(file).isDirectory();
   } catch (err) {
     console.log(err.message);
+    return false;
   }
-  return false;
 };
 
 const generateFolder = ({ path: file }: Path): GeneratedFolder => {
@@ -118,40 +120,42 @@ const isHidden = ({ path: file }: Path) => {
   }
 };
 
-const readPackage = async (options: Partial<Options>) => {
-  const { path: file = '', force = false } = options;
-
-  if (!force) {
-    // const cachedValue = await redis.get(`${READ_PACKAGE_PREFIX}${file}`);
-    // if (cachedValue) {
-    //   return cachedValue;
-    // }
+const readPackage = ({ path: docsPath = '', force = false }: Partial<Options>) => {
+  if(!force){
+    docsPath = cwd.get()
   }
-
+    
   // Hardocs hidden folder
-  const hardocsDir = getHardocsDir(file);
-  const hardocsPkg = path.join(hardocsDir, 'hardocs.json')
-
-  if (isDirectory({ path: hardocsDir })) {
-    if (fs.existsSync(hardocsPkg)) {
-      const pkg = fs.readFileSync(hardocsPkg);
-      return JSON.parse(pkg as any);
-    } else {
-      console.log('Not a hardocs directory');
-      return false;
+  const hardocsDir = getHardocsDir(docsPath);
+  const hardocsPkg = path.join(hardocsDir, 'hardocs.json')  
+  
+  try {
+    if (isDirectory({ path: hardocsDir })) {
+      if (fs.existsSync(hardocsPkg)) {
+        const jSON = fs.readFileSync(hardocsPkg, 'utf8')
+        
+        return jSON
+      }
+      return 'Please provide a hardocs-json file'
     }
+    return 'Please specify a valid hardocs directory'
+  } catch (err) {
+    console.error(err)
+    return false
   }
 };
 
-const isHardocsProject = async ({
-  path
-}: Partial<Options>): Promise<boolean> => {
+const isHardocsProject = ({
+  path: dir,
+  force = false
+}: Options): boolean => {
   try {
-    const pkg = await readPackage({ path });
+    const pkg = readPackage({ path: dir, force});
     return !!pkg;
   } catch (er) {
     if (process.env.HARDOCS_DEV_MODE) {
-      console.log(`${er} This is not a HARDOCS projects`);
+      console.log(`${er} 
+      This is not a HARDOCS projects`);
     }
     return false;
   }
@@ -167,9 +171,8 @@ const getDocsFolder = async ({ path, force }: Partial<Options>) => {
   if (!isHardocsProject({ path: fromBaseDir })) {
     throw new Error('Not a hardocs project');
   }
-
   const hardocsJson = (
-    await file.getHardocsJsonFile({ path: fromBaseDir, force })
+    file.getHardocsJsonFile({ path: fromBaseDir, force })
   ).hardocsJson;
   const { docsDir } = hardocsJson;
 

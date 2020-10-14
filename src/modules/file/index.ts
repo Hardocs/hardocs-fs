@@ -80,10 +80,13 @@ const allMarkdownFilesPath = (filePath?: string) => {
 
 const getEntryFilePath = async ({
   path: projectPath,
-  
   force
 }: Options): Promise<string> => {
-  if (!folder.isHardocsProject({ path: projectPath })) {
+  if(!force){
+    projectPath = `${cwd.get()}/${projectPath}`
+  }
+
+  if (!folder.isHardocsProject({ path: projectPath, force })) {
     throw new Error('Not a valid hardocs project');
   }
 
@@ -92,37 +95,36 @@ const getEntryFilePath = async ({
     force
   });
   const entryFileName = (
-    await getHardocsJsonFile({ path: projectPath, force })
+    getHardocsJsonFile({ path: projectPath, force })
   ).hardocsJson.entryFile;
 
   const entryFile = `${docsDir}/${entryFileName}`;
   return entryFile;
 };
 
-const getHardocsJsonFile = async ({
+const getHardocsJsonFile =  ({
   path,
   force = false
-}: Options): Promise<{
+}: Partial<Options>):{
   hardocsJson: HDS.IProject;
   currentDir: string;
-}> => {
-  let currentDir = cwd.get();
-  if (force) {
-    if (path) {
-      currentDir = path;
-    }
+} => {
+
+  if(force && !path){
+    throw new Error ("Please specify path when using `force: true` option..")
+  } 
+  if(!path){
+    path = cwd.get()
   }
-
-  const hardocsDir = getHardocsDir(currentDir);
-
-  if (!folder.isHardocsProject({ path: currentDir }) || !hardocsDir) {
+  
+  const hardocsDir = getHardocsDir(path);
+  
+  if (!folder.isHardocsProject({ path, force })) {
     throw new Error('Not a valid hardocs project');
   }
-  const hardocsFile: string = fs.readFileSync(`${hardocsDir}/hardocs.json`, {
-    encoding: 'utf-8'
-  });
-  const hardocsJson = await JSON.parse(hardocsFile);
-  return { hardocsJson, currentDir };
+  const hardocsFile: string = fs.readFileSync(`${hardocsDir}/hardocs.json`, 'utf-8');
+  const hardocsJson = JSON.parse(hardocsFile);
+  return { hardocsJson, currentDir: path };
 };
 
 const createMarkdownTemplate = async (
@@ -131,8 +133,8 @@ const createMarkdownTemplate = async (
   path: string
 ) => {
   try {
-    const data = await fs.readFileSync(entryPath, 'utf-8');
-    const newFile = await fs.writeFileSync(`${path}/${filename}`, data, {
+    const data = fs.readFileSync(entryPath, 'utf-8');
+    const newFile = fs.writeFileSync(`${path}/${filename}`, data, {
       flag: 'w+'
     });
     return newFile;
@@ -142,9 +144,11 @@ const createMarkdownTemplate = async (
 };
 
 const openEntryFile = async ({ path, force }: Options) => {
-  const entryFilePath = await getEntryFilePath({ path, force });
+  if(!force){
+    path = `${cwd.get()}/${path}`
+  }
 
-  const metadata = openFile({ path: entryFilePath, force: false });
+  const metadata = openFile({ path, force: false });
   return metadata;
 };
 
