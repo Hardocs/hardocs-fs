@@ -1,4 +1,4 @@
-import path from 'path';
+// import path from 'path';
 // import fs from 'fs';
 
 import project from '../';
@@ -16,13 +16,12 @@ describe('Hardocs project test: ', () => {
 
     projectPath = _hardocsProject.path as string;
 
-    console.log({projectPath, _hardocsProject})
+    console.log({ projectPath, _hardocsProject });
     /**
      * The ID is a randomly generated string so i have to reasign it to a fixed value and also modify the mock to have an id of "1"
      */
     mockData.id = '1';
     _hardocsProject.id = '1';
-
 
     // fs.writeFileSync(
     //   path.join(__dirname, './test.json'),
@@ -48,7 +47,7 @@ describe('Hardocs project test: ', () => {
   //   _openedProject.id = '1';
 
   //   expect(_openedProject).toEqual(expect.objectContaining(mockData));
-    
+
   //   /**
   //    * Clean-up
   //    *
@@ -59,7 +58,6 @@ describe('Hardocs project test: ', () => {
   //   // });
   // });
 });
-
 
 // afterAll(() => {
 //   fs.rmdirSync(projectPath)

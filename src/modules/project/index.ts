@@ -37,8 +37,6 @@ const openProject = async ({
     force
   });
 
-  console.log({ fullPath, hardocsJson });
-
   const docsDir = hardocsJson.hardocsJson.docsDir;
 
   if (!docsDir || docsDir.trim() === '') {
@@ -123,7 +121,7 @@ const create = async (
         writeToJson(hardocsJson, result);
       }, 0);
 
-      // Promise.resolve(writeToJson(hardocsJson, result));
+      // Promise.resolve().then(() => writeToJson(hardocsJson, result));
 
       const docsDir = `${dest}/${result.docsDir}`;
 
