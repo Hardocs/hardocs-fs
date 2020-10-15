@@ -16,12 +16,13 @@ describe('Hardocs project test: ', () => {
 
     projectPath = _hardocsProject.path as string;
 
-    console.log({ projectPath, _hardocsProject });
     /**
      * The ID is a randomly generated string so i have to reasign it to a fixed value and also modify the mock to have an id of "1"
      */
     mockData.id = '1';
     _hardocsProject.id = '1';
+
+    // console.log({ projectPath, _hardocsProject, mockData });
 
     // fs.writeFileSync(
     //   path.join(__dirname, './test.json'),
@@ -31,34 +32,32 @@ describe('Hardocs project test: ', () => {
     /**
      * Ensure that the created project matches a valid hardocs project
      */
-    // expect(_hardocsProject).toEqual(expect.objectContaining(mockData));
+    expect(_hardocsProject).toEqual(expect.objectContaining(mockData));
 
     /**
      * Ensure that the current working directory is equal to the project.path
      */
-    // expect(_hardocsProject.path).toEqual(process.cwd());
+    expect(_hardocsProject.path).toEqual(process.cwd());
   });
 
-  // it('opens a hardocs project', async () => {
-  //   const _openedProject = (await project.open({
-  //     path: `/home/divine/Documents/projects/hardocs/hardocs-fs/test-project`, force: true
-  //   })) as HDS.IProject;
-  //   mockData.id = '1';
-  //   _openedProject.id = '1';
+  it('opens a hardocs project', async () => {
+    const _openedProject = (await project.open({
+      path: projectPath,
+      force: true
+    })) as HDS.IProject;
+    mockData.id = '1';
+    _openedProject.id = '1';
 
-  //   expect(_openedProject).toEqual(expect.objectContaining(mockData));
+    expect(_openedProject).toEqual(expect.objectContaining(mockData));
 
-  //   /**
-  //    * Clean-up
-  //    *
-  //    * Delete created hardocs project
-  //    */
-  //   // fs.rmdirSync(projectPath, {
-  //   //   recursive: true
-  //   // });
-  // });
+    /**
+     * Clean-up
+     *
+     * Delete created hardocs project
+     */
+    console.log({ projectPath });
+    // fs.rmdirSync(projectPath, {
+    //   recursive: true
+    // });
+  });
 });
-
-// afterAll(() => {
-//   fs.rmdirSync(projectPath)
-// })

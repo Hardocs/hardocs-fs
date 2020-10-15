@@ -1,6 +1,7 @@
 import file from '../';
 import path from 'path';
 import fs from 'fs';
+import json from './hardocs.json';
 
 const emptyDir = path.join(__dirname, 'empty');
 const markdownFile = path.join(__dirname, 'test-file.md');
@@ -47,12 +48,23 @@ describe('Test for file operations: ', () => {
     expect(paths).toEqual([]);
   });
 
-  it('parses hardocs json file', () => {
-    const jsonFile = file.getHardocsJsonFile({
+  it('returns hardocs json file', () => {
+    const { hardocsJson } = file.getHardocsJsonFile({
       path: '/home/divine/Documents/projects/hardocs/hardocs-fs/test-project',
       force: true
     });
 
-    console.log({ jsonFile });
+    hardocsJson.id = '1';
+    json.id = '1';
+    expect(hardocsJson).toEqual(expect.objectContaining(json));
+  });
+
+  it('saves a markdown file', () => {
+    const data = `
+Train your Mind, Body and Soul to become Exceptional.
+#Divine Nature
+    `;
+
+    const response = file.writeToFile();
   });
 });
