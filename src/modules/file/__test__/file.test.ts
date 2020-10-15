@@ -1,6 +1,6 @@
 import file from '../';
 import path from 'path';
-import fs from 'fs-extra';
+import fs from 'fs';
 
 const emptyDir = path.join(__dirname, 'empty');
 const markdownFile = path.join(__dirname, 'test-file.md');
@@ -47,10 +47,12 @@ describe('Test for file operations: ', () => {
     expect(paths).toEqual([]);
   });
 
+  it('parses hardocs json file', () => {
+    const jsonFile = file.getHardocsJsonFile({
+      path: '/home/divine/Documents/projects/hardocs/hardocs-fs/test-project',
+      force: true
+    });
 
-  it("parses hardocs json file", () => {
-    const jsonFile = file.getHardocsJsonFile({path: '/home/divine/Documents/projects/hardocs/hardocs-fs/test-project', force: true})
-
-    console.log({jsonFile})
-  })
+    console.log({ jsonFile });
+  });
 });

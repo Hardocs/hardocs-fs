@@ -46,10 +46,10 @@ description: ${description}
 ---
 `;
 
-//   const mdContent = converter.makeMarkdown(content, dom.window.document);
-//   const markdown = `${yml}
-// ${mdContent}
-//   `;
+  //   const mdContent = converter.makeMarkdown(content, dom.window.document);
+  //   const markdown = `${yml}
+  // ${mdContent}
+  //   `;
 
   // const mdContent = converter.makeMarkdown(content, dom.window.document);
   const markdown = `${yml}
@@ -82,8 +82,8 @@ const getEntryFilePath = async ({
   path: projectPath,
   force
 }: Options): Promise<string> => {
-  if(!force){
-    projectPath = `${cwd.get()}/${projectPath}`
+  if (!force) {
+    projectPath = `${cwd.get()}/${projectPath}`;
   }
 
   if (!folder.isHardocsProject({ path: projectPath, force })) {
@@ -94,46 +94,55 @@ const getEntryFilePath = async ({
     path: projectPath,
     force
   });
-  const entryFileName = (
-    getHardocsJsonFile({ path: projectPath, force })
-  ).hardocsJson.entryFile;
+  const entryFileName = getHardocsJsonFile({ path: projectPath, force })
+    .hardocsJson.entryFile;
 
   const entryFile = `${docsDir}/${entryFileName}`;
   return entryFile;
 };
 
-const getHardocsJsonFile =  ({
+const getHardocsJsonFile = ({
   path,
   force = false
-}: Partial<Options>):{
+}: Partial<Options>): {
   hardocsJson: HDS.IProject;
   currentDir: string;
 } => {
-
-  if(force && !path){
-    throw new Error ("Please specify path when using `force: true` option..")
-  } 
-  if(!path){
-    path = cwd.get()
+  if (force && !path) {
+    throw new Error('Please specify path when using `force: true` option..');
   }
-  
+  if (!path) {
+    path = cwd.get();
+  }
+
   const hardocsDir = getHardocsDir(path);
-  
+
   if (!folder.isHardocsProject({ path, force })) {
     throw new Error('Not a valid hardocs project');
   }
-  const hardocsFile: string = fs.readFileSync(`${hardocsDir}/hardocs.json`, 'utf-8');
+  const hardocsFile: string = fs.readFileSync(
+    `${hardocsDir}/hardocs.json`,
+    'utf-8'
+  );
   const hardocsJson = JSON.parse(hardocsFile);
   return { hardocsJson, currentDir: path };
 };
 
-const createMarkdownTemplate = async (
-  entryPath: string,
-  filename: string,
-  path: string
-) => {
+const createMarkdownTemplate = async (filename: string, path: string) => {
   try {
-    const data = fs.readFileSync(entryPath, 'utf-8');
+    // const data = fs.readFileSync(entryPath, 'utf-8');
+
+    const data = `
+---
+title: Example
+description: This is a test document
+---
+
+# Example Doc
+
+Keep doing what you're doing
+    `;
+
     const newFile = fs.writeFileSync(`${path}/${filename}`, data, {
       flag: 'w+'
     });
@@ -144,8 +153,8 @@ const createMarkdownTemplate = async (
 };
 
 const openEntryFile = async ({ path, force }: Options) => {
-  if(!force){
-    path = `${cwd.get()}/${path}`
+  if (!force) {
+    path = `${cwd.get()}/${path}`;
   }
 
   const metadata = openFile({ path, force: false });

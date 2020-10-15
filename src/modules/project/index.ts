@@ -8,11 +8,11 @@ import folder from '../folder';
 import { getHardocsDir } from './../../utils/constants';
 import file from '../file';
 
-const templateDir = path.join(__dirname, '../../../template/template'); // TODO: Include template
-const markdownFile = path.join(
-  __dirname,
-  '../../../template/docsTemplate/index.md'
-);
+// const templateDir = path.join(__dirname, '../../../template/template'); // TODO: Include template
+// const markdownFile = path.join(
+//   __dirname,
+//   '../../../template/docsTemplate/index.md'
+// );
 // const docsTemplateDir = path.join(__dirname, '../../../template/docsTemplate');
 
 const openProject = async ({
@@ -124,20 +124,16 @@ const create = async (
       // Promise.resolve().then(() => writeToJson(hardocsJson, result));
 
       const docsDir = `${dest}/${result.docsDir}`;
-
-      if (folder.isDirectory({ path: templateDir })) {
-        folder.copy(templateDir, dest);
-        // await fs.copy(docsTemplateDir, docsDir); // TODO: Copy docs template if provided
-      }
-
       if (!fs.existsSync(docsDir)) {
         fs.mkdirSync(docsDir);
       }
-      await file.createMarkdownTemplate(
-        markdownFile,
-        result.entryFile,
-        docsDir
-      );
+
+      // if (folder.isDirectory({ path: templateDir })) {
+      //   folder.copy(templateDir, dest);
+      //   // await fs.copy(docsTemplateDir, docsDir); // TODO: Copy docs template if provided
+      // }
+
+      await file.createMarkdownTemplate(result.entryFile, docsDir);
 
       const response = await openProject({ path: dest, force: true }); // Open project before requiring any files in it
 
@@ -179,20 +175,16 @@ const createFromExisting = async ({
 
       const docsDir = `${dest}/${result.docsDir}`;
 
-      if (folder.isDirectory({ path: templateDir })) {
-        // await fs.copy(templateDir, dest);
-        // await fs.copy(docsTemplateDir, docsDir);
-        if (!fs.existsSync(docsDir)) {
-          fs.mkdirSync(docsDir);
-        }
-        if (!file.exists(`${docsDir}/${result.entryFile}`)) {
-          await file.createMarkdownTemplate(
-            markdownFile,
-            result.entryFile,
-            docsDir
-          );
-        }
+      // if (folder.isDirectory({ path: templateDir })) {
+      // await fs.copy(templateDir, dest);
+      // await fs.copy(docsTemplateDir, docsDir);
+      if (!fs.existsSync(docsDir)) {
+        fs.mkdirSync(docsDir);
       }
+      if (!file.exists(`${docsDir}/${result.entryFile}`)) {
+        await file.createMarkdownTemplate(result.entryFile, docsDir);
+      }
+      // }
 
       const stream = fs.createWriteStream(hardocsJson, {
         encoding: 'utf8',
