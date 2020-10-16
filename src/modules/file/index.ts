@@ -197,7 +197,10 @@ const deleteFile = ({
   filePath
 }: HDS.IDeleteFileOnMutationArguments): boolean | HDS.IError => {
   if (folder.isDirectory({ path: filePath })) {
-    throw new Error('File path must point to a valid file and not a directory');
+    return {
+      error: true,
+      message: 'File path must point to a valid file and not a directory'
+    };
   }
 
   if (!exists(filePath)) {
