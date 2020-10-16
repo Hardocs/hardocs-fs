@@ -195,25 +195,36 @@ const exists = (path: string): boolean => {
 
 const deleteFile = ({
   filePath
-}: HDS.IDeleteFileOnMutationArguments): boolean => {
+}: HDS.IDeleteFileOnMutationArguments): boolean | HDS.IError => {
   if (folder.isDirectory({ path: filePath })) {
     throw new Error('File path must point to a valid file and not a directory');
   }
 
   if (!exists(filePath)) {
-    throw new Error('File does not exist');
+    return {
+      error: true,
+      message: "File doesn't exist"
+    };
   }
   fs.stat(filePath, (err, stat) => {
     if (err) {
-      console.log(err);
+      return {
+        error: true,
+        message: err.message
+      };
     }
     if (stat.isDirectory()) {
-      console.log(`${filePath} is a Directory`);
-      return false;
+      return {
+        error: true,
+        message: "Method doesn't support deleting of directories."
+      };
     }
     fs.unlink(filePath, (err) => {
       if (err) {
-        throw new Error(err.message);
+        return {
+          error: true,
+          message: err.message
+        };
       }
       return true;
     });

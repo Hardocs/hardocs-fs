@@ -86,4 +86,17 @@ _Divine Nature_
     const response = file.delete({ filePath });
     expect(response).toBeTruthy();
   });
+
+  it('returns an error for invalid path', () => {
+    const filePath = `${__dirname}/test.txts`;
+
+    const response = file.delete({ filePath });
+    console.log({ response });
+    expect(response).toEqual(
+      expect.objectContaining({
+        error: true,
+        message: "File doesn't exist"
+      })
+    );
+  });
 });
