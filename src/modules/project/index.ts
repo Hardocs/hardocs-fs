@@ -151,60 +151,62 @@ const create = async (
   };
 };
 
-const createFromExisting = async ({
-  input
-}: HDS.ICreateProjectFromExistingOnMutationArguments) => {
+const createFromExisting = async (
+  input: HDS.ICreateProjectInput
+): Promise<HDS.IProject | HDS.IError> => {
   if (input) {
     const projectPath = input.path || cwd.get();
-    const dest = projectPath;
-    if (!folder.isDirectory({ path: dest })) {
-      throw new Error(`${dest} is Not a valid path`);
-    }
+    const dest = path.join(projectPath, input.name);
     await cwd.set(dest);
+    if (!folder.isDirectory({ path: dest })) {
+      fs.mkdirSync(dest);
+      await cwd.set(dest);
+    }
+
     try {
       const result = {
         id: UUIDv4(),
         ...input,
         updatedAt: 'new Date().toISOString()'
-      } as HDS.IProject;
+      };
       const hardocsDir = getHardocsDir(dest);
+
       if (!fs.existsSync(hardocsDir)) {
         fs.mkdirSync(hardocsDir);
       }
       const hardocsJson = `${hardocsDir}/hardocs.json`;
 
-      const docsDir = `${dest}/${result.docsDir}`;
+      setTimeout(async () => {
+        writeToJson(hardocsJson, result);
+      }, 0);
 
-      // if (folder.isDirectory({ path: templateDir })) {
-      // await fs.copy(templateDir, dest);
-      // await fs.copy(docsTemplateDir, docsDir);
+      // Promise.resolve().then(() => writeToJson(hardocsJson, result));
+
+      const docsDir = `${dest}/${result.docsDir}`;
       if (!fs.existsSync(docsDir)) {
         fs.mkdirSync(docsDir);
       }
+
       if (!file.exists(`${docsDir}/${result.entryFile}`)) {
         await file.createMarkdownTemplate(result.entryFile, docsDir);
       }
-      // }
 
-      const stream = fs.createWriteStream(hardocsJson, {
-        encoding: 'utf8',
-        flags: 'w+'
-      });
+      await file.createMarkdownTemplate(result.entryFile, docsDir);
 
-      stream.write(JSON.stringify(result, null, 2), (err) => {
-        if (err) {
-          console.log(err.message);
-        }
-      });
-
-      const response = openProject({ path: dest }); // Open project before requiring any files in it
+      const response = await openProject({ path: dest, force: true }); // Open project before requiring any files in it
 
       return response;
     } catch (er) {
-      throw new Error(er);
+      return {
+        error: true,
+        message: er.message
+      };
     }
   }
-  return false;
+  return {
+    error: true,
+    message: 'Please specify a project path'
+  };
 };
 
 export default {
