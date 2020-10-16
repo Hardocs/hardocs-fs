@@ -60,21 +60,22 @@ describe('Test for file operations: ', () => {
   });
 
   it('saves a markdown file', () => {
-    const data = `
->Train your Mind, Body and Soul to become Exceptional.
+    const text = `
+> Train your Mind, Body and Soul to become Exceptional.
 
 
 _Divine Nature_
     `;
 
-    const response = file.writeToFile({
+    const data = {
       title: 'The quote',
       description: 'Quote by Divine',
-      content: data,
       fileName: 'divine-quote.md',
-      path: __dirname
-    });
+      path: __dirname,
+      content: text
+    };
+    const response = file.writeToFile(data);
 
-    console.log({ response });
+    expect(response).toEqual(expect.objectContaining(data));
   });
 });
