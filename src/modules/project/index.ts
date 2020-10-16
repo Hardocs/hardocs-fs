@@ -191,8 +191,6 @@ const createFromExisting = async (
         await file.createMarkdownTemplate(result.entryFile, docsDir);
       }
 
-      await file.createMarkdownTemplate(result.entryFile, docsDir);
-
       const response = await openProject({ path: dest, force: true }); // Open project before requiring any files in it
 
       return response;
