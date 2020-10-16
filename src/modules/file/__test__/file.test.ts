@@ -4,7 +4,7 @@ import fs from 'fs';
 import json from './hardocs.json';
 
 const emptyDir = path.join(__dirname, 'empty');
-const markdownFile = path.join(__dirname, 'test-file.md');
+const markdownFile = path.join(__dirname, 'divine-quote.md');
 beforeAll(() => {
   /**
    * Create an empty directory to use for testing
@@ -18,7 +18,7 @@ afterAll(() => {
   fs.rmdirSync(emptyDir);
 });
 describe('Test for file operations: ', () => {
-  const filePath = path.join(__dirname, 'test-file.md');
+  const filePath = path.join(__dirname, 'divine-quote.md');
   it('exists', () => {
     expect(file.exists(filePath)).toBeTruthy();
   });
@@ -61,10 +61,20 @@ describe('Test for file operations: ', () => {
 
   it('saves a markdown file', () => {
     const data = `
-Train your Mind, Body and Soul to become Exceptional.
-#Divine Nature
+>Train your Mind, Body and Soul to become Exceptional.
+
+
+_Divine Nature_
     `;
 
-    const response = file.writeToFile();
+    const response = file.writeToFile({
+      title: 'The quote',
+      description: 'Quote by Divine',
+      content: data,
+      fileName: 'divine-quote.md',
+      path: __dirname
+    });
+
+    console.log({ response });
   });
 });

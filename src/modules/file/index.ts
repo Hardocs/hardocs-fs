@@ -55,7 +55,7 @@ description: ${description}
   const markdown = `${yml}
 ${content}
   `;
-  fs.writeFileSync(path + fileName, markdown, { encoding: 'utf8' });
+  fs.writeFileSync(`${path}/${fileName}`, markdown, { encoding: 'utf8' });
   const result = {
     path,
     title,
