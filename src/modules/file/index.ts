@@ -35,7 +35,7 @@ const openFile = ({ path: filePath, force = false }: Options) => {
   }
 };
 
-const writeToFile = (input: HDS.IFileInput) => {
+const writeToFile = (input: HDS.IFileInput): boolean | HDS.IError => {
   const { path, title, description, content, fileName } = input;
   if (!input) {
     throw new Error('Input all fields');
@@ -55,15 +55,18 @@ description: ${description}
   const markdown = `${yml}
 ${content}
   `;
-  fs.writeFileSync(`${path}/${fileName}`, markdown, { encoding: 'utf8' });
-  const result = {
-    path,
-    title,
-    description,
-    content,
-    fileName
-  };
-  return result;
+
+  const newPath = `${path}/${fileName}`;
+  try {
+    fs.writeFileSync(newPath, markdown, { encoding: 'utf8' });
+
+    return true;
+  } catch (er) {
+    return {
+      error: true,
+      message: er.message
+    };
+  }
 };
 
 /**
@@ -216,6 +219,8 @@ const deleteFile = ({
         message: err.message
       };
     }
+
+    // Already handled this in the upper scope, however, we want to avoid errors as much as possible
     if (stat.isDirectory()) {
       return {
         error: true,
