@@ -78,4 +78,12 @@ _Divine Nature_
 
     expect(response).toEqual(expect.objectContaining(data));
   });
+
+  it('deletes any file', () => {
+    const filePath = `${__dirname}/test.txt`;
+    fs.writeFileSync(filePath, 'Hello world');
+
+    const response = file.delete({ filePath });
+    expect(response).toBeTruthy();
+  });
 });

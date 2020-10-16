@@ -215,7 +215,6 @@ const deleteFile = ({
       if (err) {
         throw new Error(err.message);
       }
-      console.log(`${filePath} deleted successfully`);
       return true;
     });
     return true;
