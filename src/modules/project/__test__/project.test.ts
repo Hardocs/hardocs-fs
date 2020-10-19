@@ -2,7 +2,7 @@ import project from '../';
 import mockData from './test.json';
 
 let projectPath: string;
-
+const path = process.cwd();
 describe('Hardocs project test: ', () => {
   it('create a project and navigate to the new project directory', async () => {
     const _hardocsProject = (await project.create({
@@ -19,17 +19,10 @@ describe('Hardocs project test: ', () => {
     mockData.id = '1';
     _hardocsProject.id = '1';
 
-    // fs.writeFileSync(
-    //   path.join(__dirname, './test.json'),
-    //   JSON.stringify(_hardocsProject)
-    // );
-
     /**
      * Ensure that the created project matches a valid hardocs project
      */
     expect(_hardocsProject).toEqual(expect.objectContaining(mockData));
-
-    console.log({ _hardocsProject });
 
     /**
      * Ensure that the current working directory is equal to the project.path
@@ -46,6 +39,32 @@ describe('Hardocs project test: ', () => {
     _openedProject.id = '1';
 
     expect(_openedProject).toEqual(expect.objectContaining(mockData));
-    console.log({ _openedProject });
+  });
+
+  it('create a hardocs project from an existing folder', async () => {
+    const _hardocsProject = (await project.createFromExisting({
+      name: 'test-project',
+      docsDir: 'docs',
+      entryFile: 'index.md',
+      path
+    })) as HDS.IProject;
+
+    projectPath = _hardocsProject.path as string;
+
+    /**
+     * The ID is a randomly generated string so i have to reasign it to a fixed value and also modify the mock to have an id of "1"
+     */
+    mockData.id = '1';
+    _hardocsProject.id = '1';
+
+    /**
+     * Ensure that the created project matches a valid hardocs project
+     */
+    expect(_hardocsProject).toEqual(expect.objectContaining(mockData));
+
+    /**
+     * Ensure that the current working directory is equal to the project.path
+     */
+    expect(_hardocsProject.path).toEqual(process.cwd());
   });
 });

@@ -171,10 +171,11 @@ const createFromExisting = async (
       }
       const hardocsJson = `${hardocsDir}/hardocs.json`;
 
-      setTimeout(async () => {
-        writeToJson(hardocsJson, result);
-      }, 0);
-
+      await fs.promises.writeFile(
+        hardocsJson,
+        JSON.stringify(result, null, 2),
+        { encoding: 'utf-8' }
+      );
       // Promise.resolve().then(() => writeToJson(hardocsJson, result));
 
       const docsDir = `${dest}/${result.docsDir}`;
