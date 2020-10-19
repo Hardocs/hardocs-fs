@@ -76,7 +76,7 @@ const openProject = async ({
  * @param path file path you want to write to
  * @param data the content you want to write into the file
  */
-const writeToJson = (path: string, data: any) => {
+const writeToJson = async (path: string, data: any) => {
   const stream = fs.createWriteStream(path, {
     encoding: 'utf8',
     flags: 'w+'
@@ -104,12 +104,12 @@ const create = async (
       await cwd.set(dest);
     }
 
+    const result = {
+      id: UUIDv4(),
+      ...input,
+      updatedAt: 'new Date().toISOString()'
+    };
     try {
-      const result = {
-        id: UUIDv4(),
-        ...input,
-        updatedAt: 'new Date().toISOString()'
-      };
       const hardocsDir = getHardocsDir(dest);
 
       if (!fs.existsSync(hardocsDir)) {
@@ -117,21 +117,16 @@ const create = async (
       }
       const hardocsJson = `${hardocsDir}/hardocs.json`;
 
-      setTimeout(async () => {
-        writeToJson(hardocsJson, result);
-      }, 0);
-
-      // Promise.resolve().then(() => writeToJson(hardocsJson, result));
+      await fs.promises.writeFile(
+        hardocsJson,
+        JSON.stringify(result, null, 2),
+        { encoding: 'utf-8' }
+      );
 
       const docsDir = `${dest}/${result.docsDir}`;
       if (!fs.existsSync(docsDir)) {
         fs.mkdirSync(docsDir);
       }
-
-      // if (folder.isDirectory({ path: templateDir })) {
-      //   folder.copy(templateDir, dest);
-      //   // await fs.copy(docsTemplateDir, docsDir); // TODO: Copy docs template if provided
-      // }
 
       await file.createMarkdownTemplate(result.entryFile, docsDir);
 

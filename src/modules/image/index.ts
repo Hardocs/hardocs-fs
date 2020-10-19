@@ -70,9 +70,7 @@ const getImages = (path?: string) => {
   return images;
 };
 
-const getImagesInHardocsProject = ({
-  path,
-}: Options): string[] | string => {
+const getImagesInHardocsProject = ({ path }: Options): string[] | string => {
   cwd.set(path);
   const hardocsJson = file.getHardocsJsonFile({ path });
   if (hardocsJson) {
@@ -83,7 +81,9 @@ const getImagesInHardocsProject = ({
       return getImages(path);
     }
   } else {
-    throw new Error(`${path} is Not a valid hardocs project`);
+    throw new Error(
+      `${path} is Not a valid hardocs project -- getImagesInHardocsProject`
+    );
   }
 };
 

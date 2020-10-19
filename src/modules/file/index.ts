@@ -90,7 +90,7 @@ const getEntryFilePath = async ({
   }
 
   if (!folder.isHardocsProject({ path: projectPath, force })) {
-    throw new Error('Not a valid hardocs project');
+    throw new Error('Not a valid hardocs project -- getEntryFilePath');
   }
 
   const docsDir = await folder.getDocsFolder({
@@ -121,7 +121,7 @@ const getHardocsJsonFile = ({
   const hardocsDir = getHardocsDir(path);
 
   if (!folder.isHardocsProject({ path, force })) {
-    throw new Error('Not a valid hardocs project');
+    throw new Error('Not a valid hardocs project -- getHardocsJsonFile');
   }
   const hardocsFile: string = fs.readFileSync(
     `${hardocsDir}/hardocs.json`,

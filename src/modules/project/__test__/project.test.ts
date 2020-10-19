@@ -1,6 +1,3 @@
-// import path from 'path';
-// import fs from 'fs';
-
 import project from '../';
 import mockData from './test.json';
 
@@ -21,8 +18,6 @@ describe('Hardocs project test: ', () => {
      */
     mockData.id = '1';
     _hardocsProject.id = '1';
-
-    // console.log({ projectPath, _hardocsProject, mockData });
 
     // fs.writeFileSync(
     //   path.join(__dirname, './test.json'),
@@ -49,15 +44,5 @@ describe('Hardocs project test: ', () => {
     _openedProject.id = '1';
 
     expect(_openedProject).toEqual(expect.objectContaining(mockData));
-
-    /**
-     * Clean-up
-     *
-     * Delete created hardocs project
-     */
-    console.log({ projectPath });
-    // fs.rmdirSync(projectPath, {
-    //   recursive: true
-    // });
   });
 });
