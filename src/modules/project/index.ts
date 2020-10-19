@@ -71,27 +71,6 @@ const openProject = async ({
   return response;
 };
 
-/**
- *
- * @param path file path you want to write to
- * @param data the content you want to write into the file
- */
-const writeToJson = async (path: string, data: any) => {
-  const stream = fs.createWriteStream(path, {
-    encoding: 'utf8',
-    flags: 'w+'
-  });
-
-  stream.once('ready', () => {
-    stream.write(JSON.stringify(data, null, 2), (err) => {
-      if (err) {
-        console.error(err.message);
-      }
-    });
-    // console.log('Finished stream');
-  });
-};
-
 const create = async (
   input: HDS.ICreateProjectInput
 ): Promise<HDS.IProject | HDS.IError> => {
