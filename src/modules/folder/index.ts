@@ -1,15 +1,32 @@
+import { getHardocsDir } from './../../utils/constants';
 import * as path from 'path';
-import * as fs from 'fs-extra';
-import * as winattr from 'winattr';
+import * as fs from 'fs';
 
 import { Options, GeneratedFolder, Path } from '../../typings/globals';
 import cwd from '../cwd';
-import { getHardocsDir } from './../../utils/constants';
 import file from '../file';
 
 const isPlatformWindows =
   process.platform.indexOf('win') === 0 || process.platform.includes('win');
 const hiddenPrefix = '.';
+
+/**
+ * 
+ * @param src `from`. folder or file you whish to copy 
+ * @param dest `to`. destination where you want to copy files/folder to
+ */
+const copy = (src: string, dest: string) => {
+  if(!fs.existsSync(dest)){
+    fs.mkdirSync(dest);
+  }
+  fs.readdirSync(src).forEach(element => {
+      if (fs.lstatSync(path.join(src, element)).isFile()) {
+          fs.copyFileSync(path.join(src, element), path.join(dest, element));
+      } else {
+          copy(path.join(src, element), path.join(dest, element));
+      }
+  });
+}
 
 const isDirectory = ({ path: file }: Path) => {
   file = file.replace(/\\/g, path.sep);
@@ -17,8 +34,8 @@ const isDirectory = ({ path: file }: Path) => {
     return fs.existsSync(file) && fs.statSync(file).isDirectory();
   } catch (err) {
     console.log(err.message);
+    return false;
   }
-  return false;
 };
 
 const generateFolder = ({ path: file }: Path): GeneratedFolder => {
@@ -51,7 +68,7 @@ const createFolder = ({ path: name }: Path) => {
   }
 
   const folder = path.join(cwd.get(), name);
-  fs.ensureDirSync(folder);
+  fs.mkdirSync(folder);
   return generateFolder({ path: folder });
 };
 
@@ -86,7 +103,9 @@ const isHidden = ({ path: file }: Path) => {
 
     if (isPlatformWindows) {
       const windowsFile = file.replace(/\\/g, '\\\\');
-      result.windows = winattr.getSync(windowsFile).hidden;
+
+      console.log({ windowsFile });
+      // result.windows = winattr.getSync(windowsFile).hidden;
     }
 
     return (
@@ -101,40 +120,42 @@ const isHidden = ({ path: file }: Path) => {
   }
 };
 
-const readPackage = async (options: Partial<Options>) => {
-  const { path: file = '', force = false } = options;
-
-  if (!force) {
-    // const cachedValue = await redis.get(`${READ_PACKAGE_PREFIX}${file}`);
-    // if (cachedValue) {
-    //   return cachedValue;
-    // }
+const readPackage = ({ path: docsPath = '', force = false }: Partial<Options>) => {
+  if(!force){
+    docsPath = cwd.get()
   }
-
+    
   // Hardocs hidden folder
-  const hardocsDir = getHardocsDir(file);
-  const hardocsPkg = path.join(hardocsDir, 'hardocs.json');
-
-  if (isDirectory({ path: hardocsDir })) {
-    if (fs.existsSync(hardocsPkg)) {
-      const pkg = fs.readJsonSync(hardocsPkg);
-      return pkg;
-    } else {
-      console.log('Not a hardocs directory');
-      return false;
+  const hardocsDir = getHardocsDir(docsPath);
+  const hardocsPkg = path.join(hardocsDir, 'hardocs.json')  
+  
+  try {
+    if (isDirectory({ path: hardocsDir })) {
+      if (fs.existsSync(hardocsPkg)) {
+        const jSON = fs.readFileSync(hardocsPkg, 'utf8')
+        
+        return jSON
+      }
+      return 'Please provide a hardocs-json file'
     }
+    return 'Please specify a valid hardocs directory'
+  } catch (err) {
+    console.error(err)
+    return false
   }
 };
 
-const isHardocsProject = async ({
-  path
-}: Partial<Options>): Promise<boolean> => {
+const isHardocsProject = ({
+  path: dir,
+  force = false
+}: Options): boolean => {
   try {
-    const pkg = await readPackage({ path });
+    const pkg = readPackage({ path: dir, force});
     return !!pkg;
   } catch (er) {
     if (process.env.HARDOCS_DEV_MODE) {
-      console.log(`${er} This is not a HARDOCS projects`);
+      console.log(`${er} 
+      This is not a HARDOCS projects`);
     }
     return false;
   }
@@ -150,17 +171,18 @@ const getDocsFolder = async ({ path, force }: Partial<Options>) => {
   if (!isHardocsProject({ path: fromBaseDir })) {
     throw new Error('Not a hardocs project');
   }
-
   const hardocsJson = (
-    await file.getHardocsJsonFile({ path: fromBaseDir, force })
+    file.getHardocsJsonFile({ path: fromBaseDir, force })
   ).hardocsJson;
   const { docsDir } = hardocsJson;
 
   return `${fromBaseDir}/${docsDir}`;
 };
 
-const deleteFolder = async ({ path }: Path): Promise<boolean> => {
-  await fs.remove(path);
+const deleteFolder = ({ path }: Path): boolean => {
+  if(isDirectory({path})){
+    fs.rmdirSync(path, {recursive: true});
+  }
   return true;
 };
 
@@ -176,5 +198,6 @@ export default {
   getDocsFolder,
   readPackage,
   isHardocsProject,
-  deleteFolder
+  deleteFolder,
+  copy
 };

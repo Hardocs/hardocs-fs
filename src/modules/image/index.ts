@@ -70,11 +70,9 @@ const getImages = (path?: string) => {
   return images;
 };
 
-const getImagesInHardocsProject = async ({
-  path,
-}: Options): Promise<string[] | string> => {
+const getImagesInHardocsProject = ({ path }: Options): string[] | string => {
   cwd.set(path);
-  const hardocsJson = await file.getHardocsJsonFile({ path });
+  const hardocsJson = file.getHardocsJsonFile({ path });
   if (hardocsJson) {
     const assetsDir = hardocsJson.hardocsJson.assets;
     if (assetsDir) {
@@ -83,7 +81,9 @@ const getImagesInHardocsProject = async ({
       return getImages(path);
     }
   } else {
-    throw new Error(`${path} is Not a valid hardocs project`);
+    throw new Error(
+      `${path} is Not a valid hardocs project -- getImagesInHardocsProject`
+    );
   }
 };
 

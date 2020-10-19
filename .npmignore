@@ -6,3 +6,9 @@ src
 .eslintignore
 .eslintrc
 images
+!dist
+!dist/
+./**/__test__/
+test-project/
+template/
+coverage/

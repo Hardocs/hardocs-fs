@@ -172,6 +172,7 @@ declare namespace HDS {
      * @default "assets"
      */
     assets?: string | null;
+    updatedAt?: string | null;
   }
 
   /**
@@ -242,8 +243,8 @@ declare namespace HDS {
     nameWithOwner: string | null;
     longTitle: string | null;
     languages: Array<ILanguage> | null;
-    projectLink: string;
-    intendedUse: string;
+    projectLink: string | null;
+    intendedUse: string | null;
     made: boolean | null;
     madeIndependently: boolean | null;
     license: Array<ILicense | null> | null;
@@ -283,6 +284,11 @@ declare namespace HDS {
   interface IContributor {
     __typename: 'Contributor';
     name: string;
+  }
+
+  interface IError {
+    error: boolean;
+    message: string;
   }
 }
 
