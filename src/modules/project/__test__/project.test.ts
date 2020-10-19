@@ -2,7 +2,6 @@ import project from '../';
 import mockData from './test.json';
 
 let projectPath: string;
-const path = process.cwd();
 describe('Hardocs project test: ', () => {
   it('create a project and navigate to the new project directory', async () => {
     const _hardocsProject = (await project.create({
@@ -46,10 +45,8 @@ describe('Hardocs project test: ', () => {
       name: 'test-project',
       docsDir: 'docs',
       entryFile: 'index.md',
-      path
+      path: projectPath
     })) as HDS.IProject;
-
-    projectPath = _hardocsProject.path as string;
 
     /**
      * The ID is a randomly generated string so i have to reasign it to a fixed value and also modify the mock to have an id of "1"

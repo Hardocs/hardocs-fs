@@ -130,11 +130,10 @@ const createFromExisting = async (
 ): Promise<HDS.IProject | HDS.IError> => {
   if (input) {
     const projectPath = input.path || cwd.get();
-    const dest = path.join(projectPath, input.name);
-    await cwd.set(dest);
-    if (!folder.isDirectory({ path: dest })) {
-      fs.mkdirSync(dest);
-      await cwd.set(dest);
+    await cwd.set(projectPath);
+    if (!folder.isDirectory({ path: projectPath })) {
+      fs.mkdirSync(projectPath);
+      await cwd.set(projectPath);
     }
 
     try {
@@ -143,7 +142,7 @@ const createFromExisting = async (
         ...input,
         updatedAt: 'new Date().toISOString()'
       };
-      const hardocsDir = getHardocsDir(dest);
+      const hardocsDir = getHardocsDir(projectPath);
 
       if (!fs.existsSync(hardocsDir)) {
         fs.mkdirSync(hardocsDir);
@@ -157,7 +156,7 @@ const createFromExisting = async (
       );
       // Promise.resolve().then(() => writeToJson(hardocsJson, result));
 
-      const docsDir = `${dest}/${result.docsDir}`;
+      const docsDir = `${projectPath}/${result.docsDir}`;
       if (!fs.existsSync(docsDir)) {
         fs.mkdirSync(docsDir);
       }
@@ -166,7 +165,7 @@ const createFromExisting = async (
         await file.createMarkdownTemplate(result.entryFile, docsDir);
       }
 
-      const response = await openProject({ path: dest, force: true }); // Open project before requiring any files in it
+      const response = await openProject({ path: projectPath, force: true }); // Open project before requiring any files in it
 
       return response;
     } catch (er) {
