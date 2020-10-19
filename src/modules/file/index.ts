@@ -6,11 +6,11 @@ import folder from '../folder';
 import { Options, Path } from '../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 import showdown from 'showdown';
-// import jsdom from 'jsdom';
+import jsdom from 'jsdom';
 // import image from '../image'; // FIXME: Handle images
 
 const converter = new showdown.Converter({ metadata: true });
-// const dom = new jsdom.JSDOM();
+const dom = new jsdom.JSDOM();
 
 const openFile = ({ path: filePath, force = false }: Options) => {
   try {
@@ -46,15 +46,15 @@ description: ${description}
 ---
 `;
 
-  //   const mdContent = converter.makeMarkdown(content, dom.window.document);
-  //   const markdown = `${yml}
-  // ${mdContent}
-  //   `;
+  const mdContent = converter.makeMarkdown(content, dom.window.document);
+  const markdown = `${yml}
+  ${mdContent}
+    `;
 
   // const mdContent = converter.makeMarkdown(content, dom.window.document);
-  const markdown = `${yml}
-${content}
-  `;
+  //   const markdown = `${yml}
+  // ${content}
+  //   `;
 
   const newPath = `${path}/${fileName}`;
   try {

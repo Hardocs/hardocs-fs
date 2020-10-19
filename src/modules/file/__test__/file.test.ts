@@ -61,10 +61,9 @@ describe('Test for file operations: ', () => {
 
   it('saves a markdown file', () => {
     const text = `
-> Train your Mind, Body and Soul to become Exceptional.
-
-
-_Divine Nature_
+<blockquote>Train your Mind, Body and Soul to become Exceptional.</blockquote> 
+    
+<i>_Divine Nature_</i>
     `;
 
     const data = {
