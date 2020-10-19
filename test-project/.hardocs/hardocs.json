@@ -1,7 +1,0 @@
-{
-  "id": "79202a3e-38e4-4731-b7f7-b2f147998c4c",
-  "name": "test-project",
-  "docsDir": "docs",
-  "entryFile": "index.md",
-  "updatedAt": "new Date().toISOString()"
-}

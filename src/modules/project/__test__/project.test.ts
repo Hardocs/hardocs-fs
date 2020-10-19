@@ -29,6 +29,8 @@ describe('Hardocs project test: ', () => {
      */
     expect(_hardocsProject).toEqual(expect.objectContaining(mockData));
 
+    console.log({ _hardocsProject });
+
     /**
      * Ensure that the current working directory is equal to the project.path
      */
@@ -44,5 +46,6 @@ describe('Hardocs project test: ', () => {
     _openedProject.id = '1';
 
     expect(_openedProject).toEqual(expect.objectContaining(mockData));
+    console.log({ _openedProject });
   });
 });
