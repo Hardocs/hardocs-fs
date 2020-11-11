@@ -64,4 +64,10 @@ describe('Hardocs project test: ', () => {
      */
     expect(_hardocsProject.path).toEqual(process.cwd());
   });
+
+  it('throws an error for invalid project', async () => {
+    const response = await project.open({ path: __dirname });
+
+    console.log({ response });
+  });
 });

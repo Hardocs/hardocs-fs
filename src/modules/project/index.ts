@@ -32,43 +32,50 @@ const openProject = async ({
 
   await cwd.set(fullPath);
 
-  const hardocsJson = file.getHardocsJsonFile({
-    path: fullPath,
-    force
-  });
+  try {
+    const hardocsJson = file.getHardocsJsonFile({
+      path: fullPath,
+      force
+    });
 
-  const docsDir = hardocsJson.hardocsJson.docsDir;
+    const docsDir = hardocsJson.hardocsJson.docsDir;
 
-  if (!docsDir || docsDir.trim() === '') {
+    if (!docsDir || docsDir.trim() === '') {
+      return {
+        error: true,
+        message: 'No Docs directory specified in ".hardocs/hardocs.json"'
+      };
+    }
+
+    const entryFilePath = `${docsDir}/${hardocsJson.hardocsJson.entryFile}`;
+    const allFileData = await file.extractAllFileData({ path: docsDir });
+
+    const entry = await file.openEntryFile({
+      path: entryFilePath
+    });
+    const allDocsData = allFileData
+      .map((f) => {
+        if (f.fileName === file.getFileName({ path: entryFilePath })) {
+          f.content = entry.content;
+        }
+        return f;
+      })
+      .sort((a) => (a.fileName === entry.fileName ? -1 : 1));
+
+    const response = {
+      ...hardocsJson.hardocsJson,
+      path: fullPath,
+      allDocsData,
+      __typename: 'Project'
+    } as HDS.IProject;
+
+    return response;
+  } catch (err) {
     return {
       error: true,
-      message: 'No Docs directory specified in ".hardocs/hardocs.json"'
+      message: 'Not a valid hardocs project' // TODO: Return proper error message
     };
   }
-
-  const entryFilePath = `${docsDir}/${hardocsJson.hardocsJson.entryFile}`;
-  const allFileData = await file.extractAllFileData({ path: docsDir });
-
-  const entry = await file.openEntryFile({
-    path: entryFilePath
-  });
-  const allDocsData = allFileData
-    .map((f) => {
-      if (f.fileName === file.getFileName({ path: entryFilePath })) {
-        f.content = entry.content;
-      }
-      return f;
-    })
-    .sort((a) => (a.fileName === entry.fileName ? -1 : 1));
-
-  const response = {
-    ...hardocsJson.hardocsJson,
-    path: fullPath,
-    allDocsData,
-    __typename: 'Project'
-  } as HDS.IProject;
-
-  return response;
 };
 
 const create = async (

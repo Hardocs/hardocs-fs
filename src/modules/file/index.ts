@@ -97,15 +97,20 @@ const getEntryFilePath = async ({
     throw new Error('Not a valid hardocs project -- getEntryFilePath');
   }
 
-  const docsDir = await folder.getDocsFolder({
-    path: projectPath,
-    force
-  });
-  const entryFileName = getHardocsJsonFile({ path: projectPath, force })
-    .hardocsJson.entryFile;
+  try {
+    const docsDir = await folder.getDocsFolder({
+      path: projectPath,
+      force
+    });
 
-  const entryFile = `${docsDir}/${entryFileName}`;
-  return entryFile;
+    const entryFileName = getHardocsJsonFile({ path: projectPath, force })
+      .hardocsJson.entryFile;
+
+    const entryFile = `${docsDir}/${entryFileName}`;
+    return entryFile;
+  } catch (err) {
+    return 'Not a valid project';
+  }
 };
 
 const getHardocsJsonFile = ({
