@@ -9,16 +9,27 @@ import cwd from '../cwd';
 import file from '../file';
 import folder from '../folder';
 import { Options } from '../../typings/globals';
+import { generateId } from './utils';
 
-const downloadAndOptimizeImage = (base64: string, dir?: string) => {
+const regexp = /^data:image\/(jpeg|png|jpg|gif);base64,/;
+
+const downloadAndOptimizeImage = (
+  options: {
+    id: string;
+    base64: string;
+  },
+  dir?: string
+) => {
+  const base64 = options.base64;
   /**
    * If `dir` is not provided, the current working directory will
    * be used instead
    */
   dir = dir || cwd.get();
 
-  const data = base64.replace(/^data:image\/(jpeg|png|jpg|gif);base64,/, '');
-  const img = Buffer.from(data, 'base64');
+  const buffer = base64.replace(regexp, '');
+
+  const img = Buffer.from(buffer, 'base64');
 
   try {
     if (!folder.isDirectory({ path: dir })) {
@@ -27,13 +38,21 @@ const downloadAndOptimizeImage = (base64: string, dir?: string) => {
         message: 'invalid directory specified'
       };
     }
+
+    const filename = `${UUIDv4()}.jpg`;
+    const path = `${dir}/${filename}`;
+    console.log({ path });
     // .resize(300, 200)
     sharp(img)
-      .jpeg({ quality: 50 })
-      .toFile(`${dir}/${UUIDv4()}.jpg`, function (err) {
+      .jpeg() // TODO: Optimize image quality
+      .toFile(path, function (err) {
         if (err) console.error({ err });
       });
-    return true;
+    return {
+      id: options.id,
+      fullPath: path,
+      filename
+    };
   } catch (err) {
     return {
       error: true,
@@ -43,7 +62,7 @@ const downloadAndOptimizeImage = (base64: string, dir?: string) => {
   }
 };
 
-const handleImagePaths = (markdown: string, host: URL) => {
+const saveImages = (markdown: string, host: URL) => {
   const regex = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/gi;
   const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/i;
   // const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)(?=\"|\))\)/i;
@@ -69,11 +88,12 @@ const handleImagePaths = (markdown: string, host: URL) => {
       return v;
     }
 
-    if (
-      imgObject.groups.filename.startsWith(`http://`) ||
-      imgObject.groups.filename.startsWith(`www.`) ||
-      imgObject.groups.filename.startsWith(`https://`)
-    ) {
+    const _filename = imgObject.groups.filename;
+    if (_filename.match(regex)) {
+      // Download the image and get the path
+      // filename is a base64 string
+      // const {path} = downloadAndOptimizeImage(_filename);
+
       newUrl = imgObject.groups.filename;
     } else {
       if (startsWith(imgObject.groups.filename, '/')) {
@@ -135,8 +155,8 @@ const toBase64 = (imagePath: string) => {
   return data;
 };
 
-const imageCache = ({ path }: Options) => {
-  const images = getImagesInHardocsProject({ path });
+const imageCache = (path: string, images: any[]) => {
+  // const images = getImagesInHardocsProject({ path });
 
   if (!images) {
     return;
@@ -158,45 +178,99 @@ const imageCache = ({ path }: Options) => {
       let fullPath = `${path}${image}`;
 
       if (assetsDir) {
-        fullPath = `${path}/${assetsDir}${image}`;
+        fullPath = `${path}/${assetsDir}/${image.slice(0, 100)}`;
       }
+      const base64 = image.replace(regexp, '');
 
-      const base64 = toBase64(fullPath);
       const data = {
-        id: `${base64.length}-${base64.slice(0, 10)}-${base64.slice(
-          base64.length - 10,
-          base64.length
-        )}`,
+        id: generateId(base64),
         path: `${assetsDir}${image}`,
         fullPath
       };
 
       response.push(data);
     });
-    const test = [
-      ...response,
-      {
-        id: 'alksdjf',
-        path: 'jweiojasdflk',
-        fullPath: 'divine'
-      }
-    ];
-    console.log({
-      match: __.isEqual(prevCache, response),
-      filter: __.difference(test, prevCache),
-      test,
-      prevCache
-    });
-  }
 
-  // fs.writeFileSync(imageCacheFile, JSON.stringify(response, null, 2));
+    const difference = __.differenceBy(response, prevCache, 'id');
+
+    const newCache: any[] = prevCache;
+
+    if (difference) {
+      difference.map((_image) => {
+        if (!file.exists(_image.fullPath)) {
+          const _path = assetsDir ? `${path}/${assetsDir}` : path;
+          // Download The image since it doesn't exist.
+          const opts = downloadAndOptimizeImage(
+            {
+              base64: _image.path.split(assetsDir)[1],
+              id: _image.id
+            },
+            _path
+          );
+
+          newCache.push({
+            id: opts.id,
+            path: `${assetsDir}/${opts.filename}`,
+            fullPath: opts.filename
+          });
+        }
+      });
+    }
+
+    fs.writeFileSync(imageCacheFile, JSON.stringify(newCache, null, 2));
+  }
 };
 
 export default {
   getImages,
-  handleImagePaths,
+  saveImages,
   getImagesInHardocsProject,
   downloadAndOptimizeImage,
   toBase64,
   imageCache
 };
+
+// const handleImagePaths = (markdown: string, host: URL) => {
+//   const regex = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/gi;
+//   const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/i;
+//   // const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)(?=\"|\))\)/i;
+
+//   /**
+//    *
+//    * @param {string} str
+//    * @param {string} val
+//    */
+//   const startsWith = (str: string, val: string) => {
+//     if (str[0] === val || str.charAt(0) === val) return true;
+//     return false;
+//   };
+//   const result = markdown.replace(regex, (v) => {
+//     const imgObject = v.match(regex2);
+//     let newUrl = '';
+//     if (
+//       !imgObject ||
+//       !imgObject.groups ||
+//       imgObject.length < 1 ||
+//       typeof imgObject === 'undefined'
+//     ) {
+//       return v;
+//     }
+
+//     if (
+//       imgObject.groups.filename.startsWith(`http://`) ||
+//       imgObject.groups.filename.startsWith(`www.`) ||
+//       imgObject.groups.filename.startsWith(`https://`)
+//     ) {
+//       newUrl = imgObject.groups.filename;
+//     } else {
+//       if (startsWith(imgObject.groups.filename, '/')) {
+//         newUrl = [host, ...imgObject.groups.filename].join('');
+//       } else {
+//         newUrl = [`${host}/`, ...imgObject.groups.filename].join('');
+//       }
+//     }
+//     const alt = imgObject.groups.alt;
+//     return `${alt}(${newUrl})`;
+//   });
+//   return result;
+// };
