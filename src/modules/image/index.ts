@@ -166,6 +166,7 @@ const imageCache = (path: string, images: any[]) => {
   const imageCacheFile = `${path}/.hardocs/image-cache.json`;
 
   let prevCache: any[] = [];
+  const newCache: any[] = prevCache;
 
   if (file.exists(imageCacheFile)) {
     prevCache = JSON.parse(fs.readFileSync(imageCacheFile, 'utf-8')); // TODO: Validate JSON keys
@@ -193,8 +194,6 @@ const imageCache = (path: string, images: any[]) => {
 
     const difference = __.differenceBy(response, prevCache, 'id');
 
-    const newCache: any[] = prevCache;
-
     if (difference) {
       difference.map((_image) => {
         if (!file.exists(_image.fullPath)) {
@@ -219,6 +218,8 @@ const imageCache = (path: string, images: any[]) => {
 
     fs.writeFileSync(imageCacheFile, JSON.stringify(newCache, null, 2));
   }
+
+  return prevCache;
 };
 
 export default {
