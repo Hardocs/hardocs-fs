@@ -46,7 +46,7 @@ import image from '..';
 
 describe('downloads an image', () => {
   // const res = image.downloadAndOptimizeImage({ base64: data, id: 'akhdskjhf' });
-  const res = image.imageCache('/home/divine/Desktop/Jose_project', [data]);
+  const res = image.imageCache('/home/divine/Desktop/Jose_project', data);
   console.log({ res });
 
   it('is true', () => {

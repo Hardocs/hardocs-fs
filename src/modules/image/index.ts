@@ -62,20 +62,12 @@ const downloadAndOptimizeImage = (
   }
 };
 
-const saveImages = (markdown: string, host: URL) => {
+const saveImages = (markdown: string, host?: URL, path?: string) => {
+  const _path = path || cwd.get();
   const regex = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/gi;
   const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/i;
   // const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)(?=\"|\))\)/i;
 
-  /**
-   *
-   * @param {string} str
-   * @param {string} val
-   */
-  const startsWith = (str: string, val: string) => {
-    if (str[0] === val || str.charAt(0) === val) return true;
-    return false;
-  };
   const result = markdown.replace(regex, (v) => {
     const imgObject = v.match(regex2);
     let newUrl = '';
@@ -89,19 +81,11 @@ const saveImages = (markdown: string, host: URL) => {
     }
 
     const _filename = imgObject.groups.filename;
-    if (_filename.match(regex)) {
-      // Download the image and get the path
-      // filename is a base64 string
-      // const {path} = downloadAndOptimizeImage(_filename);
 
-      newUrl = imgObject.groups.filename;
-    } else {
-      if (startsWith(imgObject.groups.filename, '/')) {
-        newUrl = [host, ...imgObject.groups.filename].join('');
-      } else {
-        newUrl = [`${host}/`, ...imgObject.groups.filename].join('');
-      }
-    }
+    const newImage = imageCache(_path, _filename);
+
+    newUrl = newImage.path;
+
     const alt = imgObject.groups.alt;
     return `${alt}(${newUrl})`;
   });
@@ -155,7 +139,7 @@ const toBase64 = (imagePath: string) => {
   return data;
 };
 
-const imageCache = (path: string, images: any[]) => {
+const imageCache = (path: string, images: any) => {
   // const images = getImagesInHardocsProject({ path });
 
   if (!images) {
@@ -166,7 +150,6 @@ const imageCache = (path: string, images: any[]) => {
   const imageCacheFile = `${path}/.hardocs/image-cache.json`;
 
   let prevCache: any[] = [];
-  const newCache: any[] = prevCache;
 
   if (file.exists(imageCacheFile)) {
     prevCache = JSON.parse(fs.readFileSync(imageCacheFile, 'utf-8')); // TODO: Validate JSON keys
@@ -191,35 +174,52 @@ const imageCache = (path: string, images: any[]) => {
 
       response.push(data);
     });
+  } else {
+    let fullPath = `${path}${images}`;
 
-    const difference = __.differenceBy(response, prevCache, 'id');
-
-    if (difference) {
-      difference.map((_image) => {
-        if (!file.exists(_image.fullPath)) {
-          const _path = assetsDir ? `${path}/${assetsDir}` : path;
-          // Download The image since it doesn't exist.
-          const opts = downloadAndOptimizeImage(
-            {
-              base64: _image.path.split(assetsDir)[1],
-              id: _image.id
-            },
-            _path
-          );
-
-          newCache.push({
-            id: opts.id,
-            path: `${assetsDir}/${opts.filename}`,
-            fullPath: opts.filename
-          });
-        }
-      });
+    if (assetsDir) {
+      fullPath = `${path}/${assetsDir}/${images.slice(0, 100)}`;
     }
+    const base64 = images.replace(regexp, '');
 
-    fs.writeFileSync(imageCacheFile, JSON.stringify(newCache, null, 2));
+    const data = {
+      id: generateId(base64),
+      path: `${assetsDir}${images}`,
+      fullPath
+    };
+
+    response.push(data);
   }
 
-  return prevCache;
+  const difference = __.differenceBy(response, prevCache, 'id');
+
+  const newCache: any = prevCache;
+
+  if (difference) {
+    difference.map((_image) => {
+      if (!file.exists(_image.fullPath)) {
+        const _path = assetsDir ? `${path}/${assetsDir}` : path;
+        // Download The image since it doesn't exist.
+        const opts = downloadAndOptimizeImage(
+          {
+            base64: _image.path.split(assetsDir)[1],
+            id: _image.id
+          },
+          _path
+        );
+
+        newCache.push({
+          id: opts.id,
+          path: `${assetsDir}/${opts.filename}`,
+          fullPath: opts.filename
+        });
+      }
+    });
+  }
+
+  fs.writeFileSync(imageCacheFile, JSON.stringify(newCache, null, 2));
+
+  return newCache;
 };
 
 export default {

@@ -7,6 +7,7 @@ import { Options, Path } from '../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 import showdown from 'showdown';
 import Turndown from 'turndown';
+import image from '../image';
 // import jsdom from 'jsdom';
 // import image from '../image'; // FIXME: Handle images
 
@@ -37,7 +38,10 @@ const openFile = ({ path: filePath, force = false }: Options) => {
   }
 };
 
-const writeToFile = (input: HDS.IFileInput): boolean | HDS.IError => {
+const writeToFile = (
+  input: HDS.IFileInput,
+  process = true
+): boolean | HDS.IError => {
   const { path, title, description, content, fileName } = input;
   if (!input) {
     throw new Error('Input all fields');
@@ -49,10 +53,14 @@ description: ${description}
 `;
 
   const mdContent = turndown.turndown(content);
+
+  const result = process
+    ? image.saveImages(mdContent, undefined, path)
+    : mdContent;
   const markdown = `
 ${yml}
 
-${mdContent}
+${result}
     `;
 
   // const mdContent = converter.makeMarkdown(content, dom.window.document);
