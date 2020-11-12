@@ -1,11 +1,14 @@
 {
   "name": "hardocs-fs",
-  "version": "0.0.1-beta",
+  "version": "0.0.16-beta",
   "description": "Helper functions to perform most file/folder operations meant to be used in an electron app.",
   "scripts": {
     "lint": "eslint './**/*.{tsx,ts}' --quiet --fix",
     "test": "env NODE_ENV=test jest",
-    "gen:types": "ts-node --files ./src/scripts/createTypes.ts",
+    "v:pub": "npm publish --registry http://localhost:4873",
+    "prev:pub": "yarn build",
+    "pub": "npm publish",
+    "prepub": "yarn test",
     "build": "rimraf -fr ./dist && tsc"
   },
   "keywords": [
@@ -16,13 +19,16 @@
   "author": "Divine Hycenth <divinehycenth8@gmail.com>",
   "license": "GPLv2",
   "devDependencies": {
-    "@types/fs-extra": "^9.0.1",
     "@types/glob": "^7.1.3",
     "@types/jest": "^26.0.14",
     "@types/jsdom": "^16.2.3",
+    "@types/lodash": "^4.14.165",
     "@types/mime-types": "^2.1.0",
     "@types/node": "^14.0.20",
+    "@types/sharp": "^0.26.0",
     "@types/showdown": "^1.9.3",
+    "@types/turndown": "^5.0.0",
+    "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^3.6.0",
     "@typescript-eslint/parser": "^3.6.0",
     "eslint": "^7.4.0",
@@ -30,22 +36,23 @@
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-json": "^2.1.1",
     "eslint-plugin-prettier": "^3.1.4",
+    "jest": "^26.5.2",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
+    "ts-jest": "^26.4.1",
     "ts-node": "^8.10.2",
-    "jest": "^26.5.2",
     "typescript": "^4.0.2"
   },
   "dependencies": {
-    "@akryum/winattr": "^3.0.0",
     "dotenv": "^8.2.0",
-    "fs-extra": "^9.0.1",
     "glob": "^7.1.6",
     "jsdom": "^16.4.0",
+    "lodash": "^4.17.20",
     "mime-types": "^2.1.27",
+    "sharp": "^0.26.2",
     "showdown": "^1.9.1",
-    "ts-jest": "^26.4.1",
-    "winattr": "^3.0.0"
+    "turndown": "^7.0.0",
+    "uuid": "^8.3.1"
   },
   "publishConfig": {
     "access": "public"

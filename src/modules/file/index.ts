@@ -1,16 +1,18 @@
 import glob from 'glob';
-import fs from 'fs-extra';
+import * as fs from 'fs';
 
 import cwd from '../cwd';
 import folder from '../folder';
 import { Options, Path } from '../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 import showdown from 'showdown';
-import jsdom from 'jsdom';
+import Turndown from 'turndown';
+// import jsdom from 'jsdom';
 // import image from '../image'; // FIXME: Handle images
 
 const converter = new showdown.Converter({ metadata: true });
-const dom = new jsdom.JSDOM();
+const turndown = new Turndown();
+// const dom = new jsdom.JSDOM();
 
 const openFile = ({ path: filePath, force = false }: Options) => {
   try {
@@ -35,7 +37,7 @@ const openFile = ({ path: filePath, force = false }: Options) => {
   }
 };
 
-const writeToFile = (input: HDS.IFileInput) => {
+const writeToFile = (input: HDS.IFileInput): boolean | HDS.IError => {
   const { path, title, description, content, fileName } = input;
   if (!input) {
     throw new Error('Input all fields');
@@ -46,19 +48,29 @@ description: ${description}
 ---
 `;
 
-  const mdContent = converter.makeMarkdown(content, dom.window.document);
-  const markdown = `${yml}
+  const mdContent = turndown.turndown(content);
+  const markdown = `
+${yml}
+
 ${mdContent}
-  `;
-  fs.writeFileSync(path + fileName, markdown, { encoding: 'utf8' });
-  const result = {
-    path,
-    title,
-    description,
-    content,
-    fileName
-  };
-  return result;
+    `;
+
+  // const mdContent = converter.makeMarkdown(content, dom.window.document);
+  // const markdown = `${yml}
+  // ${content}
+  //   `;
+
+  const newPath = `${path}/${fileName}`;
+  try {
+    fs.writeFileSync(newPath, markdown, { encoding: 'utf8' });
+
+    return true;
+  } catch (er) {
+    return {
+      error: true,
+      message: er.message
+    };
+  }
 };
 
 /**
@@ -75,59 +87,75 @@ const allMarkdownFilesPath = (filePath?: string) => {
 
 const getEntryFilePath = async ({
   path: projectPath,
-  
   force
 }: Options): Promise<string> => {
-  if (!folder.isHardocsProject({ path: projectPath })) {
-    throw new Error('Not a valid hardocs project');
+  if (!force) {
+    projectPath = `${cwd.get()}/${projectPath}`;
   }
 
-  const docsDir = await folder.getDocsFolder({
-    path: projectPath,
-    force
-  });
-  const entryFileName = (
-    await getHardocsJsonFile({ path: projectPath, force })
-  ).hardocsJson.entryFile;
+  if (!folder.isHardocsProject({ path: projectPath, force })) {
+    throw new Error('Not a valid hardocs project -- getEntryFilePath');
+  }
 
-  const entryFile = `${docsDir}/${entryFileName}`;
-  return entryFile;
+  try {
+    const docsDir = await folder.getDocsFolder({
+      path: projectPath,
+      force
+    });
+
+    const entryFileName = getHardocsJsonFile({ path: projectPath, force })
+      .hardocsJson.entryFile;
+
+    const entryFile = `${docsDir}/${entryFileName}`;
+    return entryFile;
+  } catch (err) {
+    return 'Not a valid project';
+  }
 };
 
-const getHardocsJsonFile = async ({
+const getHardocsJsonFile = ({
   path,
   force = false
-}: Options): Promise<{
+}: Partial<Options>): {
   hardocsJson: HDS.IProject;
   currentDir: string;
-}> => {
-  let currentDir = cwd.get();
-  if (force) {
-    if (path) {
-      currentDir = path;
-    }
+} => {
+  if (force && !path) {
+    throw new Error('Please specify path when using `force: true` option..');
+  }
+  if (!path) {
+    path = cwd.get();
   }
 
-  const hardocsDir = getHardocsDir(currentDir);
+  const hardocsDir = getHardocsDir(path);
 
-  if (!folder.isHardocsProject({ path: currentDir }) || !hardocsDir) {
-    throw new Error('Not a valid hardocs project');
+  if (!folder.isHardocsProject({ path, force })) {
+    throw new Error('Not a valid hardocs project -- getHardocsJsonFile');
   }
-  const hardocsFile: string = await fs.readFile(`${hardocsDir}/hardocs.json`, {
-    encoding: 'utf8'
-  });
-  const hardocsJson = await JSON.parse(hardocsFile);
-  return { hardocsJson, currentDir };
+  const hardocsFile: string = fs.readFileSync(
+    `${hardocsDir}/hardocs.json`,
+    'utf-8'
+  );
+  const hardocsJson = JSON.parse(hardocsFile);
+  return { hardocsJson, currentDir: path };
 };
 
-const createMarkdownTemplate = async (
-  entryPath: string,
-  filename: string,
-  path: string
-) => {
+const createMarkdownTemplate = async (filename: string, path: string) => {
   try {
-    const data = await fs.readFile(entryPath, 'utf8');
-    const newFile = await fs.writeFile(`${path}/${filename}`, data, {
+    // const data = fs.readFileSync(entryPath, 'utf-8');
+
+    const data = `
+---
+title: Example
+description: This is a test document
+---
+
+# Example Doc
+
+Keep doing what you're doing
+    `;
+
+    const newFile = fs.writeFileSync(`${path}/${filename}`, data, {
       flag: 'w+'
     });
     return newFile;
@@ -137,9 +165,11 @@ const createMarkdownTemplate = async (
 };
 
 const openEntryFile = async ({ path, force }: Options) => {
-  const entryFilePath = await getEntryFilePath({ path, force });
+  if (!force) {
+    path = `${cwd.get()}/${path}`;
+  }
 
-  const metadata = openFile({ path: entryFilePath, force: false });
+  const metadata = openFile({ path, force: false });
   return metadata;
 };
 
@@ -177,27 +207,42 @@ const exists = (path: string): boolean => {
 
 const deleteFile = ({
   filePath
-}: HDS.IDeleteFileOnMutationArguments): boolean => {
+}: HDS.IDeleteFileOnMutationArguments): boolean | HDS.IError => {
   if (folder.isDirectory({ path: filePath })) {
-    throw new Error('File path must point to a valid file and not a directory');
+    return {
+      error: true,
+      message: 'File path must point to a valid file and not a directory'
+    };
   }
 
   if (!exists(filePath)) {
-    throw new Error('File does not exist');
+    return {
+      error: true,
+      message: "File doesn't exist"
+    };
   }
   fs.stat(filePath, (err, stat) => {
     if (err) {
-      console.log(err);
+      return {
+        error: true,
+        message: err.message
+      };
     }
+
+    // Already handled this in the upper scope, however, we want to avoid errors as much as possible
     if (stat.isDirectory()) {
-      console.log(`${filePath} is a Directory`);
-      return false;
+      return {
+        error: true,
+        message: "Method doesn't support deleting of directories."
+      };
     }
     fs.unlink(filePath, (err) => {
       if (err) {
-        throw new Error(err.message);
+        return {
+          error: true,
+          message: err.message
+        };
       }
-      console.log(`${filePath} deleted successfully`);
       return true;
     });
     return true;

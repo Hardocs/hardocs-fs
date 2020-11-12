@@ -18,3 +18,4 @@ src/.temp
 dist/
 test.js
 coverage/
+coverage/*
