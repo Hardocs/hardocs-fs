@@ -63,6 +63,9 @@ const downloadAndOptimizeImage = (
 };
 
 const saveImages = (markdown: string, host?: URL, path?: string) => {
+  if (host) {
+    console.log(host);
+  }
   const _path = path || cwd.get();
   const regex = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/gi;
   const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/i;

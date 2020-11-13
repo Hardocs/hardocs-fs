@@ -46,6 +46,8 @@ const writeToFile = (
   if (!input) {
     throw new Error('Input all fields');
   }
+
+  console.log({ input });
   const yml = `---
 title: ${title}
 description: ${description}
