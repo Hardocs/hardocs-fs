@@ -5,7 +5,7 @@ import cwd from '../cwd';
 import folder from '../folder';
 import { Options, Path } from '../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
-import image from '../image';
+// import image from '../image';
 import FM from 'front-matter';
 
 // const dom = new jsdom.JSDOM();
@@ -53,7 +53,10 @@ description: ${description}
 ---
 `;
 
-  const result = process ? image.saveImages(content, undefined, path) : content;
+  console.log(process);
+
+  // const result = process ? image.saveImages(content, undefined, path) : content; // todo: Process images
+  const result = content;
   const markdown = `${yml}
 
 ${result}
