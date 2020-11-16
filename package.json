@@ -45,11 +45,12 @@
   },
   "dependencies": {
     "dotenv": "^8.2.0",
+    "front-matter": "^4.0.2",
     "glob": "^7.1.6",
+    "jimp": "^0.16.1",
     "jsdom": "^16.4.0",
     "lodash": "^4.17.20",
     "mime-types": "^2.1.27",
-    "sharp": "^0.26.2",
     "showdown": "^1.9.1",
     "turndown": "^7.0.0",
     "uuid": "^8.3.1"
