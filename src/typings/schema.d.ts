@@ -121,7 +121,6 @@ declare namespace HDS {
   interface IFile {
     __typename: 'File';
     title: string;
-    description: string;
     path: string;
     content: string;
 
@@ -133,7 +132,6 @@ declare namespace HDS {
 
   interface IFileInput {
     title: string;
-    description: string;
     path: string;
     content: string;
     fileName: string;
@@ -202,7 +200,7 @@ declare namespace HDS {
     /**
      * Chineese
      */
-    CH = 'CH',
+    CH = 'CH'
   }
 
   interface ILicenseInput {

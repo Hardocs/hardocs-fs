@@ -16,19 +16,13 @@ const openFile = ({ path: filePath, force = false }: Options) => {
       filePath = cwd.get();
     }
     const readFile = fs.readFileSync(filePath);
-    console.log({
-      buffer: readFile,
-      fm: FM(String(readFile)),
-      toString: readFile.toString()
-    });
-    const content = FM(String(readFile));
+    const content = FM(String(readFile), {});
     const data: any = content.attributes;
     // const parsedContent = image.handleImagePaths(content, context);
     const c = content.body;
 
     return {
       title: data.title,
-      description: data.description,
       content: c,
       fileName: getFileName({ path: filePath }),
       path: force ? filePath : `${cwd.get()}/${filePath}`
@@ -42,25 +36,15 @@ const writeToFile = (
   input: HDS.IFileInput,
   process = true
 ): boolean | HDS.IError => {
-  const { path, title, description, content, fileName } = input;
+  const { path, content, fileName } = input;
   if (!input) {
     throw new Error('Input all fields');
   }
-
-  const yml = `---
-title: ${title}
-description: ${description}
----
-`;
 
   console.log(process);
 
   // const result = process ? image.saveImages(content, undefined, path) : content; // todo: Process images
   const result = content;
-  const markdown = `${yml}
-
-${result}
-    `;
 
   // const mdContent = converter.makeMarkdown(content, dom.window.document);
   // const markdown = `${yml}
@@ -69,7 +53,7 @@ ${result}
 
   const newPath = `${path}/${fileName}`;
   try {
-    fs.writeFileSync(newPath, markdown, { encoding: 'utf8' });
+    fs.writeFileSync(newPath, result, { encoding: 'utf8' });
 
     return true;
   } catch (er) {
@@ -151,13 +135,7 @@ const createMarkdownTemplate = async (filename: string, path: string) => {
   try {
     // const data = fs.readFileSync(entryPath, 'utf-8');
 
-    const data = `
----
-title: Example
-description: This is a test document
----
-
-# Example Doc
+    const data = `# Example Doc
 
 Keep doing what you're doing
     `;

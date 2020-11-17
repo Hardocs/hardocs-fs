@@ -27,7 +27,6 @@ describe('Test for file operations: ', () => {
     const openFile = file.openFile({ path: filePath });
 
     const openFileKeys = {
-      description: '',
       title: '',
       content: '',
       fileName: '',
@@ -70,7 +69,6 @@ describe('Test for file operations: ', () => {
 
     const data = {
       title: 'The quote',
-      description: 'Quote by Divine',
       fileName: 'divine-quote.md',
       path: __dirname,
       content: text
