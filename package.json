@@ -45,7 +45,6 @@
   },
   "dependencies": {
     "dotenv": "^8.2.0",
-    "front-matter": "^4.0.2",
     "glob": "^7.1.6",
     "jimp": "^0.16.1",
     "jsdom": "^16.4.0",

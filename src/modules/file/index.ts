@@ -6,7 +6,6 @@ import folder from '../folder';
 import { Options, Path } from '../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 // import image from '../image';
-import FM from 'front-matter';
 
 // const dom = new jsdom.JSDOM();
 
@@ -15,15 +14,25 @@ const openFile = ({ path: filePath, force = false }: Options) => {
     if (!filePath) {
       filePath = cwd.get();
     }
-    const readFile = fs.readFileSync(filePath);
-    const content = FM(String(readFile), {});
-    const data: any = content.attributes;
-    // const parsedContent = image.handleImagePaths(content, context);
-    const c = content.body;
+    const readFile = fs.readFileSync(filePath, 'utf-8');
+
+    const regex = /(# |## |### |#### )[\w]*[\s\S]*?\n/gis;
+    const newRegex = /(# |## |### |#### )/gi;
+
+    let title = 'Please specify a title';
+
+    const newTitle = readFile.match(regex);
+
+    if (newTitle) {
+      title = newTitle[0];
+    }
+
+    title = title.replace(newRegex, '').trim();
+    title = title.replace(/&nbsp;/g, '');
 
     return {
-      title: data.title,
-      content: c,
+      title,
+      content: readFile,
       fileName: getFileName({ path: filePath }),
       path: force ? filePath : `${cwd.get()}/${filePath}`
     };
