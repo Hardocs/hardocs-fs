@@ -5,14 +5,8 @@ import cwd from '../cwd';
 import folder from '../folder';
 import { Options, Path } from '../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
-import showdown from 'showdown';
-import Turndown from 'turndown';
-import image from '../image';
-// import jsdom from 'jsdom';
-// import image from '../image'; // FIXME: Handle images
+// import image from '../image';
 
-const converter = new showdown.Converter({ metadata: true });
-const turndown = new Turndown();
 // const dom = new jsdom.JSDOM();
 
 const openFile = ({ path: filePath, force = false }: Options) => {
@@ -20,16 +14,25 @@ const openFile = ({ path: filePath, force = false }: Options) => {
     if (!filePath) {
       filePath = cwd.get();
     }
-    const readFile = fs.readFileSync(filePath);
-    const content = converter.makeHtml(String(readFile));
-    const data: any = converter.getMetadata();
-    // const parsedContent = image.handleImagePaths(content, context);
-    const c = converter.makeHtml(content);
+    const readFile = fs.readFileSync(filePath, 'utf-8');
+
+    const regex = /(# |## |### |#### )[\w]*[\s\S]*?\n/gis;
+    const newRegex = /(# |## |### |#### )/gi;
+
+    let title = 'Please specify a title';
+
+    const newTitle = readFile.match(regex);
+
+    if (newTitle) {
+      title = newTitle[0];
+    }
+
+    title = title.replace(newRegex, '').trim();
+    title = title.replace(/&nbsp;/g, '');
 
     return {
-      title: data.title,
-      description: data.description,
-      content: c,
+      title,
+      content: readFile,
       fileName: getFileName({ path: filePath }),
       path: force ? filePath : `${cwd.get()}/${filePath}`
     };
@@ -42,28 +45,15 @@ const writeToFile = (
   input: HDS.IFileInput,
   process = true
 ): boolean | HDS.IError => {
-  const { path, title, description, content, fileName } = input;
+  const { path, content, fileName } = input;
   if (!input) {
     throw new Error('Input all fields');
   }
 
-  console.log({ input });
-  const yml = `---
-title: ${title}
-description: ${description}
----
-`;
+  console.log(process);
 
-  const mdContent = turndown.turndown(content);
-
-  const result = process
-    ? image.saveImages(mdContent, undefined, path)
-    : mdContent;
-  const markdown = `
-${yml}
-
-${result}
-    `;
+  // const result = process ? image.saveImages(content, undefined, path) : content; // todo: Process images
+  const result = content;
 
   // const mdContent = converter.makeMarkdown(content, dom.window.document);
   // const markdown = `${yml}
@@ -72,7 +62,7 @@ ${result}
 
   const newPath = `${path}/${fileName}`;
   try {
-    fs.writeFileSync(newPath, markdown, { encoding: 'utf8' });
+    fs.writeFileSync(newPath, result, { encoding: 'utf8' });
 
     return true;
   } catch (er) {
@@ -154,13 +144,7 @@ const createMarkdownTemplate = async (filename: string, path: string) => {
   try {
     // const data = fs.readFileSync(entryPath, 'utf-8');
 
-    const data = `
----
-title: Example
-description: This is a test document
----
-
-# Example Doc
+    const data = `# Example Doc
 
 Keep doing what you're doing
     `;

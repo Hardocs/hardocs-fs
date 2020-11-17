@@ -1,9 +1,9 @@
 import mime from 'mime-types';
 import glob from 'glob';
-import sharp from 'sharp';
 import { v4 as UUIDv4 } from 'uuid';
 import fs from 'fs';
 import __ from 'lodash';
+import Jimp from 'jimp';
 
 import cwd from '../cwd';
 import file from '../file';
@@ -21,6 +21,7 @@ const downloadAndOptimizeImage = (
   dir?: string
 ) => {
   const base64 = options.base64;
+  console.log({ options });
   /**
    * If `dir` is not provided, the current working directory will
    * be used instead
@@ -43,11 +44,11 @@ const downloadAndOptimizeImage = (
     const path = `${dir}/${filename}`;
     console.log({ path });
     // .resize(300, 200)
-    sharp(img)
-      .jpeg() // TODO: Optimize image quality
-      .toFile(path, function (err) {
-        if (err) console.error({ err });
-      });
+    Jimp.read(img, (err, res) => {
+      if (err) throw err;
+      res.quality(60).write(path);
+    });
+
     return {
       id: options.id,
       fullPath: path,
