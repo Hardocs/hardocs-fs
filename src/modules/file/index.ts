@@ -55,8 +55,8 @@ const writeToFile = (
   // const result = process ? image.saveImages(content, undefined, path) : content; // todo: Process images
   const result = content;
 
-  // const mdContent = converter.makeMarkdown(content, dom.window.document);
-  // const markdown = `${yml}
+  // const mdContent = converter.makeHtml(content, dom.window.document);
+  // const html = `${yml}
   // ${content}
   //   `;
 
@@ -77,12 +77,12 @@ const writeToFile = (
  *
  * @param filePath <Optional> Specify if you want to read from another directory
  */
-const allMarkdownFilesPath = (filePath?: string) => {
+const allHtmlFilesPath = (filePath?: string) => {
   if (!filePath) {
     filePath = cwd.get();
   }
-  const allMarkdowns = glob.sync(`${filePath}/**/*.*(md|mdx)`);
-  return allMarkdowns;
+  const allHtmls = glob.sync(`${filePath}/**/*.html`);
+  return allHtmls;
 };
 
 const getEntryFilePath = async ({
@@ -140,7 +140,7 @@ const getHardocsJsonFile = ({
   return { hardocsJson, currentDir: path };
 };
 
-const createMarkdownTemplate = async (filename: string, path: string) => {
+const createHtmlTemplate = async (filename: string, path: string) => {
   try {
     // const data = fs.readFileSync(entryPath, 'utf-8');
 
@@ -168,9 +168,9 @@ const openEntryFile = async ({ path, force }: Options) => {
 };
 
 const extractAllFileData = async ({ path }: Options) => {
-  const allMarkdownFilesPathPath = allMarkdownFilesPath(path);
+  const allHtmlFilesPathPath = allHtmlFilesPath(path);
   try {
-    return allMarkdownFilesPathPath.map((f) => {
+    return allHtmlFilesPathPath.map((f) => {
       const d = openFile({ path: f, force: false });
       // const d = await openFile({ filePath: f });
 
@@ -192,7 +192,7 @@ const extractAllFileData = async ({ path }: Options) => {
 const getFileName = ({ path }: Path) => {
   const fullPath = path.split(/\//gis);
   const lastIndex = fullPath[fullPath.length - 1];
-  return lastIndex.toString().includes(`.md`) && lastIndex;
+  return lastIndex.toString().includes(`.html`) && lastIndex;
 };
 
 const exists = (path: string): boolean => {
@@ -246,10 +246,10 @@ const deleteFile = ({
 };
 export default {
   openFile,
-  allMarkdownFilesPath,
+  allHtmlFilesPath,
   getEntryFilePath,
   getHardocsJsonFile,
-  createMarkdownTemplate,
+  createHtmlTemplate,
   openEntryFile,
   extractAllFileData,
   getFileName,

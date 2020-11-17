@@ -4,7 +4,7 @@ import fs from 'fs';
 import json from './hardocs.json';
 
 const emptyDir = path.join(__dirname, 'empty');
-const markdownFile = path.join(__dirname, 'divine-quote.md');
+const htmlFile = path.join(__dirname, 'divine-quote.html');
 beforeAll(() => {
   /**
    * Create an empty directory to use for testing
@@ -18,7 +18,7 @@ afterAll(() => {
   fs.rmdirSync(emptyDir);
 });
 describe('Test for file operations: ', () => {
-  const filePath = path.join(__dirname, 'divine-quote.md');
+  const filePath = path.join(__dirname, 'divine-quote.html');
   it('exists', () => {
     expect(file.exists(filePath)).toBeTruthy();
   });
@@ -38,12 +38,12 @@ describe('Test for file operations: ', () => {
     expect(sortedFileKeys).toEqual(sortedFileTest);
   });
 
-  it('returns an array of strings of paths to markdown files in this directory', () => {
-    const paths = file.allMarkdownFilesPath(__dirname);
-    expect(paths).toEqual([markdownFile]);
+  it('returns an array of strings of paths to html files in this directory', () => {
+    const paths = file.allHtmlFilesPath(__dirname);
+    expect(paths).toEqual([htmlFile]);
   });
-  it('returns an empty array for folders without markdown files', () => {
-    const paths = file.allMarkdownFilesPath(emptyDir);
+  it('returns an empty array for folders without html files', () => {
+    const paths = file.allHtmlFilesPath(emptyDir);
     expect(paths).toEqual([]);
   });
 
@@ -58,7 +58,7 @@ describe('Test for file operations: ', () => {
     expect(hardocsJson).toEqual(expect.objectContaining(json));
   });
 
-  it('saves a markdown file', () => {
+  it('saves a html file', () => {
     const text = `
 <blockquote>Train your Mind, Body and Soul to become Exceptional.</blockquote> 
     
@@ -69,7 +69,7 @@ describe('Test for file operations: ', () => {
 
     const data = {
       title: 'The quote',
-      fileName: 'divine-quote.md',
+      fileName: 'divine-quote.html',
       path: __dirname,
       content: text
     };
