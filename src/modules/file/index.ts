@@ -16,8 +16,8 @@ const openFile = ({ path: filePath, force = false }: Options) => {
     }
     const readFile = fs.readFileSync(filePath, 'utf-8');
 
-    const regex = /(# |## |### |#### )[\w]*[\s\S]*?\n/gis;
-    const newRegex = /(# |## |### |#### )/gi;
+    const regex = /<[^>].+?>(.*?)<\/.+?>/m;
+    const newRegex = /(<([^>]+)>)/gi;
 
     let title = 'Please specify a title';
 
@@ -144,10 +144,7 @@ const createHtmlTemplate = async (filename: string, path: string) => {
   try {
     // const data = fs.readFileSync(entryPath, 'utf-8');
 
-    const data = `# Example Doc
-
-Keep doing what you're doing
-    `;
+    const data = `<h1>Let's get ready to rumble</h1>`;
 
     const newFile = fs.writeFileSync(`${path}/${filename}`, data, {
       flag: 'w+'
