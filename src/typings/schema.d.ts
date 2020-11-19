@@ -162,7 +162,7 @@ declare namespace HDS {
     docsDir: string;
 
     /**
-     * @default "index.md"
+     * @default "index.html"
      */
     entryFile: string;
 

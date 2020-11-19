@@ -63,7 +63,7 @@ const downloadAndOptimizeImage = (
   }
 };
 
-const saveImages = (markdown: string, host?: URL, path?: string) => {
+const saveImages = (html: string, host?: URL, path?: string) => {
   if (host) {
     console.log(host);
   }
@@ -72,7 +72,7 @@ const saveImages = (markdown: string, host?: URL, path?: string) => {
   const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/i;
   // const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)(?=\"|\))\)/i;
 
-  const result = markdown.replace(regex, (v) => {
+  const result = html.replace(regex, (v) => {
     const imgObject = v.match(regex2);
     let newUrl = '';
     if (
@@ -235,7 +235,7 @@ export default {
   imageCache
 };
 
-// const handleImagePaths = (markdown: string, host: URL) => {
+// const handleImagePaths = (html: string, host: URL) => {
 //   const regex = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/gi;
 //   const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/i;
 //   // const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)(?=\"|\))\)/i;
@@ -249,7 +249,7 @@ export default {
 //     if (str[0] === val || str.charAt(0) === val) return true;
 //     return false;
 //   };
-//   const result = markdown.replace(regex, (v) => {
+//   const result = html.replace(regex, (v) => {
 //     const imgObject = v.match(regex2);
 //     let newUrl = '';
 //     if (

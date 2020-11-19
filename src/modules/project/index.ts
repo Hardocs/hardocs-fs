@@ -9,9 +9,9 @@ import { getHardocsDir } from './../../utils/constants';
 import file from '../file';
 
 // const templateDir = path.join(__dirname, '../../../template/template'); // TODO: Include template
-// const markdownFile = path.join(
+// const htmlFile = path.join(
 //   __dirname,
-//   '../../../template/docsTemplate/index.md'
+//   '../../../template/docsTemplate/index.html'
 // );
 // const docsTemplateDir = path.join(__dirname, '../../../template/docsTemplate');
 
@@ -114,7 +114,7 @@ const create = async (
         fs.mkdirSync(docsDir);
       }
 
-      await file.createMarkdownTemplate(result.entryFile, docsDir);
+      await file.createHtmlTemplate(result.entryFile, docsDir);
 
       const response = await openProject({ path: dest, force: true }); // Open project before requiring any files in it
 
@@ -169,7 +169,7 @@ const createFromExisting = async (
       }
 
       if (!file.exists(`${docsDir}/${result.entryFile}`)) {
-        await file.createMarkdownTemplate(result.entryFile, docsDir);
+        await file.createHtmlTemplate(result.entryFile, docsDir);
       }
 
       const response = await openProject({ path: projectPath, force: true }); // Open project before requiring any files in it

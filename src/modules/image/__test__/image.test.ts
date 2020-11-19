@@ -15,20 +15,20 @@ import image from '..';
 // `;
 
 //   const mdContent = turndown.turndown(content);
-//   const markdown = `
+//   const html = `
 // ${yml}
 
 // ${mdContent}
 //     `;
 
-//   // const mdContent = converter.makeMarkdown(content, dom.window.document);
-//   // const markdown = `${yml}
+//   // const mdContent = converter.makeHtml(content, dom.window.document);
+//   // const html = `${yml}
 //   // ${content}
 //   //   `;
 
 //   const newPath = `${path}/${fileName}`;
 //   try {
-//     fs.writeFileSync(newPath, markdown, { encoding: 'utf8' });
+//     fs.writeFileSync(newPath, html, { encoding: 'utf8' });
 
 //     return true;
 //   } catch (er) {
