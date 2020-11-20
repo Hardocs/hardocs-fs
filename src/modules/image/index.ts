@@ -68,12 +68,16 @@ const saveImages = (html: string, host?: URL, path?: string) => {
     console.log(host);
   }
   const _path = path || cwd.get();
-  const regex = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/gi;
-  const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/i;
+  // const regex = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/gi;
+  // const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/i;
+  const regex = /<img .*? \/>/gi;
+  const regex2 = /<img .*?src="(?<filename>.*?)".?alt="(?<alt>.*?)" \/>/i;
   // const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)(?=\"|\))\)/i;
 
-  const result = html.replace(regex, (v) => {
+  const imgArray: string[] = [];
+  html.replace(regex, (v) => {
     const imgObject = v.match(regex2);
+
     let newUrl = '';
     if (
       !imgObject ||
@@ -86,14 +90,19 @@ const saveImages = (html: string, host?: URL, path?: string) => {
 
     const _filename = imgObject.groups.filename;
 
+    if (_filename.match(/^http/)) {
+      return v;
+    }
+    imgArray.push(_filename);
+
     const newImage = imageCache(_path, _filename);
 
     newUrl = newImage.path;
 
     const alt = imgObject.groups.alt;
-    return `${alt}(${newUrl})`;
+    return `<img src="${newUrl}" alt="${alt}" />`;
   });
-  return result;
+  return imgArray;
 };
 
 const getImages = (path?: string) => {
@@ -145,7 +154,6 @@ const toBase64 = (imagePath: string) => {
 
 const imageCache = (path: string, images: any) => {
   // const images = getImagesInHardocsProject({ path });
-
   if (!images) {
     return;
   }
