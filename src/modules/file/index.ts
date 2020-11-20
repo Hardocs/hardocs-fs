@@ -5,7 +5,7 @@ import cwd from '../cwd';
 import folder from '../folder';
 import { Options, Path } from '../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
-// import image from '../image';
+import image from '../image';
 
 // const dom = new jsdom.JSDOM();
 
@@ -50,10 +50,11 @@ const writeToFile = (
     throw new Error('Input all fields');
   }
 
-  console.log(process);
+  console.log({ process });
+  const { result } = image.saveImages(content, undefined, path);
 
-  // const result = process ? image.saveImages(content, undefined, path) : content; // todo: Process images
-  const result = content;
+  const _result = process ? result : content; // todo: Process images
+  // const result = content;
 
   // const mdContent = converter.makeHtml(content, dom.window.document);
   // const html = `${yml}
@@ -62,7 +63,7 @@ const writeToFile = (
 
   const newPath = `${path}/${fileName}`;
   try {
-    fs.writeFileSync(newPath, result, { encoding: 'utf8' });
+    fs.writeFileSync(newPath, _result, { encoding: 'utf8' });
 
     return true;
   } catch (er) {

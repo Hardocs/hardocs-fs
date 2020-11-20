@@ -81,7 +81,7 @@ const saveImages = (html: string, host?: URL, path?: string) => {
   // const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)(?=\"|\))\)/i;
 
   const imgArray: string[] = [];
-  html.replace(regex, (v) => {
+  const result = html.replace(regex, (v) => {
     const imgObject = v.match(regex2);
 
     let newUrl = '';
@@ -103,12 +103,20 @@ const saveImages = (html: string, host?: URL, path?: string) => {
 
     const newImage = imageCache(_path, _filename);
 
-    newUrl = newImage.path;
+    const response = newImage.map((_image: any) => {
+      newUrl = _image.path;
 
-    const alt = imgObject.groups.alt;
-    return `<img src="${newUrl}" alt="${alt}" />`;
+      const alt = imgObject.groups?.alt;
+      return `<img src="${newUrl}" alt="${alt}" />`;
+    });
+    console.log({ response });
+    return response;
   });
-  return imgArray;
+
+  return {
+    imgArray,
+    result
+  };
 };
 
 const getImages = (path?: string) => {
@@ -236,7 +244,6 @@ const imageCache = (path: string, images: any) => {
   }
 
   fs.writeFileSync(imageCacheFile, JSON.stringify(newCache, null, 2));
-
   return newCache;
 };
 

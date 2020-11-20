@@ -70,10 +70,11 @@ describe('Test for file operations: ', () => {
     const data = {
       title: 'The quote',
       fileName: 'divine-quote.html',
-      path: __dirname,
+      path:
+        '/home/divine/Documents/projects/hardocs/hardocs-fs/src/modules/file/__test__/Jose_project',
       content: text
     };
-    const response = file.writeToFile(data, false);
+    const response = file.writeToFile(data, true);
 
     expect(response).toBeTruthy();
   });
