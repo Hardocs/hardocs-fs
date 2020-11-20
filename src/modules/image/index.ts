@@ -42,11 +42,17 @@ const downloadAndOptimizeImage = (
 
     const filename = `${UUIDv4()}.jpg`;
     const path = `${dir}/${filename}`;
-    console.log({ path });
-    // .resize(300, 200)
+
+    const defaultWidth = 600;
+
     Jimp.read(img, (err, res) => {
       if (err) throw err;
-      res.quality(60).write(path);
+      let _width = res.getWidth();
+
+      if (_width > defaultWidth) {
+        _width = defaultWidth;
+      }
+      res.resize(_width, Jimp.AUTO).quality(60).write(path);
     });
 
     return {
