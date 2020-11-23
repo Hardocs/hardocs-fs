@@ -51,7 +51,7 @@ const writeToFile = (
   }
 
   console.log({ process });
-  const { result } = image.saveImages(content, undefined, path);
+  const result = image.imagesInHtml(content);
 
   const _result = process ? result : content; // todo: Process images
   // const result = content;
