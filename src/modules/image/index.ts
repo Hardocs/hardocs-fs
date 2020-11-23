@@ -69,22 +69,45 @@ const downloadAndOptimizeImage = (
   }
 };
 
-const saveImages = (html: string, host?: URL, path?: string) => {
-  if (host) {
-    console.log(host);
-  }
-  const _path = path || cwd.get();
+const processImage = (data: string) => {
+  data = data.replace(regexp, '');
+
+  const buffer = Buffer.from(data, 'base64');
+  const maxWidth = 600;
+  const maxHeight = 400;
+
+  Jimp.read(buffer, (err, res) => {
+    if (err) throw new Error(err.message);
+
+    let _width = res.getWidth();
+    let _height = res.getHeight();
+
+    if (_width > maxWidth) {
+      _width = maxWidth;
+    }
+    if (_height > maxHeight) {
+      _height = maxHeight;
+    }
+
+    res.resize(_width, Jimp.AUTO).quality(50);
+
+    data = res.bitmap.data.toString('base64');
+    // res.resize(_width, Jimp.AUTO)
+    // .quality(0).write('resided-2.jpg')
+  });
+  return data;
+};
+
+const imagesInHtml = (html: string) => {
   // const regex = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/gi;
   // const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/i;
   const regex = /<img .*? \/>/gi;
   const regex2 = /<img .*?src="(?<filename>.*?)".?alt="(?<alt>.*?)" \/>/i;
   // const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)(?=\"|\))\)/i;
 
-  const imgArray: string[] = [];
   const result = html.replace(regex, (v) => {
     const imgObject = v.match(regex2);
 
-    let newUrl = '';
     if (
       !imgObject ||
       !imgObject.groups ||
@@ -99,24 +122,15 @@ const saveImages = (html: string, host?: URL, path?: string) => {
     if (_filename.match(/^http/)) {
       return v;
     }
-    imgArray.push(_filename);
 
-    const newImage = imageCache(_path, _filename);
+    const newImage = processImage(_filename);
+    const alt = imgObject.groups?.alt;
 
-    const response = newImage.map((_image: any) => {
-      newUrl = _image.path;
-
-      const alt = imgObject.groups?.alt;
-      return `<img src="${newUrl}" alt="${alt}" />`;
-    });
-    console.log({ response });
+    const response = `<img src="${newImage}" alt="${alt}" />`;
     return response;
   });
 
-  return {
-    imgArray,
-    result
-  };
+  return result;
 };
 
 const getImages = (path?: string) => {
@@ -249,7 +263,7 @@ const imageCache = (path: string, images: any) => {
 
 export default {
   getImages,
-  saveImages,
+  imagesInHtml,
   getImagesInHardocsProject,
   downloadAndOptimizeImage,
   toBase64,

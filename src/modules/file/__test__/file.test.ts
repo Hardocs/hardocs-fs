@@ -70,8 +70,7 @@ describe('Test for file operations: ', () => {
     const data = {
       title: 'The quote',
       fileName: 'divine-quote.html',
-      path:
-        '/home/divine/Documents/projects/hardocs/hardocs-fs/src/modules/file/__test__/Jose_project',
+      path: __dirname,
       content: text
     };
     const response = file.writeToFile(data, true);

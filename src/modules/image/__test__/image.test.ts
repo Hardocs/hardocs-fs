@@ -50,13 +50,9 @@ describe('downloads an image', () => {
   // const res = image.imageCache('/home/divine/Desktop/Jose_project', data);
   // console.log({ res });
 
-  const html = `this is a html document
-  <img src="${data1}" alt="small size" />
-  <img src="${data2}" alt="medium size" />
-  <img src="${data3}" alt="large size" />
-  `;
+  const html = `this is a html document <img src="${data1}" alt="small size" /><img src="${data2}" alt="medium size" /><img src="${data3}" alt="large size" />`;
 
-  image.saveImages(html, undefined, '/home/divine/Desktop/Jose_project');
+  image.imagesInHtml(html);
 
   it('is true', () => {
     expect(true).toBeTruthy();
