@@ -72,37 +72,56 @@ const downloadAndOptimizeImage = (
 const processImage = (data: string) => {
   data = data.replace(regexp, '');
 
+  let response;
+  console.log({ prevLength: data.length });
+
   const buffer = Buffer.from(data, 'base64');
   const maxWidth = 600;
   const maxHeight = 400;
 
-  Jimp.read(buffer, (err, res) => {
-    if (err) throw new Error(err.message);
+  try {
+    Jimp.read(buffer)
+      .then((res) => {
+        let _width = res.getWidth();
+        let _height = res.getHeight();
 
-    let _width = res.getWidth();
-    let _height = res.getHeight();
+        if (_width > maxWidth) {
+          _width = maxWidth;
+        }
+        if (_height > maxHeight) {
+          _height = maxHeight;
+        }
 
-    if (_width > maxWidth) {
-      _width = maxWidth;
-    }
-    if (_height > maxHeight) {
-      _height = maxHeight;
-    }
+        res.resize(_width, Jimp.AUTO).quality(50);
 
-    res.resize(_width, Jimp.AUTO).quality(50);
+        console.log({
+          data: data.slice(0, 12),
+          response: res.bitmap.data.toString('base64').slice(1, 100)
+        });
 
-    data = res.bitmap.data.toString('base64');
-    // res.resize(_width, Jimp.AUTO)
-    // .quality(0).write('resided-2.jpg')
+        response.push(res.bitmap.data.toString('base64'));
+
+        return res.bitmap.data.toString('base64').slice(0, 100);
+      })
+      .catch((err) => {
+        throw new Error(err);
+      });
+  } catch (err) {
+    console.error(err);
+  }
+
+  console.log({
+    newRes: response
   });
-  return data;
+
+  return response;
 };
 
-const imagesInHtml = (html: string) => {
+const imagesInHtml = async (html: string) => {
   // const regex = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/gi;
   // const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)\)/i;
   const regex = /<img .*? \/>/gi;
-  const regex2 = /<img .*?src="(?<filename>.*?)".?alt="(?<alt>.*?)" \/>/i;
+  const regex2 = /<img .*?src="(?<base64string>.*?)".?alt="(?<alt>.*?)" \/>/i;
   // const regex2 = /(?<alt>!\[[^\]]*\])\((?<filename>.*?)(?=\"|\))\)/i;
 
   const result = html.replace(regex, (v) => {
@@ -117,16 +136,18 @@ const imagesInHtml = (html: string) => {
       return v;
     }
 
-    const _filename = imgObject.groups.filename;
+    const base64string = imgObject.groups.base64string;
 
-    if (_filename.match(/^http/)) {
+    if (base64string.match(/^http/)) {
       return v;
     }
 
-    const newImage = processImage(_filename);
     const alt = imgObject.groups?.alt;
+    const newBase64 = processImage(base64string);
 
-    const response = `<img src="${newImage}" alt="${alt}" />`;
+    console.log({ newBase64 });
+
+    const response = `<img src="data:image/jpeg;base64,${newBase64}" alt="${alt}" />`;
     return response;
   });
 
@@ -267,7 +288,8 @@ export default {
   getImagesInHardocsProject,
   downloadAndOptimizeImage,
   toBase64,
-  imageCache
+  imageCache,
+  processImage
 };
 
 // const handleImagePaths = (html: string, host: URL) => {

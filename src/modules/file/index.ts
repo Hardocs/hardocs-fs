@@ -5,7 +5,6 @@ import cwd from '../cwd';
 import folder from '../folder';
 import { Options, Path } from '../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
-import image from '../image';
 
 // const dom = new jsdom.JSDOM();
 
@@ -41,29 +40,17 @@ const openFile = ({ path: filePath, force = false }: Options) => {
   }
 };
 
-const writeToFile = (
-  input: HDS.IFileInput,
-  process = true
-): boolean | HDS.IError => {
+const writeToFile = async (
+  input: HDS.IFileInput
+): Promise<boolean | HDS.IError> => {
   const { path, content, fileName } = input;
   if (!input) {
     throw new Error('Input all fields');
   }
 
-  console.log({ process });
-  const result = image.imagesInHtml(content);
-
-  const _result = process ? result : content; // todo: Process images
-  // const result = content;
-
-  // const mdContent = converter.makeHtml(content, dom.window.document);
-  // const html = `${yml}
-  // ${content}
-  //   `;
-
   const newPath = `${path}/${fileName}`;
   try {
-    fs.writeFileSync(newPath, _result, { encoding: 'utf8' });
+    fs.writeFileSync(newPath, content, { encoding: 'utf8' });
 
     return true;
   } catch (er) {

@@ -73,7 +73,7 @@ describe('Test for file operations: ', () => {
       path: __dirname,
       content: text
     };
-    const response = file.writeToFile(data, true);
+    const response = file.writeToFile(data);
 
     expect(response).toBeTruthy();
   });
