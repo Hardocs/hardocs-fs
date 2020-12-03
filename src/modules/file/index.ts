@@ -132,7 +132,11 @@ const createHtmlTemplate = async (filename: string, path: string) => {
   try {
     // const data = fs.readFileSync(entryPath, 'utf-8');
 
-    const data = `<h1>Untitled</h1>`;
+    const data = `<h2>Index</h2>
+    <br/>
+    <hr/>
+    <p>You can change the title of this document but in the file system will always remain as <code>index.html</code></p>
+    `;
 
     const newFile = fs.writeFileSync(`${path}/${filename}`, data, {
       flag: 'w+'
