@@ -132,7 +132,7 @@ const createHtmlTemplate = async (filename: string, path: string) => {
   try {
     // const data = fs.readFileSync(entryPath, 'utf-8');
 
-    const data = `<h1>Let's get ready to rumble</h1>`;
+    const data = `<h1>Untitled</h1>`;
 
     const newFile = fs.writeFileSync(`${path}/${filename}`, data, {
       flag: 'w+'
