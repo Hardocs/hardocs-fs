@@ -1,5 +1,5 @@
 {
-  "id": "1",
+  "id": "c9854368-8e6b-4be4-b757-c3c610d6d69c",
   "name": "test-project",
   "docsDir": "docs",
   "entryFile": "index.html",
@@ -7,9 +7,8 @@
   "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/test-project",
   "allDocsData": [
     {
-      "title": "Example",
-      "description": "This is a test document",
-      "content": "<h1 id=\"exampledoc\">Example Doc</h1>\n<p>Keep doing what you're doing</p>",
+      "title": "Index",
+      "content": "<h1>Index</h1>\n    <p>You can change the title of this document but in the file system will always remain as <code>index.html</code></p>\n    ",
       "fileName": "index.html",
       "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/test-project/docs/index.html"
     }
