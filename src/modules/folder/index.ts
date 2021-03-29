@@ -61,13 +61,16 @@ const openParent = ({ path: file }: Path) => {
   return generateFolder({ path: cwd.get() });
 };
 
-const createFolder = ({ path: name }: Path) => {
+const createFolder = ({ path: name, force = false }: Options) => {
   if (isDirectory({ path: name })) {
     console.log(`Folder already exist.`);
     return false;
   }
 
-  const folder = path.join(cwd.get(), name);
+  let folder = path.join(cwd.get(), name);
+  if (force) {
+    folder = name;
+  }
   fs.mkdirSync(folder);
   return generateFolder({ path: folder });
 };

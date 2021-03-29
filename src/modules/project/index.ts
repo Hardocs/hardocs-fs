@@ -8,13 +8,6 @@ import folder from '../folder';
 import { getHardocsDir } from './../../utils/constants';
 import file from '../file';
 
-// const templateDir = path.join(__dirname, '../../../template/template'); // TODO: Include template
-// const htmlFile = path.join(
-//   __dirname,
-//   '../../../template/docsTemplate/index.html'
-// );
-// const docsTemplateDir = path.join(__dirname, '../../../template/docsTemplate');
-
 const openProject = async ({
   path: fullPath,
   force = false

@@ -131,7 +131,7 @@ declare namespace HDS {
   }
 
   interface IFileInput {
-    title: string;
+    title?: string;
     path: string;
     content: string;
     fileName: string;
