@@ -11,35 +11,31 @@ const generateDefaultSchema = async (options: { schemaDir?: string }) => {
   // await cwd.set('/home/divine/Desktop');
   const dir = schemaDir ?? getHardocsDir(cwd.get());
 
-  folder.createFolder({ path: `${dir}/schema`, force: true });
+  folder.createFolder({ path: `${dir}/metadata`, force: true });
 
   file.writeToFile({
     content: JSON.stringify(defaultData, null, 2),
-    path: `${dir}/schema`,
+    path: `${dir}/metadata`,
     fileName: 'schema.json'
   });
   return true;
 };
 
 /**
- * Builds a default schema specification and stores it in `.hardocs/schemas/<filename>`
+ * Updates schema standard in `.hardocs/schemas/<filename>`
  */
 const updateSchema = async (options: { schemaDir?: string; content: any }) => {
   // TODO: Do we need some sort of schema validations? not sure yet!
   const { schemaDir } = options;
   const dir = schemaDir ?? getHardocsDir(cwd.get());
 
-  folder.createFolder({ path: `${dir}/schema`, force: true });
-
   file.writeToFile({
     content: JSON.stringify(defaultData, null, 2),
-    path: `${dir}/schema`,
+    path: `${dir}/metadata`,
     fileName: 'schema.json'
   });
   return true;
 };
-
-export { generateDefaultSchema };
 
 const defaultData = {
   $schema: 'http://json-schema.org/draft-07/schema',
