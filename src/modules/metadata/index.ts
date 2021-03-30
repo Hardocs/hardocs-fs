@@ -25,27 +25,32 @@ const generateDefaultSchema = async (path?: string) => {
     throw new Error(err.message);
   }
 };
+interface UpdateSchemaParams {
+  path?: string;
+  content: Record<string, unknown>;
+}
 
 /**
  * Updates schema standard in `.hardocs/schemas/<filename>`
+ * @param content Object containing a schema standard
+ * @returns JSON object
  */
-const updateSchema = async (options: { schemaDir?: string; content: any }) => {
+const updateSchema = async (opts: UpdateSchemaParams) => {
+  const { path, content } = opts;
   // TODO: Do we need some sort of schema validations? not sure yet!
-  const { schemaDir } = options;
-  const dir = `${schemaDir}/.hardocs` ?? getHardocsDir(cwd.get());
+  const dir = path ?? getHardocsDir(cwd.get());
 
   try {
-    file.writeToFile({
-      content: JSON.stringify(defaultStandard, null, 2),
+    await file.writeToFile({
+      content: JSON.stringify(content, null, 2),
       path: dir,
       fileName: 'schema.json'
     });
-    return true;
+    return JSON.stringify(content, null, 2);
   } catch (err) {
     throw new Error(err.message);
   }
 };
-
 /**
  * Load schema to project
  * @param options
