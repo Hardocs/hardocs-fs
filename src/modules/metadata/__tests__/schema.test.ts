@@ -1,4 +1,5 @@
-import { defaultData, generateDefaultSchema, loadSchema } from '../';
+import { defaultStandard } from '../defaultStandard';
+import { generateDefaultSchema, loadSchema } from '../';
 import cwd from '../../cwd';
 
 const path = process.cwd();
@@ -12,7 +13,7 @@ describe('Schema tests', () => {
     const schema = await loadSchema(`${mocksDir}/test-project`);
 
     // Default data should be same as generated schema
-    expect(schema).toBe(JSON.stringify(defaultData, null, 2));
+    expect(schema).toBe(JSON.stringify(defaultStandard, null, 2));
   });
 });
 
