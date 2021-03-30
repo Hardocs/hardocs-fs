@@ -7,17 +7,16 @@ import fs from 'fs/promises';
 /**
  * Builds a default schema specification and stores it in `.hardocs/schemas/<filename>`
  */
-const generateDefaultSchema = async (options: { schemaDir?: string }) => {
-  const { schemaDir } = options;
+const generateDefaultSchema = async (path?: string) => {
   // await cwd.set('/home/divine/Desktop');
-  const dir = schemaDir ?? getHardocsDir(cwd.get());
+  const dir = `${path}/.hardocs` ?? getHardocsDir(cwd.get());
 
   try {
-    folder.createFolder({ path: `${dir}/.hardocs/metadata`, force: true });
+    folder.createFolder({ path: dir, force: true });
 
-    file.writeToFile({
+    await file.writeToFile({
       content: JSON.stringify(defaultData, null, 2),
-      path: `${dir}/.hardocs/metadata`,
+      path: dir,
       fileName: 'schema.json'
     });
     return true;
@@ -32,12 +31,12 @@ const generateDefaultSchema = async (options: { schemaDir?: string }) => {
 const updateSchema = async (options: { schemaDir?: string; content: any }) => {
   // TODO: Do we need some sort of schema validations? not sure yet!
   const { schemaDir } = options;
-  const dir = schemaDir ?? getHardocsDir(cwd.get());
+  const dir = `${schemaDir}/.hardocs` ?? getHardocsDir(cwd.get());
 
   try {
     file.writeToFile({
       content: JSON.stringify(defaultData, null, 2),
-      path: `${dir}/.hardocs/metadata`,
+      path: dir,
       fileName: 'schema.json'
     });
     return true;
@@ -57,11 +56,10 @@ const updateSchema = async (options: { schemaDir?: string; content: any }) => {
  * }`
  * @returns Json Schema Specification
  */
-const loadSchema = async (options: { path?: string }) => {
-  const { path } = options;
-  const dir = path ?? getHardocsDir(cwd.get());
+const loadSchema = async (path?: string) => {
+  const dir = `${path}/.hardocs` ?? getHardocsDir(cwd.get());
 
-  const schema = await fs.readFile(`${dir}/.hardocs/metadata/schema.json`, {
+  const schema = await fs.readFile(`${dir}/schema.json`, {
     encoding: 'utf-8'
   });
 

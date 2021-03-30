@@ -7,6 +7,7 @@ import cwd from '../cwd';
 import folder from '../folder';
 import { getHardocsDir } from './../../utils/constants';
 import file from '../file';
+import { generateDefaultSchema } from '../metadata';
 
 const openProject = async ({
   path: fullPath,
@@ -109,7 +110,10 @@ const create = async (
 
       await file.createHtmlTemplate(result.entryFile, docsDir);
 
+      // Generate default schema
+
       const response = await openProject({ path: dest, force: true }); // Open project before requiring any files in it
+      // await generateDefaultSchema();
 
       return response;
     } catch (er) {
