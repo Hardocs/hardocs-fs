@@ -10,14 +10,14 @@ import fs from 'fs/promises';
  */
 const generateDefaultSchema = async (path?: string) => {
   // await cwd.set('/home/divine/Desktop');
-  const dir = `${path}/.hardocs` ?? getHardocsDir(cwd.get());
+  const dir = path ?? getHardocsDir(cwd.get());
 
   try {
     folder.createFolder({ path: dir, force: true });
 
     await file.writeToFile({
       content: JSON.stringify(defaultStandard, null, 2),
-      path: dir,
+      path: `${dir}/.hardocs`,
       fileName: 'schema.json'
     });
     return true;

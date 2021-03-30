@@ -112,8 +112,9 @@ const create = async (
 
       // Generate default schema
 
+      await generateDefaultSchema(dest);
+
       const response = await openProject({ path: dest, force: true }); // Open project before requiring any files in it
-      // await generateDefaultSchema();
 
       return response;
     } catch (er) {

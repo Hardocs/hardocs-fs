@@ -68,6 +68,11 @@ describe('Hardocs project test: ', () => {
   it('throws an error for invalid project', async () => {
     const response = await project.open({ path: __dirname });
 
-    console.log({ response });
+    expect(response).toEqual(
+      expect.objectContaining({
+        error: true,
+        message: 'Not a valid hardocs project'
+      })
+    );
   });
 });
