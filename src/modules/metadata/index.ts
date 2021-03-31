@@ -1,41 +1,21 @@
 import { defaultStandard } from './defaultStandard';
 import cwd from '../cwd';
-import folder from '../folder';
 import file from '../file';
 import { getHardocsDir } from './../../utils/constants';
 import fs from 'fs/promises';
 
-/**
- * Builds a default schema specification and stores it in `.hardocs/schemas/<filename>`
- */
-const generateDefaultSchema = async (path?: string) => {
-  // await cwd.set('/home/divine/Desktop');
-  const dir = path ?? getHardocsDir(cwd.get());
-
-  try {
-    folder.createFolder({ path: dir, force: true });
-
-    await file.writeToFile({
-      content: JSON.stringify(defaultStandard, null, 2),
-      path: `${dir}/.hardocs`,
-      fileName: 'schema.json'
-    });
-    return true;
-  } catch (err) {
-    throw new Error(err.message);
-  }
-};
 interface UpdateSchemaParams {
   path?: string;
   content: Record<string, unknown>;
 }
 
 /**
- * Updates schema standard in `.hardocs/schemas/<filename>`
- * @param content Object containing a schema standard
+ * This method can be used to create or update a schema
+ * @param opts Object containing a path and a schema standard
+ * the path parameter is optionalk
  * @returns JSON object
  */
-const updateSchema = async (opts: UpdateSchemaParams) => {
+const bootstrapSchema = async (opts: UpdateSchemaParams) => {
   const { path, content } = opts;
   // TODO: Do we need some sort of schema validations? not sure yet!
   const dir = path ?? getHardocsDir(cwd.get());
@@ -72,4 +52,25 @@ const loadSchema = async (path?: string) => {
   return schema;
 };
 
-export { generateDefaultSchema, updateSchema, loadSchema };
+interface DefaultMetadataProps {
+  path: string;
+  docsDir: string;
+}
+
+const generateDefaultMetadata = async (opts: DefaultMetadataProps) => {
+  const { path, docsDir } = opts;
+  // await cwd.set('/home/divine/Desktop');
+
+  try {
+    await file.writeToFile({
+      content: JSON.stringify(defaultStandard, null, 2),
+      path: `${path}/${docsDir}`,
+      fileName: 'metadata.json'
+    });
+    return true;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+export { loadSchema, bootstrapSchema, generateDefaultMetadata };
