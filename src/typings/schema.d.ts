@@ -234,10 +234,6 @@ declare namespace HDS {
     path: string | null;
     name: string;
     shortTitle: string | null;
-
-    /**
-     * description: String
-     */
     nameWithOwner: string | null;
     longTitle: string | null;
     languages: Array<ILanguage> | null;
@@ -251,8 +247,18 @@ declare namespace HDS {
     contributors: Array<IContributor | null> | null;
     docsDir: string;
     allDocsData: Array<IFile | null> | null;
-    entryFile: string;
+    schema: Schema;
+    metadata: Metadata;
     assets: string | null;
+  }
+
+  interface Metadata {
+    fileName: 'metadata.json';
+    content: Record<string, unknown>;
+  }
+  interface Schema {
+    fileName: 'schema.json';
+    content: Record<string, unknown>;
   }
 
   interface ILanguage {

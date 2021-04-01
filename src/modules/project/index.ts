@@ -7,7 +7,13 @@ import cwd from '../cwd';
 import folder from '../folder';
 import { getHardocsDir } from './../../utils/constants';
 import file from '../file';
-import { generateDefaultSchema } from '../metadata';
+import {
+  bootstrapSchema,
+  generateMetadata,
+  loadMetadata,
+  loadSchema
+} from '../metadata';
+import { defaultStandard } from '../metadata/defaultStandard';
 
 const openProject = async ({
   path: fullPath,
@@ -41,25 +47,28 @@ const openProject = async ({
       };
     }
 
-    const entryFilePath = `${docsDir}/${hardocsJson.hardocsJson.entryFile}`;
     const allFileData = await file.extractAllFileData({ path: docsDir });
 
-    const entry = await file.openEntryFile({
-      path: entryFilePath
-    });
+    const schema = await loadSchema(fullPath);
+    const metadata = await loadMetadata(fullPath, docsDir);
+
     const allDocsData = allFileData
-      .map((f) => {
-        if (f.fileName === file.getFileName({ path: entryFilePath })) {
-          f.content = entry.content;
-        }
-        return f;
-      })
-      .sort((a) => (a.fileName === entry.fileName ? -1 : 1));
+      // .map((f) => {
+      //   if (f.fileName === file.getFileName({ path: entryFilePath })) {
+      //     f.content = metadata.content;
+      //   }
+      //   return f;
+      // })
+      .sort((a) => (a.fileName === 'Metadata' ? -1 : 1));
+
+    // const metadata = await loadMetadata(fullPath, docsDir);
 
     const response = {
       ...hardocsJson.hardocsJson,
       path: fullPath,
       allDocsData,
+      schema,
+      metadata,
       __typename: 'Project'
     } as HDS.IProject;
 
@@ -108,11 +117,12 @@ const create = async (
         fs.mkdirSync(docsDir);
       }
 
-      await file.createHtmlTemplate(result.entryFile, docsDir);
+      // await file.createHtmlTemplate(result.entryFile, docsDir);
 
       // Generate default schema
 
-      await generateDefaultSchema(dest);
+      await bootstrapSchema({ content: defaultStandard });
+      await generateMetadata({ docsDir, path: dest, content: {} });
 
       const response = await openProject({ path: dest, force: true }); // Open project before requiring any files in it
 
@@ -166,9 +176,11 @@ const createFromExisting = async (
         fs.mkdirSync(docsDir);
       }
 
-      if (!file.exists(`${docsDir}/${result.entryFile}`)) {
-        await file.createHtmlTemplate(result.entryFile, docsDir);
-      }
+      // if (!file.exists(`${docsDir}/${result.entryFile}`)) {
+      //   await file.createHtmlTemplate(result.entryFile, docsDir);
+      // }
+
+      await bootstrapSchema({ content: defaultStandard });
 
       const response = await openProject({ path: projectPath, force: true }); // Open project before requiring any files in it
 

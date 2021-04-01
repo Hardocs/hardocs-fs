@@ -1,8 +1,7 @@
-import { defaultStandard } from './defaultStandard';
 import cwd from '../cwd';
 import file from '../file';
 import { getHardocsDir } from './../../utils/constants';
-import fs from 'fs/promises';
+import fs from 'fs';
 
 interface UpdateSchemaParams {
   path?: string;
@@ -42,28 +41,51 @@ const bootstrapSchema = async (opts: UpdateSchemaParams) => {
  * }`
  * @returns Json Schema Specification
  */
-const loadSchema = async (path?: string) => {
-  const dir = `${path}/.hardocs` ?? getHardocsDir(cwd.get());
+const loadSchema = async (path?: string): Promise<HDS.Schema> => {
+  const dir = path ?? getHardocsDir(cwd.get());
 
-  const schema = await fs.readFile(`${dir}/schema.json`, {
+  const schema = await fs.promises.readFile(`${dir}/schema.json`, {
     encoding: 'utf-8'
   });
 
-  return schema;
+  return {
+    fileName: 'schema.json',
+    content: JSON.parse(schema)
+  };
+};
+
+const loadMetadata = async (
+  path: string,
+  docsDir: string
+): Promise<HDS.Metadata> => {
+  const dir = path ?? cwd.get();
+
+  const metadata = await fs.promises.readFile(
+    `${dir}/${docsDir}/metadata.json`,
+    {
+      encoding: 'utf-8'
+    }
+  );
+
+  return {
+    fileName: 'metadata.json',
+    content: JSON.parse(metadata)
+  };
 };
 
 interface DefaultMetadataProps {
   path: string;
   docsDir: string;
+  content: Record<string, unknown>;
 }
 
-const generateDefaultMetadata = async (opts: DefaultMetadataProps) => {
-  const { path, docsDir } = opts;
+const generateMetadata = async (opts: DefaultMetadataProps) => {
+  const { path, docsDir, content } = opts;
   // await cwd.set('/home/divine/Desktop');
 
   try {
     await file.writeToFile({
-      content: JSON.stringify(defaultStandard, null, 2),
+      content: JSON.stringify(content, null, 2),
       path: `${path}/${docsDir}`,
       fileName: 'metadata.json'
     });
@@ -73,4 +95,4 @@ const generateDefaultMetadata = async (opts: DefaultMetadataProps) => {
   }
 };
 
-export { loadSchema, bootstrapSchema, generateDefaultMetadata };
+export { loadSchema, bootstrapSchema, generateMetadata, loadMetadata };
