@@ -50,17 +50,12 @@ const openProject = async ({
 
     const allFileData = await file.extractAllFileData({ path: docsDir });
 
-    const schema = await loadSchema(fullPath);
+    const schema = await loadSchema();
     const metadata = await loadMetadata(fullPath, docsDir);
 
-    const allDocsData = allFileData
-      // .map((f) => {
-      //   if (f.fileName === file.getFileName({ path: entryFilePath })) {
-      //     f.content = metadata.content;
-      //   }
-      //   return f;
-      // })
-      .sort((a) => (a.fileName === 'metadata.json' ? -1 : 1));
+    const allDocsData = allFileData.sort((a) =>
+      a.fileName === 'metadata.json' ? -1 : 1
+    );
 
     // const metadata = await loadMetadata(fullPath, docsDir);
 
@@ -123,8 +118,11 @@ const create = async (
       // Generate default schema
 
       await bootstrapSchema({ content: defaultStandard });
-      await generateMetadata({ docsDir, path: dest, content: {} });
-
+      await generateMetadata({
+        docsDir: input.docsDir,
+        path: dest,
+        content: {}
+      });
       const response = await openProject({ path: dest, force: true }); // Open project before requiring any files in it
 
       return response;

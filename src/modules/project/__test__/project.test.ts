@@ -34,7 +34,6 @@ describe('Hardocs project test: ', () => {
       path: projectPath,
       force: true
     })) as HDS.IProject;
-    console.log({ _openedProject });
     mockData.id = '1';
     _openedProject.id = '1';
 
@@ -71,8 +70,8 @@ describe('Hardocs project test: ', () => {
 
     expect(response).toEqual(
       expect.objectContaining({
-        error: true,
-        message: 'Not a valid hardocs project'
+        error: true
+        // message: 'Not a valid hardocs project'
       })
     );
   });
