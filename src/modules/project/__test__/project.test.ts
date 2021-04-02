@@ -34,6 +34,7 @@ describe('Hardocs project test: ', () => {
       path: projectPath,
       force: true
     })) as HDS.IProject;
+    console.log({ _openedProject });
     mockData.id = '1';
     _openedProject.id = '1';
 

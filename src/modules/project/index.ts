@@ -22,7 +22,8 @@ const openProject = async ({
   if (force && !fullPath) {
     return {
       error: true,
-      message: 'Please specify path when using `force: true` option..'
+      message:
+        'Please specify path when using `force: true` option. --openProject--'
     };
   }
 
@@ -59,7 +60,7 @@ const openProject = async ({
       //   }
       //   return f;
       // })
-      .sort((a) => (a.fileName === 'Metadata' ? -1 : 1));
+      .sort((a) => (a.fileName === 'metadata.json' ? -1 : 1));
 
     // const metadata = await loadMetadata(fullPath, docsDir);
 
@@ -76,7 +77,7 @@ const openProject = async ({
   } catch (err) {
     return {
       error: true,
-      message: 'Not a valid hardocs project' // TODO: Return proper error message
+      message: 'Not a valid hardocs project. message: ' + err.message // TODO: Return proper error message
     };
   }
 };
