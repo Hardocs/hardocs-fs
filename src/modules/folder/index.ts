@@ -63,7 +63,7 @@ const openParent = ({ path: file }: Path) => {
 
 const createFolder = ({ path: name, force = false }: Options) => {
   if (isDirectory({ path: name })) {
-    console.log(`Folder already exist.`);
+    // console.log(`Folder already exist.`);
     return false;
   }
 
@@ -105,9 +105,8 @@ const isHidden = ({ path: file }: Path) => {
     };
 
     if (isPlatformWindows) {
-      const windowsFile = file.replace(/\\/g, '\\\\');
-
-      console.log({ windowsFile });
+      // const windowsFile = file.replace(/\\/g, '\\\\');
+      // console.log({ windowsFile });
       // result.windows = winattr.getSync(windowsFile).hidden;
     }
 
@@ -117,7 +116,6 @@ const isHidden = ({ path: file }: Path) => {
     );
   } catch (er) {
     if (process.env.HARDOCS_DEV_MODE) {
-      console.log('File: ' + file);
       return console.log(er);
     }
   }

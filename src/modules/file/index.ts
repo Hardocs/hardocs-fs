@@ -92,7 +92,7 @@ const getEntryFilePath = async ({
     });
 
     const entryFileName = getHardocsJsonFile({ path: projectPath, force })
-      .hardocsJson.entryFile;
+      .hardocsJson.metadata;
 
     const entryFile = `${docsDir}/${entryFileName}`;
     return entryFile;
