@@ -1,8 +1,7 @@
 {
-  "id": "57917cbd-74f6-4b6d-9692-93c527e0cd3e",
+  "id": "5b8e5ae9-2f5e-4225-933d-4f1de5333813",
   "name": "test-project",
   "docsDir": "docs",
   "entryFile": "index.html",
-  "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/test-project",
   "updatedAt": "new Date().toISOString()"
 }

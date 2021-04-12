@@ -1,6 +1,11 @@
-import { defaultStandard } from '../defaultStandard';
-import { bootstrapSchema, generateMetadata, loadSchema } from '../';
+import {
+  bootstrapSchema,
+  generateMetadata,
+  loadMetadata,
+  loadSchema
+} from '../';
 import cwd from '../../cwd';
+import { defaultStandard } from '../defaultStandard';
 
 const path = process.cwd();
 describe('Schema tests', () => {
@@ -26,6 +31,9 @@ describe('Schema tests', () => {
       docsDir: 'docs',
       content: {}
     });
+  });
+  test('should load metadata', async () => {
+    await loadMetadata(`${mocksDir}/test-project`, 'docs');
   });
 });
 

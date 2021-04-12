@@ -255,10 +255,12 @@ declare namespace HDS {
   interface Metadata {
     fileName: 'metadata.json';
     content: Record<string, unknown>;
+    path: string;
   }
   interface Schema {
     fileName: 'schema.json';
     content: Record<string, unknown>;
+    path: string;
   }
 
   interface ILanguage {

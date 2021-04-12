@@ -1,12 +1,9 @@
-import { Options } from './../../typings/globals';
-import * as path from 'path';
 import * as fs from 'fs';
+import * as path from 'path';
 import { v4 as UUIDv4 } from 'uuid';
-
 import cwd from '../cwd';
-import folder from '../folder';
-import { getHardocsDir } from './../../utils/constants';
 import file from '../file';
+import folder from '../folder';
 import {
   bootstrapSchema,
   generateMetadata,
@@ -14,6 +11,8 @@ import {
   loadSchema
 } from '../metadata';
 import { defaultStandard } from '../metadata/defaultStandard';
+import { Options } from './../../typings/globals';
+import { getHardocsDir } from './../../utils/constants';
 
 const openProject = async ({
   path: fullPath,
@@ -48,14 +47,10 @@ const openProject = async ({
       };
     }
 
-    const allFileData = await file.extractAllFileData({ path: docsDir });
+    const allDocsData = await file.extractAllFileData({ path: docsDir });
 
     const schema = await loadSchema();
     const metadata = await loadMetadata(fullPath, docsDir);
-
-    const allDocsData = allFileData.sort((a) =>
-      a.fileName === 'metadata.json' ? -1 : 1
-    );
 
     // const metadata = await loadMetadata(fullPath, docsDir);
 
@@ -193,7 +188,6 @@ const createFromExisting = async (
         });
       }
       const response = await openProject({ path: projectPath, force: true }); // Open project before requiring any files in it
-      console.log({ response });
       return response;
     } catch (er) {
       return {

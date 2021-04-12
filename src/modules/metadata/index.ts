@@ -1,7 +1,7 @@
+import fs from 'fs';
 import cwd from '../cwd';
 import file from '../file';
 import { getHardocsDir } from './../../utils/constants';
-import fs from 'fs';
 
 interface UpdateSchemaParams {
   path?: string;
@@ -50,7 +50,8 @@ const loadSchema = async (path?: string): Promise<HDS.Schema> => {
 
   return {
     fileName: 'schema.json',
-    content: JSON.parse(schema)
+    content: JSON.parse(schema),
+    path: dir
   };
 };
 
@@ -69,7 +70,8 @@ const loadMetadata = async (
 
   return {
     fileName: 'metadata.json',
-    content: JSON.parse(metadata)
+    content: JSON.parse(metadata),
+    path: `${dir}/${docsDir}`
   };
 };
 
