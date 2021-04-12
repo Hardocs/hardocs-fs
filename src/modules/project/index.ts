@@ -179,10 +179,21 @@ const createFromExisting = async (
       //   await file.createHtmlTemplate(result.entryFile, docsDir);
       // }
 
-      await bootstrapSchema({ content: defaultStandard });
+      // If we do not have a schema then we have to create a new one
+      if (!fs.existsSync(`${hardocsDir}/schema.json`)) {
+        await bootstrapSchema({ content: defaultStandard });
+      }
 
+      // If we do not have a metadata, then we have to create a new one
+      if (!fs.existsSync(`${hardocsDir}/metadata.json`)) {
+        await generateMetadata({
+          docsDir: input.docsDir,
+          path: projectPath,
+          content: {}
+        });
+      }
       const response = await openProject({ path: projectPath, force: true }); // Open project before requiring any files in it
-
+      console.log({ response });
       return response;
     } catch (er) {
       return {
