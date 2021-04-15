@@ -4,12 +4,7 @@ import { v4 as UUIDv4 } from 'uuid';
 import cwd from '../cwd';
 import file from '../file';
 import folder from '../folder';
-import {
-  bootstrapSchema,
-  generateMetadata,
-  loadMetadata,
-  loadSchema
-} from '../metadata';
+import metadata from '../metadata';
 import { defaultStandard } from '../metadata/defaultStandard';
 import { Options } from './../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
@@ -49,8 +44,8 @@ const openProject = async ({
 
     const allDocsData = await file.extractAllFileData({ path: docsDir });
 
-    const schema = await loadSchema();
-    const metadata = await loadMetadata(fullPath, docsDir);
+    const schema = await metadata.loadSchema();
+    const metadataContent = await metadata.loadMetadata(fullPath, docsDir);
 
     // const metadata = await loadMetadata(fullPath, docsDir);
 
@@ -59,7 +54,7 @@ const openProject = async ({
       path: fullPath,
       allDocsData,
       schema,
-      metadata,
+      metadata: metadataContent,
       __typename: 'Project'
     } as HDS.IProject;
 
@@ -112,8 +107,8 @@ const create = async (
 
       // Generate default schema
 
-      await bootstrapSchema({ content: defaultStandard });
-      await generateMetadata({
+      await metadata.bootstrapSchema({ content: defaultStandard });
+      await metadata.generateMetadata({
         docsDir: input.docsDir,
         path: dest,
         content: {}
@@ -176,12 +171,12 @@ const createFromExisting = async (
 
       // If we do not have a schema then we have to create a new one
       if (!fs.existsSync(`${hardocsDir}/schema.json`)) {
-        await bootstrapSchema({ content: defaultStandard });
+        await metadata.bootstrapSchema({ content: defaultStandard });
       }
 
       // If we do not have a metadata, then we have to create a new one
       if (!fs.existsSync(`${hardocsDir}/metadata.json`)) {
-        await generateMetadata({
+        await metadata.generateMetadata({
           docsDir: input.docsDir,
           path: projectPath,
           content: {}
