@@ -3,5 +3,16 @@
   "name": "test-project",
   "docsDir": "docs",
   "entryFile": "index.html",
-  "updatedAt": "new Date().toISOString()"
+  "updatedAt": "new Date().toISOString()",
+  "schemas": [
+    "somehashgeneratedfortheschema-kasshdkfhwfeuw.json",
+    "aksldjfoiwoilkasddnckjnokohdfa.json"
+  ],
+  "metadata": [
+    {
+      "id": "somehashgeneratedfortheschema-kasshdkfhwfeuw.json",
+      "filename": "laksjdflj.json",
+      "path": "the-=path"
+    }
+  ]
 }
