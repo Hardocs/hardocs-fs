@@ -97,4 +97,4 @@ const generateMetadata = async (opts: DefaultMetadataProps) => {
   }
 };
 
-export { loadSchema, bootstrapSchema, generateMetadata, loadMetadata };
+export default { loadSchema, bootstrapSchema, generateMetadata, loadMetadata };
