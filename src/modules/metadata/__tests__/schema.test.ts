@@ -8,7 +8,8 @@ describe('Schema tests', () => {
 
   test('should load a schema', async () => {
     const schema = await metadata.loadSchema(
-      `${mocksDir}/test-project/.hardocs`
+      `${mocksDir}/test-project/.hardocs`,
+      'schema'
     );
 
     // Default data should be same as generated schema
@@ -30,13 +31,13 @@ describe('Schema tests', () => {
     });
   });
   test('should load metadata', async () => {
-    await metadata.loadMetadata(`${mocksDir}/test-project`, 'docs');
+    await metadata.loadMetadata(`${mocksDir}/test-project`, 'docs', 'schema');
   });
 
   test('should download schema from URL', async () => {
     await metadata.schemaFromURL(
       'https://json.schemastore.org/jekyll.json',
-      'Jekyll'
+      'schema'
     );
   });
 });

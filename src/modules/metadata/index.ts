@@ -7,6 +7,7 @@ import { getHardocsDir } from './../../utils/constants';
 interface UpdateSchemaParams {
   path?: string;
   content: Record<string, unknown>;
+  name?: string;
 }
 
 /**
@@ -16,7 +17,7 @@ interface UpdateSchemaParams {
  * @returns JSON object
  */
 const bootstrapSchema = async (opts: UpdateSchemaParams) => {
-  const { path, content } = opts;
+  const { path, content, name = 'schema' } = opts;
   // TODO: Do we need some sort of schema validations? not sure yet!
   const dir = path ?? getHardocsDir(cwd.get());
 
@@ -24,7 +25,7 @@ const bootstrapSchema = async (opts: UpdateSchemaParams) => {
     await file.writeToFile({
       content: JSON.stringify(content, null, 2),
       path: dir,
-      fileName: 'schema.json'
+      fileName: `${name}.json`
     });
     return JSON.stringify(content, null, 2);
   } catch (err) {
@@ -50,6 +51,7 @@ const schemaFromURL = async (url: string, name: string) => {
       path: dir,
       fileName: `${name}.json`
     };
+
     await file.writeToFile(response);
 
     return response;
@@ -65,23 +67,25 @@ const schemaFromURL = async (url: string, name: string) => {
  * }`
  * @returns Json Schema Specification
  */
-const loadSchema = async (path?: string): Promise<HDS.Schema> => {
+const loadSchema = async (path?: string, name: string): Promise<HDS.Schema> => {
   const dir = path ?? getHardocsDir(cwd.get());
 
-  const schema = await fs.promises.readFile(`${dir}/schema.json`, {
+  const schema = await fs.promises.readFile(`${dir}/${name}.json`, {
     encoding: 'utf-8'
   });
 
   return {
-    fileName: 'schema.json',
+    name,
     content: JSON.parse(schema),
-    path: dir
+    path: dir,
+    fileName: `${name}.json`
   };
 };
 
 const loadMetadata = async (
   path: string,
-  docsDir: string
+  docsDir: string,
+  name: string
 ): Promise<HDS.Metadata> => {
   const dir = path ?? cwd.get();
 
@@ -93,9 +97,10 @@ const loadMetadata = async (
   );
 
   return {
-    fileName: 'metadata.json',
+    name,
     content: JSON.parse(metadata),
-    path: `${dir}/${docsDir}`
+    path: `${dir}/${docsDir}`,
+    fileName: `${name}.json`
   };
 };
 
