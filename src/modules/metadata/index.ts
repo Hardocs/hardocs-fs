@@ -1,3 +1,4 @@
+import RefParser from '@apidevtools/json-schema-ref-parser';
 import fs from 'fs';
 import cwd from '../cwd';
 import file from '../file';
@@ -30,10 +31,33 @@ const bootstrapSchema = async (opts: UpdateSchemaParams) => {
     throw new Error(err.message);
   }
 };
+
 /**
- * Load schema to project
- * @param options
+ *
+ * @param url URL to schema
+ * @returns schema object
  */
+const schemaFromURL = async (url: string, name: string) => {
+  try {
+    const dir = getHardocsDir(cwd.get());
+    const schema = await RefParser.dereference(url);
+
+    if (!schema) {
+      throw new Error('Invalid schema');
+    }
+    const response = {
+      content: JSON.stringify(schema, null, 2),
+      path: dir,
+      fileName: `${name}.json`
+    };
+    await file.writeToFile(response);
+
+    return response;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
 /**
  *
  * @param options Object with  `{
@@ -97,4 +121,10 @@ const generateMetadata = async (opts: DefaultMetadataProps) => {
   }
 };
 
-export default { loadSchema, bootstrapSchema, generateMetadata, loadMetadata };
+export default {
+  loadSchema,
+  bootstrapSchema,
+  generateMetadata,
+  loadMetadata,
+  schemaFromURL
+};

@@ -32,6 +32,13 @@ describe('Schema tests', () => {
   test('should load metadata', async () => {
     await metadata.loadMetadata(`${mocksDir}/test-project`, 'docs');
   });
+
+  test('should download schema from URL', async () => {
+    await metadata.schemaFromURL(
+      'https://json.schemastore.org/jekyll.json',
+      'Jekyll'
+    );
+  });
 });
 
 afterAll(async () => {
