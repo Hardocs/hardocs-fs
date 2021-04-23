@@ -106,8 +106,6 @@ const create = async (
         fs.mkdirSync(docsDir);
       }
 
-      // await file.createHtmlTemplate(result.entryFile, docsDir);
-
       // Generate default schema
 
       await metadata.bootstrapSchema({ content: defaultStandard });
@@ -166,10 +164,6 @@ const createFromExisting = async (
       if (!fs.existsSync(docsDir)) {
         fs.mkdirSync(docsDir);
       }
-
-      // if (!file.exists(`${docsDir}/${result.entryFile}`)) {
-      //   await file.createHtmlTemplate(result.entryFile, docsDir);
-      // }
 
       // If we do not have a schema then we have to create a new one
       if (!fs.existsSync(`${hardocsDir}/schema.json`)) {

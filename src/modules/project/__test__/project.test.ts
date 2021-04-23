@@ -6,8 +6,7 @@ describe('Hardocs project test: ', () => {
   it('create a project and navigate to the new project directory', async () => {
     const _hardocsProject = (await project.create({
       name: 'test-project',
-      docsDir: 'docs',
-      entryFile: 'index.html'
+      docsDir: 'docs'
     })) as HDS.IProject;
 
     projectPath = _hardocsProject.path as string;
@@ -45,7 +44,6 @@ describe('Hardocs project test: ', () => {
     const _hardocsProject = (await project.createFromExisting({
       name: 'test-project',
       docsDir: 'docs',
-      entryFile: 'index.html',
       path: projectPath
     })) as HDS.IProject;
 

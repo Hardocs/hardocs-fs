@@ -35,10 +35,13 @@ describe('Schema tests', () => {
   });
 
   test('should download schema from URL', async () => {
-    await metadata.schemaFromURL(
-      'https://json.schemastore.org/jekyll.json',
-      'schema'
+    const isWritten = await metadata.schemaFromURL(
+      'https://json.schemastore.org/esmrc.json',
+      'schema',
+      `${mocksDir}/test-project/.hardocs`
     );
+
+    expect(isWritten).toBeTruthy();
   });
 });
 

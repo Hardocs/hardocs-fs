@@ -162,11 +162,6 @@ declare namespace HDS {
     docsDir: string;
 
     /**
-     * @default "index.html"
-     */
-    entryFile: string;
-
-    /**
      * @default "assets"
      */
     assets?: string | null;

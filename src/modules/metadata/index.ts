@@ -38,9 +38,9 @@ const bootstrapSchema = async (opts: UpdateSchemaParams) => {
  * @param url URL to schema
  * @returns schema object
  */
-const schemaFromURL = async (url: string, name: string) => {
+const schemaFromURL = async (url: string, name: string, path?: string) => {
   try {
-    const dir = getHardocsDir(cwd.get());
+    const dir = path || getHardocsDir(cwd.get());
     const schema = await RefParser.dereference(url);
 
     if (!schema) {
@@ -52,9 +52,9 @@ const schemaFromURL = async (url: string, name: string) => {
       fileName: `${name}.json`
     };
 
-    await file.writeToFile(response);
+    const isWritten = await file.writeToFile(response);
 
-    return response;
+    return isWritten;
   } catch (err) {
     throw new Error(err.message);
   }
