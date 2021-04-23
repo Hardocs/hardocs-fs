@@ -112,7 +112,8 @@ const create = async (
       await metadata.generateMetadata({
         docsDir: input.docsDir,
         path: dest,
-        content: {}
+        content: {},
+        name: 'metadata'
       });
       const response = await openProject({ path: dest, force: true }); // Open project before requiring any files in it
 
@@ -175,7 +176,8 @@ const createFromExisting = async (
         await metadata.generateMetadata({
           docsDir: input.docsDir,
           path: projectPath,
-          content: {}
+          content: {},
+          name: 'metadata'
         });
       }
       const response = await openProject({ path: projectPath, force: true }); // Open project before requiring any files in it
