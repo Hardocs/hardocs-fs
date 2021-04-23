@@ -10,6 +10,8 @@ interface UpdateSchemaParams {
   name?: string;
 }
 
+const formatName = (name: string) => name.split(' ').join('-').trim();
+
 /**
  * This method can be used to create or update a schema
  * @param opts Object containing a path and a schema standard
@@ -25,9 +27,15 @@ const bootstrapSchema = async (opts: UpdateSchemaParams) => {
     await file.writeToFile({
       content: JSON.stringify(content, null, 2),
       path: dir,
-      fileName: `${name}.json`
+      fileName: `${formatName(name)}.json`
     });
-    return JSON.stringify(content, null, 2);
+
+    return {
+      content,
+      fileName: `${formatName(name)}.json`,
+      path: dir,
+      name
+    };
   } catch (err) {
     throw new Error(err.message);
   }
@@ -49,12 +57,17 @@ const schemaFromURL = async (url: string, name: string, path?: string) => {
     const response = {
       content: JSON.stringify(schema, null, 2),
       path: dir,
-      fileName: `${name}.json`
+      fileName: `${formatName(name)}.json`,
+      name
     };
 
     const isWritten = await file.writeToFile(response);
 
-    return isWritten;
+    if (isWritten !== true) {
+      throw new Error('Unable to write schema.');
+    }
+
+    return response;
   } catch (err) {
     throw new Error(err.message);
   }
@@ -78,7 +91,7 @@ const loadSchema = async (name: string, path?: string): Promise<HDS.Schema> => {
     name,
     content: JSON.parse(schema),
     path: dir,
-    fileName: `${name}.json`
+    fileName: `${formatName(name)}.json`
   };
 };
 
@@ -100,7 +113,7 @@ const loadMetadata = async (
     name,
     content: JSON.parse(metadata),
     path: `${dir}/${docsDir}`,
-    fileName: `${name}.json`
+    fileName: `${formatName(name)}.json`
   };
 };
 
@@ -108,19 +121,26 @@ interface DefaultMetadataProps {
   path: string;
   docsDir: string;
   content: Record<string, unknown>;
+  name: string;
 }
 
 const generateMetadata = async (opts: DefaultMetadataProps) => {
-  const { path, docsDir, content } = opts;
+  const { path, docsDir, content, name = 'metadata' } = opts;
   // await cwd.set('/home/divine/Desktop');
-
+  const dir = `${path}/${docsDir}`;
+  const fileName = `${formatName(name)}.json`;
   try {
     await file.writeToFile({
       content: JSON.stringify(content, null, 2),
-      path: `${path}/${docsDir}`,
-      fileName: 'metadata.json'
+      path: dir,
+      fileName
     });
-    return true;
+    return {
+      content,
+      path: dir,
+      fileName,
+      name
+    };
   } catch (err) {
     throw new Error(err.message);
   }

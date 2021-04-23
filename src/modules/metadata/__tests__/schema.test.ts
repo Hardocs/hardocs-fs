@@ -21,13 +21,14 @@ describe('Schema tests', () => {
       path: `${mocksDir}/test-project/.hardocs`,
       content: defaultStandard
     });
-    expect(JSON.parse(response)).toEqual(defaultStandard);
+    expect(response.content).toEqual(defaultStandard);
   });
   test('should generate an empty metadata file', async () => {
     await metadata.generateMetadata({
       path: `${mocksDir}/test-project`,
       docsDir: 'docs',
-      content: {}
+      content: {},
+      name: 'metadata'
     });
   });
   test('should load metadata', async () => {

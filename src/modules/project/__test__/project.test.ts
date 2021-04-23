@@ -11,7 +11,6 @@ describe('Hardocs project test: ', () => {
 
     projectPath = _hardocsProject.path as string;
 
-    console.log({ _hardocsProject });
     /**
      * The ID is a randomly generated string so i have to reasign it to a fixed value and also modify the mock to have an id of "1"
      */
