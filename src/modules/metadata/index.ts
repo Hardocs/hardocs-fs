@@ -67,7 +67,7 @@ const schemaFromURL = async (url: string, name: string) => {
  * }`
  * @returns Json Schema Specification
  */
-const loadSchema = async (path?: string, name: string): Promise<HDS.Schema> => {
+const loadSchema = async (name: string, path?: string): Promise<HDS.Schema> => {
   const dir = path ?? getHardocsDir(cwd.get());
 
   const schema = await fs.promises.readFile(`${dir}/${name}.json`, {

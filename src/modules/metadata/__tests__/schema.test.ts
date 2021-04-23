@@ -8,8 +8,8 @@ describe('Schema tests', () => {
 
   test('should load a schema', async () => {
     const schema = await metadata.loadSchema(
-      `${mocksDir}/test-project/.hardocs`,
-      'schema'
+      'schema',
+      `${mocksDir}/test-project/.hardocs`
     );
 
     // Default data should be same as generated schema

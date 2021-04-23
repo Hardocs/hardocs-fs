@@ -170,7 +170,6 @@ declare namespace HDS {
      * @default "assets"
      */
     assets?: string | null;
-    updatedAt?: string | null;
   }
 
   /**
@@ -242,7 +241,6 @@ declare namespace HDS {
     made: boolean | null;
     madeIndependently: boolean | null;
     license: Array<ILicense | null> | null;
-    updatedAt: string | null;
     author: IAuthor | null;
     contributors: Array<IContributor | null> | null;
     docsDir: string;

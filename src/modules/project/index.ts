@@ -44,8 +44,12 @@ const openProject = async ({
 
     const allDocsData = await file.extractAllFileData({ path: docsDir });
 
-    const schema = await metadata.loadSchema();
-    const metadataContent = await metadata.loadMetadata(fullPath, docsDir);
+    const schema = await metadata.loadSchema('schema');
+    const metadataContent = await metadata.loadMetadata(
+      fullPath,
+      docsDir,
+      'schema'
+    );
 
     // const metadata = await loadMetadata(fullPath, docsDir);
 
@@ -81,8 +85,7 @@ const create = async (
 
     const result = {
       id: UUIDv4(),
-      ...input,
-      updatedAt: 'new Date().toISOString()'
+      ...input
     };
     try {
       const hardocsDir = getHardocsDir(dest);
@@ -143,8 +146,7 @@ const createFromExisting = async (
     try {
       const result = {
         id: UUIDv4(),
-        ...input,
-        updatedAt: 'new Date().toISOString()'
+        ...input
       };
       const hardocsDir = getHardocsDir(projectPath);
 

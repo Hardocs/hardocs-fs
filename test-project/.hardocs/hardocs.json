@@ -1,18 +1,7 @@
 {
-  "id": "5b8e5ae9-2f5e-4225-933d-4f1de5333813",
+  "id": "3aae53d9-7970-478a-9234-0ebba976d19c",
   "name": "test-project",
   "docsDir": "docs",
   "entryFile": "index.html",
-  "updatedAt": "new Date().toISOString()",
-  "schemas": [
-    "somehashgeneratedfortheschema-kasshdkfhwfeuw.json",
-    "aksldjfoiwoilkasddnckjnokohdfa.json"
-  ],
-  "metadata": [
-    {
-      "id": "somehashgeneratedfortheschema-kasshdkfhwfeuw.json",
-      "filename": "laksjdflj.json",
-      "path": "the-=path"
-    }
-  ]
+  "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/test-project"
 }

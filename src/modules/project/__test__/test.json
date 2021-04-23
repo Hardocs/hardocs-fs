@@ -3,7 +3,6 @@
   "name": "test-project",
   "docsDir": "docs",
   "entryFile": "index.html",
-  "updatedAt": "new Date().toISOString()",
   "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/test-project",
   "allDocsData": [],
   "schema": {
