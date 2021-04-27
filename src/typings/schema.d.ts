@@ -242,20 +242,21 @@ declare namespace HDS {
     allDocsData: Array<IFile | null> | null;
     schema: Schema;
     metadata: Metadata;
+    schemas: Schema[];
     assets: string | null;
   }
 
   interface Metadata {
-    name: string;
-    content: Record<string, unknown>;
+    label: string;
+    content?: Record<string, unknown>;
     path: string;
-    fileName: string;
+    hash: string;
   }
   interface Schema {
-    name: string;
+    label: string;
     content: Record<string, unknown>;
     path: string;
-    fileName: string;
+    hash: string;
   }
 
   interface ILanguage {

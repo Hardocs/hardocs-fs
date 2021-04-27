@@ -1,9 +1,8 @@
-import glob from 'glob';
 import * as fs from 'fs';
-
+import glob from 'glob';
+import { Options, Path } from '../../typings/globals';
 import cwd from '../cwd';
 import folder from '../folder';
-import { Options, Path } from '../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 
 // const dom = new jsdom.JSDOM();
@@ -106,7 +105,7 @@ const getHardocsJsonFile = ({
   force = false
 }: Partial<Options>): {
   hardocsJson: HDS.IProject;
-  currentDir: string;
+  hardocsDir: string;
 } => {
   if (force && !path) {
     throw new Error('Please specify path when using `force: true` option..');
@@ -125,7 +124,7 @@ const getHardocsJsonFile = ({
     'utf-8'
   );
   const hardocsJson = JSON.parse(hardocsFile);
-  return { hardocsJson, currentDir: path };
+  return { hardocsJson, hardocsDir };
 };
 
 const createHtmlTemplate = async (filename: string, path: string) => {
