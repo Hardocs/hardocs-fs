@@ -5,7 +5,6 @@ import cwd from '../cwd';
 import file from '../file';
 import folder from '../folder';
 import metadata from '../metadata';
-import { defaultStandard } from '../metadata/defaultStandard';
 import { Options } from './../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 
@@ -28,12 +27,12 @@ const openProject = async ({
   await cwd.set(fullPath);
 
   try {
-    const hardocsJson = file.getHardocsJsonFile({
+    const { hardocsJson } = file.getHardocsJsonFile({
       path: fullPath,
       force
     });
 
-    const docsDir = hardocsJson.hardocsJson.docsDir;
+    const docsDir = hardocsJson.docsDir;
 
     if (!docsDir || docsDir.trim() === '') {
       return {
@@ -44,21 +43,12 @@ const openProject = async ({
 
     const allDocsData = await file.extractAllFileData({ path: docsDir });
 
-    const schema = await metadata.loadSchema('schema');
-    const metadataContent = await metadata.loadMetadata(
-      fullPath,
-      docsDir,
-      'schema'
-    );
-
     // const metadata = await loadMetadata(fullPath, docsDir);
 
     const response = {
-      ...hardocsJson.hardocsJson,
+      ...hardocsJson,
       path: fullPath,
       allDocsData,
-      schema,
-      metadata: metadataContent,
       __typename: 'Project'
     } as HDS.IProject;
 
@@ -84,9 +74,11 @@ const create = async (
     }
 
     const result = {
+      ...input,
       id: UUIDv4(),
-      ...input
+      path: projectPath
     };
+
     try {
       const hardocsDir = getHardocsDir(dest);
 
@@ -108,12 +100,11 @@ const create = async (
 
       // Generate default schema
 
-      await metadata.bootstrapSchema({ content: defaultStandard });
       await metadata.generateMetadata({
         docsDir: input.docsDir,
         path: dest,
-        content: {},
-        name: 'metadata'
+        schemaUrl: 'https://json.schemastore.org/esmrc.json',
+        label: 'default'
       });
       const response = await openProject({ path: dest, force: true }); // Open project before requiring any files in it
 
@@ -167,19 +158,25 @@ const createFromExisting = async (
       }
 
       // If we do not have a schema then we have to create a new one
-      if (!fs.existsSync(`${hardocsDir}/schema.json`)) {
-        await metadata.bootstrapSchema({ content: defaultStandard });
-      }
+      // if (!fs.existsSync(`${hardocsDir}/schema.json`)) {
+      //   await metadata.bootstrapSchema({ content: defaultStandard });
+      // }
 
       // If we do not have a metadata, then we have to create a new one
-      if (!fs.existsSync(`${hardocsDir}/metadata.json`)) {
-        await metadata.generateMetadata({
-          docsDir: input.docsDir,
-          path: projectPath,
-          content: {},
-          name: 'metadata'
-        });
-      }
+      // if (!fs.existsSync(`${hardocsDir}/metadata.json`)) {
+      //   await metadata.generateMetadata({
+      //     docsDir: input.docsDir,
+      //     path: projectPath,
+      //     content: {},
+      //     name: 'metadata'
+      //   });
+      // }
+      await metadata.generateMetadata({
+        docsDir: input.docsDir,
+        path: projectPath,
+        schemaUrl: 'https://json.schemastore.org/esmrc.json',
+        label: 'default'
+      });
       const response = await openProject({ path: projectPath, force: true }); // Open project before requiring any files in it
       return response;
     } catch (er) {

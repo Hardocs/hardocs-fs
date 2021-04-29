@@ -241,8 +241,7 @@ declare namespace HDS {
     docsDir: string;
     allDocsData: Array<IFile | null> | null;
     schema: Schema;
-    metadata: Metadata;
-    schemas: Schema[];
+    records: Record<string, unknown>;
     assets: string | null;
   }
 

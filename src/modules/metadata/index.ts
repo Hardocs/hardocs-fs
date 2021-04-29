@@ -3,7 +3,6 @@ import fs from 'fs';
 import cwd from '../cwd';
 import file from '../file';
 import { getHardocsDir } from './../../utils/constants';
-import { createHashFromValue } from './../../utils/createHashFromValue';
 
 interface UpdateSchemaParams {
   path?: string;
@@ -43,42 +42,40 @@ const bootstrapSchema = async (opts: UpdateSchemaParams) => {
   }
 };
 
-/**
- * This function conditionally updates the schema in a hardocs project.
- * @param schemas Existing schemas in a given project
- * @param label label of the schema
- * @param path path to store the schema
- * @param source can be a url from which the schema was downloaded.
- */
-const processSchema = (
-  schemas: any[],
+const processMetadata = (
+  hardocsJson: any,
   label: string,
-  path: string,
-  source?: string
+  schemaSource: string
 ) => {
   // generate a unique hash from schema label
-  if (!label) {
-    throw new Error('Please provide a label for the given schema');
-  }
-  const hash = `${createHashFromValue(label)}-${formatName(label)}`;
-  const newSchema = {
-    path,
-    label,
-    hash,
-    source
+  // if (!label) {
+  //   throw new Error('Please provide a label for the given schema');
+  // }
+  const metadata = {
+    path: `${hardocsJson.path}/${hardocsJson.docsDir}/${formatName(label)}`,
+    fileName: `${formatName(label)}-metadata.json`,
+    schema: {
+      source: schemaSource,
+      path: `${hardocsJson.path}/${getHardocsDir(
+        hardocsJson.path
+      )}/${formatName(label)}`,
+      fileName: `${formatName(label)}-schema.json`
+    }
   };
 
-  if (!schemas) {
-    schemas = [newSchema];
-    return { schemas, newSchema };
+  if (!hardocsJson.records) {
+    hardocsJson.records = {
+      [label]: metadata
+    };
+    return { hardocsJson, metadata };
   } else {
-    const exists = schemas.find((schema) => schema.hash === hash);
+    const exists = hardocsJson.records[label];
 
     if (!exists) {
-      schemas.push(newSchema);
+      hardocsJson.records[label] = metadata;
     }
 
-    return { schemas, newSchema };
+    return { hardocsJson, metadata };
   }
 };
 
@@ -173,33 +170,32 @@ const generateMetadata = async (opts: DefaultMetadataProps) => {
       throw new Error('Invalid schema');
     }
 
-    const { schemas, newSchema } = processSchema(
-      hardocsJson.schemas,
-      label,
-      path,
-      schemaUrl
-    );
+    const response = processMetadata(hardocsJson, label, schemaUrl);
 
-    hardocsJson.schemas = schemas;
     const schemaPromise = file.writeToFile({
       content: JSON.stringify(schema, null, 2),
       path: hardocsDir,
-      fileName: `${newSchema.hash}.json`
+      fileName: response.metadata.schema.fileName
     });
 
     const metadataPromise = file.writeToFile({
       content: JSON.stringify({}, null, 2),
       path: `${path}/${hardocsJson.docsDir}`,
-      fileName: `${newSchema.hash}.json`
+      fileName: response.metadata.fileName
     });
 
     const hardocsJsonPromise = fs.promises.writeFile(
       `${hardocsDir}/hardocs.json`,
-      JSON.stringify(hardocsJson, null, 2),
+      JSON.stringify(response.hardocsJson, null, 2),
       'utf-8'
     );
     await Promise.all([hardocsJsonPromise, metadataPromise, schemaPromise]);
-    return true;
+
+    return {
+      hardocsJson: response.hardocsJson,
+      metadata: response.metadata,
+      schema: response.metadata.schema
+    };
   } catch (err) {
     throw new Error(
       JSON.stringify(
@@ -220,5 +216,5 @@ export default {
   generateMetadata,
   loadMetadata,
   schemaFromURL,
-  processSchema
+  processMetadata
 };

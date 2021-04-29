@@ -23,12 +23,14 @@ describe('Schema tests', () => {
   //   expect(response.content).toEqual(defaultStandard);
   // });
   test('should generate an empty metadata file', async () => {
-    await metadata.generateMetadata({
+    const response = await metadata.generateMetadata({
       path: `${mocksDir}/test-project`,
       docsDir: 'docs',
       label: 'example',
       schemaUrl: 'https://json.schemastore.org/esmrc.json'
     });
+    console.log(response);
+    // expect(response)
   });
   // test('should load metadata', async () => {
   //   await metadata.loadMetadata(`${mocksDir}/test-project`, 'docs', 'schema');
