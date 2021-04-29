@@ -21,7 +21,6 @@ declare namespace HDS {
   }
 
   interface IQuery {
-    __typename: 'Query';
     cwd: string;
     getEntryFile: string;
     folderExists: boolean;
@@ -58,7 +57,6 @@ declare namespace HDS {
   }
 
   interface IFolder {
-    __typename: 'Folder';
     name: string;
     path: string;
     isPackage: boolean | null;
@@ -68,7 +66,6 @@ declare namespace HDS {
   }
 
   interface IMutation {
-    __typename: 'Mutation';
     openFile: IFile;
     writeToFile: IFile;
     deleteFile: boolean | null;
@@ -119,7 +116,6 @@ declare namespace HDS {
   }
 
   interface IFile {
-    __typename: 'File';
     title: string;
     path: string;
     content: string;
@@ -223,7 +219,6 @@ declare namespace HDS {
    * Project schemas
    */
   interface IProject {
-    __typename: 'Project';
     id: string;
     path: string | null;
     name: string;
@@ -259,7 +254,6 @@ declare namespace HDS {
   }
 
   interface ILanguage {
-    __typename: 'Language';
     name: Lang;
     description: string;
     longDescription: string;
@@ -267,8 +261,6 @@ declare namespace HDS {
   }
 
   interface ILicense {
-    __typename: 'License';
-
     /**
      * Name of license. i.e MIT, ISC, Apache License etc.
      */
@@ -277,13 +269,11 @@ declare namespace HDS {
   }
 
   interface IAuthor {
-    __typename: 'Author';
     name: string;
     affiliation: string;
   }
 
   interface IContributor {
-    __typename: 'Contributor';
     name: string;
   }
 

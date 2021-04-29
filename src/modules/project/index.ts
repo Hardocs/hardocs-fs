@@ -48,8 +48,7 @@ const openProject = async ({
     const response = {
       ...hardocsJson,
       path: fullPath,
-      allDocsData,
-      __typename: 'Project'
+      allDocsData
     } as HDS.IProject;
 
     return response;
@@ -76,7 +75,8 @@ const create = async (
     const result = {
       ...input,
       id: UUIDv4(),
-      path: projectPath
+      path: projectPath,
+      allDocsData: []
     };
 
     try {
@@ -125,20 +125,23 @@ const create = async (
 const createFromExisting = async (
   input: HDS.ICreateProjectInput
 ): Promise<HDS.IProject | HDS.IError> => {
+  if (!input.path) {
+    throw new Error('Please specify a path -- createProjectFromExistingFolder');
+  }
   if (input) {
-    const projectPath = input.path || cwd.get();
-    await cwd.set(projectPath);
-    if (!folder.isDirectory({ path: projectPath })) {
-      fs.mkdirSync(projectPath);
-      await cwd.set(projectPath);
+    await cwd.set(input.path);
+    if (!folder.isDirectory({ path: input.path })) {
+      fs.mkdirSync(input.path);
+      await cwd.set(input.path);
     }
 
     try {
       const result = {
+        ...input,
         id: UUIDv4(),
-        ...input
+        allDocsData: []
       };
-      const hardocsDir = getHardocsDir(projectPath);
+      const hardocsDir = getHardocsDir(input.path);
 
       if (!fs.existsSync(hardocsDir)) {
         fs.mkdirSync(hardocsDir);
@@ -152,32 +155,18 @@ const createFromExisting = async (
       );
       // Promise.resolve().then(() => writeToJson(hardocsJson, result));
 
-      const docsDir = `${projectPath}/${result.docsDir}`;
+      const docsDir = `${input.path}/${result.docsDir}`;
       if (!fs.existsSync(docsDir)) {
         fs.mkdirSync(docsDir);
       }
 
-      // If we do not have a schema then we have to create a new one
-      // if (!fs.existsSync(`${hardocsDir}/schema.json`)) {
-      //   await metadata.bootstrapSchema({ content: defaultStandard });
-      // }
-
-      // If we do not have a metadata, then we have to create a new one
-      // if (!fs.existsSync(`${hardocsDir}/metadata.json`)) {
-      //   await metadata.generateMetadata({
-      //     docsDir: input.docsDir,
-      //     path: projectPath,
-      //     content: {},
-      //     name: 'metadata'
-      //   });
-      // }
       await metadata.generateMetadata({
         docsDir: input.docsDir,
-        path: projectPath,
+        path: input.path,
         schemaUrl: 'https://json.schemastore.org/esmrc.json',
         label: 'default'
       });
-      const response = await openProject({ path: projectPath, force: true }); // Open project before requiring any files in it
+      const response = await openProject({ path: input.path, force: true }); // Open project before requiring any files in it
       return response;
     } catch (er) {
       return {

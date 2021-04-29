@@ -62,6 +62,15 @@ const processMetadata = (
       fileName: `${formatName(label)}-schema.json`
     }
   };
+  const isObject =
+    typeof hardocsJson.records === 'object' &&
+    !Array.isArray(hardocsJson.records) &&
+    hardocsJson.records !== null;
+  if (hardocsJson.records && !isObject) {
+    throw new Error(
+      'Records must be an object. Invalid `hardocs.json`. -- processMetadata'
+    );
+  }
 
   if (!hardocsJson.records) {
     hardocsJson.records = {

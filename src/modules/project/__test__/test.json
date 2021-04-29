@@ -1,18 +1,18 @@
 {
-  "id": "1",
   "name": "test-project",
   "docsDir": "docs",
+  "id": "1",
   "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/test-project",
-  "records": [
-    {
+  "allDocsData": [],
+  "records": {
+    "default": {
+      "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/docs/default",
       "fileName": "default-metadata.json",
-      "label": "default",
-      "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/test-project/docs/default",
       "schema": {
-        "fileName": "default-schema.json",
-        "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/test-project//home/divine/Documents/projects/hardocs/hardocs-fs/test-project/.hardocs/default",
-        "source": "https://json.schemastore.org/esmrc.json"
+        "source": "https://json.schemastore.org/esmrc.json",
+        "path": "/home/divine/Documents/projects/hardocs/hardocs-fs//home/divine/Documents/projects/hardocs/hardocs-fs/.hardocs/default",
+        "fileName": "default-schema.json"
       }
     }
-  ]
+  }
 }

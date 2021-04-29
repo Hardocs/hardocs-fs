@@ -1,11 +1,11 @@
 {
-  "id": "20923d96-f959-47bf-85ef-92653cc85793",
   "name": "test-project",
   "docsDir": "docs",
   "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/test-project",
-  "records": [
-    {
-      "label": "default",
+  "id": "282de646-ba45-436c-8fb5-70f84cd71d44",
+  "allDocsData": [],
+  "records": {
+    "default": {
       "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/test-project/docs/default",
       "fileName": "default-metadata.json",
       "schema": {
@@ -14,5 +14,5 @@
         "fileName": "default-schema.json"
       }
     }
-  ]
+  }
 }

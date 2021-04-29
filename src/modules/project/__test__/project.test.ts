@@ -35,6 +35,7 @@ describe('Hardocs project test: ', () => {
     })) as HDS.IProject;
     mockData.id = '1';
     _openedProject.id = '1';
+    // fs.writeFileSync('./test.json', JSON.stringify(_openedProject, null, 2));
 
     expect(_openedProject).toEqual(expect.objectContaining(mockData));
   });
@@ -51,7 +52,7 @@ describe('Hardocs project test: ', () => {
      */
     mockData.id = '1';
     _hardocsProject.id = '1';
-
+    console.log({ _hardocsProject }); // Todo: DEBUG THIS
     /**
      * Ensure that the created project matches a valid hardocs project
      */
