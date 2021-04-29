@@ -72,33 +72,33 @@ const allHtmlFilesPath = (filePath?: string) => {
   return allHtmls;
 };
 
-const getEntryFilePath = async ({
-  path: projectPath,
-  force
-}: Options): Promise<string> => {
-  if (!force) {
-    projectPath = `${cwd.get()}/${projectPath}`;
-  }
+// const getEntryFilePath = async ({
+//   path: projectPath,
+//   force
+// }: Options): Promise<string> => {
+//   if (!force) {
+//     projectPath = `${cwd.get()}/${projectPath}`;
+//   }
 
-  if (!folder.isHardocsProject({ path: projectPath, force })) {
-    throw new Error('Not a valid hardocs project -- getEntryFilePath');
-  }
+//   if (!folder.isHardocsProject({ path: projectPath, force })) {
+//     throw new Error('Not a valid hardocs project -- getEntryFilePath');
+//   }
 
-  try {
-    const docsDir = await folder.getDocsFolder({
-      path: projectPath,
-      force
-    });
+//   try {
+//     const docsDir = await folder.getDocsFolder({
+//       path: projectPath,
+//       force
+//     });
 
-    const entryFileName = getHardocsJsonFile({ path: projectPath, force })
-      .hardocsJson.metadata;
+//     const entryFileName = getHardocsJsonFile({ path: projectPath, force })
+//       .hardocsJson.metadata;
 
-    const entryFile = `${docsDir}/${entryFileName}`;
-    return entryFile;
-  } catch (err) {
-    return 'Not a valid project';
-  }
-};
+//     const entryFile = `${docsDir}/${entryFileName}`;
+//     return entryFile;
+//   } catch (err) {
+//     return 'Not a valid project';
+//   }
+// };
 
 const getHardocsJsonFile = ({
   path,
@@ -233,7 +233,7 @@ const deleteFile = ({
 export default {
   openFile,
   allHtmlFilesPath,
-  getEntryFilePath,
+  // getEntryFilePath,
   getHardocsJsonFile,
   createHtmlTemplate,
   openEntryFile,
