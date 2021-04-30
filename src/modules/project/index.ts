@@ -43,13 +43,13 @@ const openProject = async ({
 
     const allDocsData = await file.extractAllFileData({ path: docsDir });
 
-    // const metadata = await loadMetadata(fullPath, docsDir);
+    const data = await metadata.loadMetadataAndSchema(hardocsJson);
 
     const response = {
-      ...hardocsJson,
+      ...data,
       path: fullPath,
       allDocsData
-    } as HDS.IProject;
+    };
 
     return response;
   } catch (err) {
