@@ -1,16 +1,17 @@
 {
-  "id": "16c8e1c9-44e2-472e-b1c3-4579cac76417",
+  "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/src/modules/metadata/__tests__/__mocks__",
   "name": "test-project",
   "docsDir": "docs",
-  "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/test-project",
+  "id": "b4154b15-f07b-4e0c-bc2d-8b222d93edcd",
+  "allDocsData": [],
   "records": {
-    "example": {
-      "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/test-project/docs/example",
-      "fileName": "example-metadata.json",
+    "default": {
+      "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/src/modules/metadata/__tests__/__mocks__/test-project/docs/default-metadata.json",
+      "fileName": "default-metadata.json",
       "schema": {
         "source": "https://json.schemastore.org/esmrc.json",
-        "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/test-project//home/divine/Documents/projects/hardocs/hardocs-fs/test-project/.hardocs/example",
-        "fileName": "example-schema.json"
+        "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/src/modules/metadata/__tests__/__mocks__/test-project/.hardocs/default-schema.json",
+        "fileName": "default-schema.json"
       }
     }
   }

@@ -1,5 +1,6 @@
 import metadata from '../';
 import cwd from '../../cwd';
+import project from '../../project';
 
 const path = process.cwd();
 describe('Schema tests', () => {
@@ -22,15 +23,28 @@ describe('Schema tests', () => {
   //   });
   //   expect(response.content).toEqual(defaultStandard);
   // });
-  test('should generate an empty metadata file', async () => {
-    const response = await metadata.generateMetadata({
-      path: `${mocksDir}/test-project`,
-      docsDir: 'docs',
-      label: 'example',
-      schemaUrl: 'https://json.schemastore.org/esmrc.json'
+  // test('should generate an empty metadata file', async () => {
+  //   await metadata.generateMetadata({
+  //     path: `${mocksDir}/test-project`,
+  //     docsDir: 'docs',
+  //     label: 'default',
+  //     schemaUrl: 'https://json.schemastore.org/esmrc.json'
+  //   });
+  //   // expect(response)
+  // });
+
+  test('load metadata and schema content', async () => {
+    // const openedProject = await project.create({
+    //   path: mocksDir,
+    //   name: 'test-project',
+    //   docsDir: 'docs'
+    // });
+    const openedProject = await project.open({
+      path: `${mocksDir}/test-project`
     });
-    console.log(response);
-    // expect(response)
+
+    const response = await metadata.loadMetadataAndSchema(openedProject);
+    console.log(response.records);
   });
   // test('should load metadata', async () => {
   //   await metadata.loadMetadata(`${mocksDir}/test-project`, 'docs', 'schema');

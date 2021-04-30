@@ -52,13 +52,15 @@ const processMetadata = (
   //   throw new Error('Please provide a label for the given schema');
   // }
   const metadata = {
-    path: `${hardocsJson.path}/${hardocsJson.docsDir}/${formatName(label)}`,
+    path: `${hardocsJson.path}/${hardocsJson.name}/${
+      hardocsJson.docsDir
+    }/${formatName(label)}-metadata.json`,
     fileName: `${formatName(label)}-metadata.json`,
     schema: {
       source: schemaSource,
-      path: `${hardocsJson.path}/${getHardocsDir(
-        hardocsJson.path
-      )}/${formatName(label)}`,
+      path: `${getHardocsDir(
+        `${hardocsJson.path}/${hardocsJson.name}`
+      )}/${formatName(label)}-schema.json`,
       fileName: `${formatName(label)}-schema.json`
     }
   };
@@ -219,11 +221,34 @@ const generateMetadata = async (opts: DefaultMetadataProps) => {
   }
 };
 
+const loadMetadataAndSchema = async (hardocsJson: any) => {
+  if (!hardocsJson.records) {
+    console.log('No records');
+    return hardocsJson;
+  }
+
+  for (const metadata in hardocsJson.records) {
+    const metadataContent = await fs.promises.readFile(
+      hardocsJson.records[metadata].path,
+      'utf-8'
+    );
+    const schemaContent = await fs.promises.readFile(
+      hardocsJson.records[metadata].schema.path,
+      'utf-8'
+    );
+    hardocsJson.records[metadata].content = metadataContent;
+    hardocsJson.records[metadata].schema.content = schemaContent;
+  }
+
+  return hardocsJson;
+};
+
 export default {
   loadSchema,
   bootstrapSchema,
   generateMetadata,
   loadMetadata,
   schemaFromURL,
-  processMetadata
+  processMetadata,
+  loadMetadataAndSchema
 };
