@@ -47,15 +47,15 @@ const openProject = async ({
 
     const response = {
       ...data,
-      path: fullPath,
-      allDocsData
+      allDocsData: [...data.allDocsData, ...allDocsData],
+      path: fullPath
     };
 
     return response;
   } catch (err) {
     return {
       error: true,
-      message: 'Not a valid hardocs project. message: ' + err.message // TODO: Return proper error message
+      message: 'Not a valid hardocs project. message: ' + err.message
     };
   }
 };
@@ -76,7 +76,7 @@ const create = async (
       ...input,
       id: UUIDv4(),
       path: projectPath,
-      allDocsData: []
+      allDocsData: {}
     };
 
     try {
@@ -139,7 +139,7 @@ const createFromExisting = async (
       const result = {
         ...input,
         id: UUIDv4(),
-        allDocsData: []
+        allDocsData: {}
       };
       const hardocsDir = getHardocsDir(input.path);
 

@@ -47,15 +47,13 @@ const processMetadata = (
   label: string,
   schemaSource: string
 ) => {
-  // generate a unique hash from schema label
-  // if (!label) {
-  //   throw new Error('Please provide a label for the given schema');
-  // }
   const metadata = {
     path: `${hardocsJson.path}/${hardocsJson.name}/${
       hardocsJson.docsDir
     }/${formatName(label)}-metadata.json`,
     fileName: `${formatName(label)}-metadata.json`,
+    title: label,
+    type: 'record',
     schema: {
       source: schemaSource,
       path: `${getHardocsDir(
@@ -64,26 +62,20 @@ const processMetadata = (
       fileName: `${formatName(label)}-schema.json`
     }
   };
-  const isObject =
-    typeof hardocsJson.records === 'object' &&
-    !Array.isArray(hardocsJson.records) &&
-    hardocsJson.records !== null;
-  if (hardocsJson.records && !isObject) {
-    throw new Error(
-      'Records must be an object. Invalid `hardocs.json`. -- processMetadata'
-    );
+  if (!Array.isArray(hardocsJson.allDocsData)) {
+    hardocsJson.allDocsData = [];
   }
 
-  if (!hardocsJson.records) {
-    hardocsJson.records = {
-      [label]: metadata
-    };
+  if (!hardocsJson.allDocsData) {
+    hardocsJson.allDocsData.unshift(metadata);
     return { hardocsJson, metadata };
   } else {
-    const exists = hardocsJson.records[label];
+    const exists = hardocsJson.allDocsData.find(
+      (v: Record<string, unknown>) => v.title === label
+    );
 
     if (!exists) {
-      hardocsJson.records[label] = metadata;
+      hardocsJson.allDocsData.unshift(metadata);
     }
 
     return { hardocsJson, metadata };
@@ -222,22 +214,22 @@ const generateMetadata = async (opts: DefaultMetadataProps) => {
 };
 
 const loadMetadataAndSchema = async (hardocsJson: any) => {
-  if (!hardocsJson.records) {
+  if (!hardocsJson.allDocsData) {
     console.log('No records');
     return hardocsJson;
   }
 
-  for (const metadata in hardocsJson.records) {
-    const metadataContent = await fs.promises.readFile(
-      hardocsJson.records[metadata].path,
-      'utf-8'
-    );
-    const schemaContent = await fs.promises.readFile(
-      hardocsJson.records[metadata].schema.path,
-      'utf-8'
-    );
-    hardocsJson.records[metadata].content = metadataContent;
-    hardocsJson.records[metadata].schema.content = schemaContent;
+  for (const doc of hardocsJson.allDocsData) {
+    if (doc.type === 'record') {
+      const metadataContent = await fs.promises.readFile(doc.path, 'utf-8');
+      const schemaContent = await fs.promises.readFile(
+        doc.schema.path,
+        'utf-8'
+      );
+
+      doc.content = metadataContent;
+      doc.schema.content = schemaContent;
+    }
   }
 
   return hardocsJson;
