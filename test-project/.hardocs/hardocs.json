@@ -2,17 +2,18 @@
   "name": "test-project",
   "docsDir": "docs",
   "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/test-project",
-  "id": "df09c396-ba71-4439-92ef-dc604aad62c1",
-  "allDocsData": [],
-  "records": {
-    "default": {
+  "id": "2505cfa1-94a5-49af-91a0-4119e11c9304",
+  "allDocsData": [
+    {
       "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/test-project/test-project/docs/default-metadata.json",
       "fileName": "default-metadata.json",
+      "title": "default",
+      "type": "record",
       "schema": {
         "source": "https://json.schemastore.org/esmrc.json",
         "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/test-project/test-project/.hardocs/default-schema.json",
         "fileName": "default-schema.json"
       }
     }
-  }
+  ]
 }

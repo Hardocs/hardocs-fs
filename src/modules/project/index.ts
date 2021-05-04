@@ -43,13 +43,15 @@ const openProject = async ({
 
     const allDocsData = await file.extractAllFileData({ path: docsDir });
 
-    const data = await metadata.loadMetadataAndSchema(hardocsJson);
+    // const data = await metadata.loadMetadataAndSchema(hardocsJson);
 
+    const data = await metadata.loadMetadataAndSchema(hardocsJson);
     const response = {
       ...data,
       allDocsData: [...data.allDocsData, ...allDocsData],
       path: fullPath
     };
+    console.log(JSON.stringify(response, null, 2));
 
     return response;
   } catch (err) {
