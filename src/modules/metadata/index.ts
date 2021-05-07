@@ -42,44 +42,39 @@ const bootstrapSchema = async (opts: UpdateSchemaParams) => {
   }
 };
 
-const processMetadata = (
-  hardocsJson: any,
-  label: string,
-  schemaSource: string
-) => {
+const processMetadata = async (data: any) => {
+  const { path, docsDir, label, schemaUrl } = data;
   const metadata = {
-    path: `${hardocsJson.path}/${hardocsJson.name}/${
-      hardocsJson.docsDir
-    }/${formatName(label)}-metadata.json`,
+    path: `${path}/${docsDir}/${formatName(label)}-metadata.json`,
     fileName: `${formatName(label)}-metadata.json`,
     title: label,
     type: 'record',
     schema: {
-      source: schemaSource,
-      path: `${getHardocsDir(
-        `${hardocsJson.path}/${hardocsJson.name}`
-      )}/${formatName(label)}-schema.json`,
+      source: schemaUrl,
+      path: `${path}/.hardocs/${formatName(label)}-schema.json`,
       fileName: `${formatName(label)}-schema.json`
     }
   };
-  if (!Array.isArray(hardocsJson.allDocsData)) {
-    hardocsJson.allDocsData = [];
-  }
 
-  if (!hardocsJson.allDocsData) {
-    hardocsJson.allDocsData.unshift(metadata);
-    return { hardocsJson, metadata };
-  } else {
-    const exists = hardocsJson.allDocsData.find(
-      (v: Record<string, unknown>) => v.title === label
-    );
+  const schema = await RefParser.dereference(schemaUrl);
+  const schemaPromise = file.writeToFile(
+    {
+      content: JSON.stringify(schema, null, 2),
+      path: metadata.schema.path
+    },
+    true
+  );
 
-    if (!exists) {
-      hardocsJson.allDocsData.unshift(metadata);
-    }
+  const metadataPromise = file.writeToFile(
+    {
+      content: JSON.stringify({}, null, 2),
+      path: `${path}/${docsDir}`
+    },
+    true
+  );
 
-    return { hardocsJson, metadata };
-  }
+  await Promise.all([metadataPromise, schemaPromise]);
+  return metadata;
 };
 
 /**
@@ -101,7 +96,7 @@ const schemaFromURL = async (url: string, title: string, path?: string) => {
       content: JSON.stringify(schema, null, 2),
       path: dir,
       fileName: `${formatName(title)}.json`,
-      title
+      source: url
     };
 
     const isWritten = await file.writeToFile(response);
@@ -156,63 +151,6 @@ const loadMetadata = async (path: string, docsDir: string, name: string) => {
   };
 };
 
-interface DefaultMetadataProps {
-  path: string;
-  docsDir: string;
-  label: string;
-  schemaUrl: string;
-}
-
-const generateMetadata = async (opts: DefaultMetadataProps) => {
-  const { path, label = 'metadata', schemaUrl } = opts;
-  try {
-    const { hardocsJson, hardocsDir } = file.getHardocsJsonFile({ path });
-    const schema = await RefParser.dereference(schemaUrl);
-
-    if (!schema) {
-      throw new Error('Invalid schema');
-    }
-
-    const response = processMetadata(hardocsJson, label, schemaUrl);
-
-    const schemaPromise = file.writeToFile({
-      content: JSON.stringify(schema, null, 2),
-      path: hardocsDir,
-      fileName: response.metadata.schema.fileName
-    });
-
-    const metadataPromise = file.writeToFile({
-      content: JSON.stringify({}, null, 2),
-      path: `${path}/${hardocsJson.docsDir}`,
-      fileName: response.metadata.fileName
-    });
-
-    const hardocsJsonPromise = fs.promises.writeFile(
-      `${hardocsDir}/hardocs.json`,
-      JSON.stringify(response.hardocsJson, null, 2),
-      'utf-8'
-    );
-    await Promise.all([hardocsJsonPromise, metadataPromise, schemaPromise]);
-
-    return {
-      hardocsJson: response.hardocsJson,
-      metadata: response.metadata,
-      schema: response.metadata.schema
-    };
-  } catch (err) {
-    throw new Error(
-      JSON.stringify(
-        {
-          path: 'generateMetadata',
-          message: err.message
-        },
-        null,
-        2
-      )
-    );
-  }
-};
-
 const loadMetadataAndSchema = async (hardocsJson: any) => {
   if (!hardocsJson.allDocsData) {
     console.log('No records');
@@ -238,7 +176,6 @@ const loadMetadataAndSchema = async (hardocsJson: any) => {
 export default {
   loadSchema,
   bootstrapSchema,
-  generateMetadata,
   loadMetadata,
   schemaFromURL,
   processMetadata,

@@ -130,7 +130,7 @@ declare namespace HDS {
     title?: string;
     path: string;
     content: string;
-    fileName: string;
+    fileName?: string;
   }
 
   interface ICreateProjectInput {

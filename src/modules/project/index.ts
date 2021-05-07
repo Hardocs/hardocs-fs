@@ -73,13 +73,12 @@ const create = async (
       fs.mkdirSync(dest);
       await cwd.set(dest);
     }
-
-    const result = {
-      ...input,
-      id: UUIDv4(),
-      path: projectPath,
-      allDocsData: {}
-    };
+    const allDocsData = await metadata.processMetadata({
+      docsDir: input.docsDir,
+      path: dest,
+      schemaUrl: 'https://json.schemastore.org/esmrc.json',
+      label: 'default'
+    });
 
     try {
       const hardocsDir = getHardocsDir(dest);
@@ -89,25 +88,25 @@ const create = async (
       }
       const hardocsJson = `${hardocsDir}/hardocs.json`;
 
+      const docsDir = `${dest}/${input.docsDir}`;
+      if (!fs.existsSync(docsDir)) {
+        fs.mkdirSync(docsDir);
+      }
+      const result = {
+        id: UUIDv4(),
+        ...input,
+        path: dest,
+        allDocsData: [allDocsData]
+      };
+      console.log(result);
       await fs.promises.writeFile(
         hardocsJson,
         JSON.stringify(result, null, 2),
         { encoding: 'utf-8' }
       );
 
-      const docsDir = `${dest}/${result.docsDir}`;
-      if (!fs.existsSync(docsDir)) {
-        fs.mkdirSync(docsDir);
-      }
-
       // Generate default schema
 
-      await metadata.generateMetadata({
-        docsDir: input.docsDir,
-        path: dest,
-        schemaUrl: 'https://json.schemastore.org/esmrc.json',
-        label: 'default'
-      });
       const response = await openProject({ path: dest, force: true }); // Open project before requiring any files in it
 
       return response;
@@ -162,7 +161,7 @@ const createFromExisting = async (
         fs.mkdirSync(docsDir);
       }
 
-      await metadata.generateMetadata({
+      await metadata.processMetadata({
         docsDir: input.docsDir,
         path: input.path,
         schemaUrl: 'https://json.schemastore.org/esmrc.json',

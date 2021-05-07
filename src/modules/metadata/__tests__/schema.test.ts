@@ -46,6 +46,11 @@ describe('Schema tests', () => {
     const response = await metadata.loadMetadataAndSchema(openedProject);
     console.log(response.allDocsData);
   });
+
+  // test('should generate and load a new metadata + schema', () => {
+
+  // })
+
   // test('should load metadata', async () => {
   //   await metadata.loadMetadata(`${mocksDir}/test-project`, 'docs', 'schema');
   // });

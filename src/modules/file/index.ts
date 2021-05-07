@@ -40,14 +40,18 @@ const openFile = ({ path: filePath, force = false }: Options) => {
 };
 
 const writeToFile = async (
-  input: HDS.IFileInput
+  input: HDS.IFileInput,
+  absolute?: boolean
 ): Promise<boolean | HDS.IError> => {
   const { path, content, fileName } = input;
   if (!input) {
     throw new Error('Input all fields');
   }
 
-  const newPath = `${path}/${fileName}`;
+  let newPath = path;
+  if (!absolute) {
+    newPath = `${path}/${fileName}`;
+  }
   try {
     fs.writeFileSync(newPath, content, { encoding: 'utf8' });
 
