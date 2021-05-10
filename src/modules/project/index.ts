@@ -73,16 +73,9 @@ const create = async (
       fs.mkdirSync(dest);
       await cwd.set(dest);
     }
-    const allDocsData = await metadata.processMetadata({
-      docsDir: input.docsDir,
-      path: dest,
-      schemaUrl: 'https://json.schemastore.org/esmrc.json',
-      label: 'default'
-    });
+    const hardocsDir = getHardocsDir(dest);
 
     try {
-      const hardocsDir = getHardocsDir(dest);
-
       if (!fs.existsSync(hardocsDir)) {
         fs.mkdirSync(hardocsDir);
       }
@@ -92,13 +85,19 @@ const create = async (
       if (!fs.existsSync(docsDir)) {
         fs.mkdirSync(docsDir);
       }
+      const allDocsData = await metadata.processMetadata({
+        docsDir: input.docsDir,
+        path: dest,
+        schemaUrl: 'https://json.schemastore.org/esmrc.json',
+        label: 'default'
+      });
+
       const result = {
         id: UUIDv4(),
         ...input,
         path: dest,
         allDocsData: [allDocsData]
       };
-      console.log(result);
       await fs.promises.writeFile(
         hardocsJson,
         JSON.stringify(result, null, 2),

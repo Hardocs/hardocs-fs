@@ -68,13 +68,14 @@ const processMetadata = async (data: any) => {
   const metadataPromise = file.writeToFile(
     {
       content: JSON.stringify({}, null, 2),
-      path: `${path}/${docsDir}`
+      path: metadata.path
     },
     true
   );
 
-  await Promise.all([metadataPromise, schemaPromise]);
-  return metadata;
+  return await Promise.all([metadataPromise, schemaPromise]).then(() => {
+    return metadata;
+  });
 };
 
 /**
