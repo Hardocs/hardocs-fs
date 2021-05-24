@@ -44,6 +44,7 @@ const bootstrapSchema = async (opts: UpdateSchemaParams) => {
 
 const processMetadata = async (data: any) => {
   const { path, docsDir, label, schemaUrl } = data;
+  console.log({ label });
   const metadata = {
     path: `${path}/${docsDir}/${formatName(label)}-metadata.json`,
     fileName: `${formatName(label)}-metadata.json`,
@@ -57,7 +58,7 @@ const processMetadata = async (data: any) => {
   };
 
   const schema = await RefParser.dereference(schemaUrl);
-  const schemaPromise = file.writeToFile(
+  await file.writeToFile(
     {
       content: JSON.stringify(schema, null, 2),
       path: metadata.schema.path
@@ -65,17 +66,56 @@ const processMetadata = async (data: any) => {
     true
   );
 
-  const metadataPromise = file.writeToFile(
+  await file.writeToFile(
     {
       content: JSON.stringify({}, null, 2),
       path: metadata.path
     },
     true
   );
+  return {
+    ...metadata,
+    content: {},
+    schema: {
+      ...metadata.schema,
+      content: schema
+    }
+  };
+};
 
-  return await Promise.all([metadataPromise, schemaPromise]).then(() => {
-    return metadata;
-  });
+const addMetadata = async (
+  hardocsJson: any,
+  label: string,
+  schemaUrl: string
+) => {
+  const { path, docsDir } = hardocsJson;
+  const manifestPath = `${getHardocsDir(path)}/hardocs.json`;
+  const manifest = JSON.parse(
+    await fs.promises.readFile(manifestPath, 'utf-8')
+  );
+  const metadata = await processMetadata({ path, docsDir, label, schemaUrl });
+  const data = {
+    path: metadata.path,
+    fileName: metadata.fileName,
+    title: metadata.title,
+    type: metadata.type,
+    schema: {
+      path: metadata.schema.path,
+      source: metadata.schema.source,
+      fileName: metadata.schema.fileName
+    }
+  };
+
+  manifest.allDocsData.push(data);
+  await file.writeToFile(
+    {
+      path: manifestPath,
+      content: JSON.stringify(manifest, null, 2)
+    },
+    true
+  );
+
+  return metadata;
 };
 
 /**
@@ -174,11 +214,39 @@ const loadMetadataAndSchema = async (hardocsJson: any) => {
   return hardocsJson;
 };
 
+const removeFromManifest = async (filename: string) => {
+  const manifestPath = `${cwd.get()}/.hardocs/hardocs.json`;
+
+  const manifest = JSON.parse(
+    await fs.promises.readFile(manifestPath, 'utf-8')
+  );
+
+  const index = manifest.allDocsData.findIndex(
+    (i: any) => i.fileName === filename
+  );
+  if (index !== -1) {
+    manifest.allDocsData.splice(index, 1);
+    await file.writeToFile(
+      {
+        content: manifest,
+        path: manifest.path,
+        fileName: manifest.name
+      },
+      true
+    );
+    return true;
+  }
+
+  return false;
+};
+
 export default {
   loadSchema,
   bootstrapSchema,
   loadMetadata,
   schemaFromURL,
   processMetadata,
-  loadMetadataAndSchema
+  loadMetadataAndSchema,
+  addMetadata,
+  removeFromManifest
 };

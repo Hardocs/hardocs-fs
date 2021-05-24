@@ -43,15 +43,12 @@ const openProject = async ({
 
     const allDocsData = await file.extractAllFileData({ path: docsDir });
 
-    // const data = await metadata.loadMetadataAndSchema(hardocsJson);
-
     const data = await metadata.loadMetadataAndSchema(hardocsJson);
     const response = {
       ...data,
       allDocsData: [...data.allDocsData, ...allDocsData],
       path: fullPath
     };
-    console.log(JSON.stringify(response, null, 2));
 
     return response;
   } catch (err) {
@@ -96,7 +93,19 @@ const create = async (
         id: UUIDv4(),
         ...input,
         path: dest,
-        allDocsData: [allDocsData]
+        allDocsData: [
+          {
+            path: allDocsData.path,
+            fileName: allDocsData.fileName,
+            title: allDocsData.title,
+            type: allDocsData.type,
+            schema: {
+              path: allDocsData.schema.path,
+              source: allDocsData.schema.source,
+              fileName: allDocsData.schema.fileName
+            }
+          }
+        ]
       };
       await fs.promises.writeFile(
         hardocsJson,
