@@ -214,29 +214,25 @@ const loadMetadataAndSchema = async (hardocsJson: any) => {
   return hardocsJson;
 };
 
-const removeFromManifest = async (filename: string) => {
-  const manifestPath = `${cwd.get()}/.hardocs/hardocs.json`;
+const removeFromManifest = async (projectPath: string, filename: string) => {
+  const manifestPath = `${projectPath}/.hardocs/hardocs.json`;
 
   const manifest = JSON.parse(
     await fs.promises.readFile(manifestPath, 'utf-8')
   );
 
-  const index = manifest.allDocsData.findIndex(
-    (i: any) => i.fileName === filename
+  manifest.allDocsData = manifest.allDocsData.filter(
+    (i: any) => i.fileName !== filename
   );
-  if (index !== -1) {
-    manifest.allDocsData.splice(index, 1);
-    await file.writeToFile(
-      {
-        content: manifest,
-        path: manifest.path,
-        fileName: manifest.name
-      },
-      true
-    );
-    return true;
-  }
 
+  await file.writeToFile(
+    {
+      content: JSON.stringify(manifest, null, 2),
+      path: manifestPath,
+      fileName: manifest.name
+    },
+    true
+  );
   return false;
 };
 
