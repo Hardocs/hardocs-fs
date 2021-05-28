@@ -1,17 +1,18 @@
 {
-  "id": "c9854368-8e6b-4be4-b757-c3c610d6d69c",
   "name": "test-project",
   "docsDir": "docs",
-  "entryFile": "index.html",
-  "updatedAt": "new Date().toISOString()",
+  "id": "1",
   "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/test-project",
-  "allDocsData": [
-    {
-      "title": "Index",
-      "content": "<h1>Index</h1>\n    <p>You can change the title of this document but in the file system will always remain as <code>index.html</code></p>\n    ",
-      "fileName": "index.html",
-      "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/test-project/docs/index.html"
+  "allDocsData": [],
+  "records": {
+    "default": {
+      "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/docs/default",
+      "fileName": "default-metadata.json",
+      "schema": {
+        "source": "https://json.schemastore.org/esmrc.json",
+        "path": "/home/divine/Documents/projects/hardocs/hardocs-fs//home/divine/Documents/projects/hardocs/hardocs-fs/.hardocs/default",
+        "fileName": "default-schema.json"
+      }
     }
-  ],
-  "__typename": "Project"
+  }
 }

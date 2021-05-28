@@ -1,9 +1,8 @@
-import glob from 'glob';
 import * as fs from 'fs';
-
+import glob from 'glob';
+import { Options, Path } from '../../typings/globals';
 import cwd from '../cwd';
 import folder from '../folder';
-import { Options, Path } from '../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 
 // const dom = new jsdom.JSDOM();
@@ -41,14 +40,18 @@ const openFile = ({ path: filePath, force = false }: Options) => {
 };
 
 const writeToFile = async (
-  input: HDS.IFileInput
+  input: HDS.IFileInput,
+  absolute?: boolean
 ): Promise<boolean | HDS.IError> => {
   const { path, content, fileName } = input;
   if (!input) {
     throw new Error('Input all fields');
   }
 
-  const newPath = `${path}/${fileName}`;
+  let newPath = path;
+  if (!absolute) {
+    newPath = `${path}/${fileName}`;
+  }
   try {
     fs.writeFileSync(newPath, content, { encoding: 'utf8' });
 
@@ -73,40 +76,40 @@ const allHtmlFilesPath = (filePath?: string) => {
   return allHtmls;
 };
 
-const getEntryFilePath = async ({
-  path: projectPath,
-  force
-}: Options): Promise<string> => {
-  if (!force) {
-    projectPath = `${cwd.get()}/${projectPath}`;
-  }
+// const getEntryFilePath = async ({
+//   path: projectPath,
+//   force
+// }: Options): Promise<string> => {
+//   if (!force) {
+//     projectPath = `${cwd.get()}/${projectPath}`;
+//   }
 
-  if (!folder.isHardocsProject({ path: projectPath, force })) {
-    throw new Error('Not a valid hardocs project -- getEntryFilePath');
-  }
+//   if (!folder.isHardocsProject({ path: projectPath, force })) {
+//     throw new Error('Not a valid hardocs project -- getEntryFilePath');
+//   }
 
-  try {
-    const docsDir = await folder.getDocsFolder({
-      path: projectPath,
-      force
-    });
+//   try {
+//     const docsDir = await folder.getDocsFolder({
+//       path: projectPath,
+//       force
+//     });
 
-    const entryFileName = getHardocsJsonFile({ path: projectPath, force })
-      .hardocsJson.entryFile;
+//     const entryFileName = getHardocsJsonFile({ path: projectPath, force })
+//       .hardocsJson.metadata;
 
-    const entryFile = `${docsDir}/${entryFileName}`;
-    return entryFile;
-  } catch (err) {
-    return 'Not a valid project';
-  }
-};
+//     const entryFile = `${docsDir}/${entryFileName}`;
+//     return entryFile;
+//   } catch (err) {
+//     return 'Not a valid project';
+//   }
+// };
 
 const getHardocsJsonFile = ({
   path,
   force = false
 }: Partial<Options>): {
   hardocsJson: HDS.IProject;
-  currentDir: string;
+  hardocsDir: string;
 } => {
   if (force && !path) {
     throw new Error('Please specify path when using `force: true` option..');
@@ -125,7 +128,7 @@ const getHardocsJsonFile = ({
     'utf-8'
   );
   const hardocsJson = JSON.parse(hardocsFile);
-  return { hardocsJson, currentDir: path };
+  return { hardocsJson, hardocsDir };
 };
 
 const createHtmlTemplate = async (filename: string, path: string) => {
@@ -234,7 +237,7 @@ const deleteFile = ({
 export default {
   openFile,
   allHtmlFilesPath,
-  getEntryFilePath,
+  // getEntryFilePath,
   getHardocsJsonFile,
   createHtmlTemplate,
   openEntryFile,

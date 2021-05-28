@@ -21,7 +21,6 @@ declare namespace HDS {
   }
 
   interface IQuery {
-    __typename: 'Query';
     cwd: string;
     getEntryFile: string;
     folderExists: boolean;
@@ -58,7 +57,6 @@ declare namespace HDS {
   }
 
   interface IFolder {
-    __typename: 'Folder';
     name: string;
     path: string;
     isPackage: boolean | null;
@@ -68,7 +66,6 @@ declare namespace HDS {
   }
 
   interface IMutation {
-    __typename: 'Mutation';
     openFile: IFile;
     writeToFile: IFile;
     deleteFile: boolean | null;
@@ -119,7 +116,6 @@ declare namespace HDS {
   }
 
   interface IFile {
-    __typename: 'File';
     title: string;
     path: string;
     content: string;
@@ -131,10 +127,10 @@ declare namespace HDS {
   }
 
   interface IFileInput {
-    title: string;
+    title?: string;
     path: string;
     content: string;
-    fileName: string;
+    fileName?: string;
   }
 
   interface ICreateProjectInput {
@@ -162,15 +158,9 @@ declare namespace HDS {
     docsDir: string;
 
     /**
-     * @default "index.html"
-     */
-    entryFile: string;
-
-    /**
      * @default "assets"
      */
     assets?: string | null;
-    updatedAt?: string | null;
   }
 
   /**
@@ -229,15 +219,10 @@ declare namespace HDS {
    * Project schemas
    */
   interface IProject {
-    __typename: 'Project';
     id: string;
     path: string | null;
     name: string;
     shortTitle: string | null;
-
-    /**
-     * description: String
-     */
     nameWithOwner: string | null;
     longTitle: string | null;
     languages: Array<ILanguage> | null;
@@ -246,17 +231,29 @@ declare namespace HDS {
     made: boolean | null;
     madeIndependently: boolean | null;
     license: Array<ILicense | null> | null;
-    updatedAt: string | null;
     author: IAuthor | null;
     contributors: Array<IContributor | null> | null;
     docsDir: string;
     allDocsData: Array<IFile | null> | null;
-    entryFile: string;
+    schema: Schema;
+    records: Record<string, unknown>;
     assets: string | null;
   }
 
+  interface Metadata {
+    label: string;
+    content?: Record<string, unknown>;
+    path: string;
+    hash: string;
+  }
+  interface Schema {
+    label: string;
+    content: Record<string, unknown>;
+    path: string;
+    hash: string;
+  }
+
   interface ILanguage {
-    __typename: 'Language';
     name: Lang;
     description: string;
     longDescription: string;
@@ -264,8 +261,6 @@ declare namespace HDS {
   }
 
   interface ILicense {
-    __typename: 'License';
-
     /**
      * Name of license. i.e MIT, ISC, Apache License etc.
      */
@@ -274,13 +269,11 @@ declare namespace HDS {
   }
 
   interface IAuthor {
-    __typename: 'Author';
     name: string;
     affiliation: string;
   }
 
   interface IContributor {
-    __typename: 'Contributor';
     name: string;
   }
 

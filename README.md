@@ -1,6 +1,9 @@
 # Hardocs Fs (File System) module
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 This module is used to perform most file system operations in [hardocs-desktop](https://hardocs.github.io) app.
@@ -35,8 +38,7 @@ const { project } = require('hardocs-fs');
 project
   .create({
     name: 'test-project',
-    docsDir: 'docs',
-    entryFile: 'index.html'
+    docsDir: 'docs'
   })
   .then((response) => {
     console.log(response);

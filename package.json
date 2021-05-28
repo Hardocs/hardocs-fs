@@ -1,6 +1,6 @@
 {
   "name": "hardocs-fs",
-  "version": "0.0.21-beta",
+  "version": "0.0.222",
   "description": "Helper functions to perform most file/folder operations meant to be used in an electron app.",
   "scripts": {
     "lint": "eslint './**/*.{tsx,ts}' --quiet --fix",
@@ -45,6 +45,7 @@
     "typescript": "^4.0.2"
   },
   "dependencies": {
+    "@apidevtools/json-schema-ref-parser": "^9.0.7",
     "dotenv": "^8.2.0",
     "glob": "^7.1.6",
     "jimp": "^0.16.1",

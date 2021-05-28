@@ -1,7 +1,5 @@
 {
   "id": "e226ed3b-4194-49d2-b96a-0794ec06c149",
   "name": "test-project",
-  "docsDir": "docs",
-  "entryFile": "index.html",
-  "updatedAt": "new Date().toISOString()"
+  "docsDir": "docs"
 }

@@ -1,19 +1,12 @@
-import { Options } from './../../typings/globals';
-import * as path from 'path';
 import * as fs from 'fs';
+import * as path from 'path';
 import { v4 as UUIDv4 } from 'uuid';
-
 import cwd from '../cwd';
-import folder from '../folder';
-import { getHardocsDir } from './../../utils/constants';
 import file from '../file';
-
-// const templateDir = path.join(__dirname, '../../../template/template'); // TODO: Include template
-// const htmlFile = path.join(
-//   __dirname,
-//   '../../../template/docsTemplate/index.html'
-// );
-// const docsTemplateDir = path.join(__dirname, '../../../template/docsTemplate');
+import folder from '../folder';
+import metadata from '../metadata';
+import { Options } from './../../typings/globals';
+import { getHardocsDir } from './../../utils/constants';
 
 const openProject = async ({
   path: fullPath,
@@ -22,7 +15,8 @@ const openProject = async ({
   if (force && !fullPath) {
     return {
       error: true,
-      message: 'Please specify path when using `force: true` option..'
+      message:
+        'Please specify path when using `force: true` option. --openProject--'
     };
   }
 
@@ -33,12 +27,12 @@ const openProject = async ({
   await cwd.set(fullPath);
 
   try {
-    const hardocsJson = file.getHardocsJsonFile({
+    const { hardocsJson } = file.getHardocsJsonFile({
       path: fullPath,
       force
     });
 
-    const docsDir = hardocsJson.hardocsJson.docsDir;
+    const docsDir = hardocsJson.docsDir;
 
     if (!docsDir || docsDir.trim() === '') {
       return {
@@ -47,33 +41,20 @@ const openProject = async ({
       };
     }
 
-    const entryFilePath = `${docsDir}/${hardocsJson.hardocsJson.entryFile}`;
-    const allFileData = await file.extractAllFileData({ path: docsDir });
+    const allDocsData = await file.extractAllFileData({ path: docsDir });
 
-    const entry = await file.openEntryFile({
-      path: entryFilePath
-    });
-    const allDocsData = allFileData
-      .map((f) => {
-        if (f.fileName === file.getFileName({ path: entryFilePath })) {
-          f.content = entry.content;
-        }
-        return f;
-      })
-      .sort((a) => (a.fileName === entry.fileName ? -1 : 1));
-
+    const data = await metadata.loadMetadataAndSchema(hardocsJson);
     const response = {
-      ...hardocsJson.hardocsJson,
-      path: fullPath,
-      allDocsData,
-      __typename: 'Project'
-    } as HDS.IProject;
+      ...data,
+      allDocsData: [...data.allDocsData, ...allDocsData],
+      path: fullPath
+    };
 
     return response;
   } catch (err) {
     return {
       error: true,
-      message: 'Not a valid hardocs project' // TODO: Return proper error message
+      message: 'Not a valid hardocs project. message: ' + err.message
     };
   }
 };
@@ -89,32 +70,50 @@ const create = async (
       fs.mkdirSync(dest);
       await cwd.set(dest);
     }
+    const hardocsDir = getHardocsDir(dest);
 
-    const result = {
-      id: UUIDv4(),
-      ...input,
-      updatedAt: 'new Date().toISOString()'
-    };
     try {
-      const hardocsDir = getHardocsDir(dest);
-
       if (!fs.existsSync(hardocsDir)) {
         fs.mkdirSync(hardocsDir);
       }
       const hardocsJson = `${hardocsDir}/hardocs.json`;
 
+      const docsDir = `${dest}/${input.docsDir}`;
+      if (!fs.existsSync(docsDir)) {
+        fs.mkdirSync(docsDir);
+      }
+      const allDocsData = await metadata.processMetadata({
+        docsDir: input.docsDir,
+        path: dest,
+        schemaUrl: 'https://json.schemastore.org/esmrc.json',
+        label: 'default'
+      });
+
+      const result = {
+        id: UUIDv4(),
+        ...input,
+        path: dest,
+        allDocsData: [
+          {
+            path: allDocsData.path,
+            fileName: allDocsData.fileName,
+            title: allDocsData.title,
+            type: allDocsData.type,
+            schema: {
+              path: allDocsData.schema.path,
+              source: allDocsData.schema.source,
+              fileName: allDocsData.schema.fileName
+            }
+          }
+        ]
+      };
       await fs.promises.writeFile(
         hardocsJson,
         JSON.stringify(result, null, 2),
         { encoding: 'utf-8' }
       );
 
-      const docsDir = `${dest}/${result.docsDir}`;
-      if (!fs.existsSync(docsDir)) {
-        fs.mkdirSync(docsDir);
-      }
-
-      await file.createHtmlTemplate(result.entryFile, docsDir);
+      // Generate default schema
 
       const response = await openProject({ path: dest, force: true }); // Open project before requiring any files in it
 
@@ -135,21 +134,23 @@ const create = async (
 const createFromExisting = async (
   input: HDS.ICreateProjectInput
 ): Promise<HDS.IProject | HDS.IError> => {
+  if (!input.path) {
+    throw new Error('Please specify a path -- createProjectFromExistingFolder');
+  }
   if (input) {
-    const projectPath = input.path || cwd.get();
-    await cwd.set(projectPath);
-    if (!folder.isDirectory({ path: projectPath })) {
-      fs.mkdirSync(projectPath);
-      await cwd.set(projectPath);
+    await cwd.set(input.path);
+    if (!folder.isDirectory({ path: input.path })) {
+      fs.mkdirSync(input.path);
+      await cwd.set(input.path);
     }
 
     try {
       const result = {
-        id: UUIDv4(),
         ...input,
-        updatedAt: 'new Date().toISOString()'
+        id: UUIDv4(),
+        allDocsData: {}
       };
-      const hardocsDir = getHardocsDir(projectPath);
+      const hardocsDir = getHardocsDir(input.path);
 
       if (!fs.existsSync(hardocsDir)) {
         fs.mkdirSync(hardocsDir);
@@ -163,17 +164,18 @@ const createFromExisting = async (
       );
       // Promise.resolve().then(() => writeToJson(hardocsJson, result));
 
-      const docsDir = `${projectPath}/${result.docsDir}`;
+      const docsDir = `${input.path}/${result.docsDir}`;
       if (!fs.existsSync(docsDir)) {
         fs.mkdirSync(docsDir);
       }
 
-      if (!file.exists(`${docsDir}/${result.entryFile}`)) {
-        await file.createHtmlTemplate(result.entryFile, docsDir);
-      }
-
-      const response = await openProject({ path: projectPath, force: true }); // Open project before requiring any files in it
-
+      await metadata.processMetadata({
+        docsDir: input.docsDir,
+        path: input.path,
+        schemaUrl: 'https://json.schemastore.org/esmrc.json',
+        label: 'default'
+      });
+      const response = await openProject({ path: input.path, force: true }); // Open project before requiring any files in it
       return response;
     } catch (er) {
       return {

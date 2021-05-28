@@ -13,3 +13,4 @@ test-project/
 template/
 coverage/
 test.js
+__test__/

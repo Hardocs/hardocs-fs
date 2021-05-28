@@ -1,0 +1,19 @@
+{
+  "id": "679e94ea-ba54-4d5c-ba6b-746dae06f861",
+  "name": "test-project",
+  "docsDir": "docs",
+  "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/src/modules/project/__test__/__mocks__/test-project",
+  "allDocsData": [
+    {
+      "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/src/modules/project/__test__/__mocks__/test-project/docs/default-metadata.json",
+      "fileName": "default-metadata.json",
+      "title": "default",
+      "type": "record",
+      "schema": {
+        "path": "/home/divine/Documents/projects/hardocs/hardocs-fs/src/modules/project/__test__/__mocks__/test-project/.hardocs/default-schema.json",
+        "source": "https://json.schemastore.org/esmrc.json",
+        "fileName": "default-schema.json"
+      }
+    }
+  ]
+}

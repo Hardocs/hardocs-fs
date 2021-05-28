@@ -21,7 +21,6 @@ const downloadAndOptimizeImage = (
   dir?: string
 ) => {
   const base64 = options.base64;
-  console.log({ options });
   /**
    * If `dir` is not provided, the current working directory will
    * be used instead
@@ -73,7 +72,6 @@ const processImage = (data: string) => {
   data = data.replace(regexp, '');
 
   let response;
-  console.log({ prevLength: data.length });
 
   const buffer = Buffer.from(data, 'base64');
   const maxWidth = 600;
@@ -94,11 +92,6 @@ const processImage = (data: string) => {
 
         res.resize(_width, Jimp.AUTO).quality(50);
 
-        console.log({
-          data: data.slice(0, 12),
-          response: res.bitmap.data.toString('base64').slice(1, 100)
-        });
-
         response.push(res.bitmap.data.toString('base64'));
 
         return res.bitmap.data.toString('base64').slice(0, 100);
@@ -109,10 +102,6 @@ const processImage = (data: string) => {
   } catch (err) {
     console.error(err);
   }
-
-  console.log({
-    newRes: response
-  });
 
   return response;
 };
@@ -144,8 +133,6 @@ const imagesInHtml = async (html: string) => {
 
     const alt = imgObject.groups?.alt;
     const newBase64 = processImage(base64string);
-
-    console.log({ newBase64 });
 
     const response = `<img src="data:image/jpeg;base64,${newBase64}" alt="${alt}" />`;
     return response;
