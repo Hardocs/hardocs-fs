@@ -63,12 +63,9 @@ const create = async (
   input: HDS.ICreateProjectInput
 ): Promise<HDS.IProject | HDS.IError> => {
   if (input) {
-    const projectPath = input.path || cwd.get();
-    const dest = path.join(projectPath, input.name);
-    await cwd.set(dest);
+    const dest = path.join(input.path, input.name);
     if (!folder.isDirectory({ path: dest })) {
       fs.mkdirSync(dest);
-      await cwd.set(dest);
     }
     const hardocsDir = getHardocsDir(dest);
 
@@ -90,9 +87,8 @@ const create = async (
       });
 
       const result = {
-        id: UUIDv4(),
-        ...input,
-        path: dest,
+        name: input.name,
+        docsDir: input.docsDir,
         allDocsData: [
           {
             path: allDocsData.path,
@@ -112,8 +108,6 @@ const create = async (
         JSON.stringify(result, null, 2),
         { encoding: 'utf-8' }
       );
-
-      // Generate default schema
 
       const response = await openProject({ path: dest, force: true }); // Open project before requiring any files in it
 

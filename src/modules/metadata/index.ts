@@ -1,5 +1,6 @@
 import RefParser from '@apidevtools/json-schema-ref-parser';
 import fs from 'fs';
+import { join } from 'path';
 import cwd from '../cwd';
 import file from '../file';
 import { getHardocsDir } from './../../utils/constants';
@@ -42,17 +43,18 @@ const bootstrapSchema = async (opts: UpdateSchemaParams) => {
   }
 };
 
+// ✅
 const processMetadata = async (data: any) => {
   const { path, docsDir, label, schemaUrl } = data;
   console.log({ label });
   const metadata = {
-    path: `${path}/${docsDir}/${formatName(label)}-metadata.json`,
+    path: `${docsDir}/${formatName(label)}-metadata.json`,
     fileName: `${formatName(label)}-metadata.json`,
     title: label,
     type: 'record',
     schema: {
       source: schemaUrl,
-      path: `${path}/.hardocs/${formatName(label)}-schema.json`,
+      path: `.hardocs/${formatName(label)}-schema.json`,
       fileName: `${formatName(label)}-schema.json`
     }
   };
@@ -61,7 +63,7 @@ const processMetadata = async (data: any) => {
   await file.writeToFile(
     {
       content: JSON.stringify(schema, null, 2),
-      path: metadata.schema.path
+      path: join(path, metadata.schema.path)
     },
     true
   );
@@ -69,7 +71,7 @@ const processMetadata = async (data: any) => {
   await file.writeToFile(
     {
       content: JSON.stringify({}, null, 2),
-      path: metadata.path
+      path: join(path, metadata.path)
     },
     true
   );
