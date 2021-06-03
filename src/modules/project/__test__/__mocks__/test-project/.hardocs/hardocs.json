@@ -1,7 +1,7 @@
 {
   "name": "test-project",
   "docsDir": "docs",
-  "allDocsData": [
+  "hardocs": [
     {
       "path": "docs/default-metadata.json",
       "fileName": "default-metadata.json",

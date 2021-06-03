@@ -9,10 +9,9 @@ import { Options } from './../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 
 const openProject = async ({
-  path: fullPath,
-  force = false
+  path: fullPath
 }: Partial<Options>): Promise<HDS.IProject | HDS.IError> => {
-  if (force && !fullPath) {
+  if (!fullPath) {
     return {
       error: true,
       message:
@@ -20,17 +19,8 @@ const openProject = async ({
     };
   }
 
-  if (!fullPath) {
-    fullPath = cwd.get();
-  }
-
-  await cwd.set(fullPath);
-
   try {
-    const { hardocsJson } = file.getHardocsJsonFile({
-      path: fullPath,
-      force
-    });
+    const { hardocsJson } = file.getHardocsJsonFile(fullPath);
 
     const docsDir = hardocsJson.docsDir;
 
@@ -41,12 +31,12 @@ const openProject = async ({
       };
     }
 
-    const allDocsData = await file.extractAllFileData({ path: docsDir });
+    const hardocs = await file.extractAllFileData({ path: docsDir });
 
     const data = await metadata.loadMetadataAndSchema(hardocsJson);
     const response = {
       ...data,
-      allDocsData: [...data.allDocsData, ...allDocsData],
+      hardocs: [...data.hardocs, ...hardocs],
       path: fullPath
     };
 
@@ -64,7 +54,7 @@ const create = async (
 ): Promise<HDS.IProject | HDS.IError> => {
   if (input) {
     const dest = path.join(input.path, input.name);
-    if (!folder.isDirectory({ path: dest })) {
+    if (!folder.isDirectory(dest)) {
       fs.mkdirSync(dest);
     }
     const hardocsDir = getHardocsDir(dest);
@@ -79,7 +69,7 @@ const create = async (
       if (!fs.existsSync(docsDir)) {
         fs.mkdirSync(docsDir);
       }
-      const allDocsData = await metadata.processMetadata({
+      const hardocs = await metadata.processMetadata({
         docsDir: input.docsDir,
         path: dest,
         schemaUrl: 'https://json.schemastore.org/esmrc.json',
@@ -89,16 +79,16 @@ const create = async (
       const result = {
         name: input.name,
         docsDir: input.docsDir,
-        allDocsData: [
+        hardocs: [
           {
-            path: allDocsData.path,
-            fileName: allDocsData.fileName,
-            title: allDocsData.title,
-            type: allDocsData.type,
+            path: hardocs.path,
+            fileName: hardocs.fileName,
+            title: hardocs.title,
+            type: hardocs.type,
             schema: {
-              path: allDocsData.schema.path,
-              source: allDocsData.schema.source,
-              fileName: allDocsData.schema.fileName
+              path: hardocs.schema.path,
+              source: hardocs.schema.source,
+              fileName: hardocs.schema.fileName
             }
           }
         ]
@@ -133,7 +123,7 @@ const createFromExisting = async (
   }
   if (input) {
     await cwd.set(input.path);
-    if (!folder.isDirectory({ path: input.path })) {
+    if (!folder.isDirectory(input.path)) {
       fs.mkdirSync(input.path);
       await cwd.set(input.path);
     }
@@ -142,8 +132,9 @@ const createFromExisting = async (
       const result = {
         ...input,
         id: UUIDv4(),
-        allDocsData: {}
+        hardocs: []
       };
+
       const hardocsDir = getHardocsDir(input.path);
 
       if (!fs.existsSync(hardocsDir)) {
@@ -156,7 +147,6 @@ const createFromExisting = async (
         JSON.stringify(result, null, 2),
         { encoding: 'utf-8' }
       );
-      // Promise.resolve().then(() => writeToJson(hardocsJson, result));
 
       const docsDir = `${input.path}/${result.docsDir}`;
       if (!fs.existsSync(docsDir)) {

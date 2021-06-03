@@ -76,51 +76,19 @@ const allHtmlFilesPath = (filePath?: string) => {
   return allHtmls;
 };
 
-// const getEntryFilePath = async ({
-//   path: projectPath,
-//   force
-// }: Options): Promise<string> => {
-//   if (!force) {
-//     projectPath = `${cwd.get()}/${projectPath}`;
-//   }
-
-//   if (!folder.isHardocsProject({ path: projectPath, force })) {
-//     throw new Error('Not a valid hardocs project -- getEntryFilePath');
-//   }
-
-//   try {
-//     const docsDir = await folder.getDocsFolder({
-//       path: projectPath,
-//       force
-//     });
-
-//     const entryFileName = getHardocsJsonFile({ path: projectPath, force })
-//       .hardocsJson.metadata;
-
-//     const entryFile = `${docsDir}/${entryFileName}`;
-//     return entryFile;
-//   } catch (err) {
-//     return 'Not a valid project';
-//   }
-// };
-
-const getHardocsJsonFile = ({
-  path,
-  force = false
-}: Partial<Options>): {
+const getHardocsJsonFile = (
+  path: string
+): {
   hardocsJson: HDS.IProject;
   hardocsDir: string;
 } => {
-  if (force && !path) {
-    throw new Error('Please specify path when using `force: true` option..');
-  }
   if (!path) {
-    path = cwd.get();
+    throw new Error('Please specify path when using `force: true` option..');
   }
 
   const hardocsDir = getHardocsDir(path);
 
-  if (!folder.isHardocsProject({ path, force })) {
+  if (!folder.isHardocsProject(path)) {
     throw new Error('Not a valid hardocs project -- getHardocsJsonFile');
   }
   const hardocsFile: string = fs.readFileSync(
@@ -179,7 +147,7 @@ const exists = (path: string): boolean => {
 };
 
 const deleteFile = (path: string): boolean | HDS.IError => {
-  if (folder.isDirectory({ path })) {
+  if (folder.isDirectory(path)) {
     return {
       error: true,
       message: 'File path must point to a valid file and not a directory'

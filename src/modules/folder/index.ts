@@ -1,8 +1,5 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Options } from '../../typings/globals';
-import cwd from '../cwd';
-import file from '../file';
 import { getHardocsDir } from './../../utils/constants';
 
 const isPlatformWindows =
@@ -44,32 +41,7 @@ const generateFolder = (folder: string) => {
   };
 };
 
-const open = async ({ path: file }: Path) => {
-  await cwd.set(file);
-  return generateFolder({ path: cwd.get() });
-};
-
-const openParent = ({ path: file }: Path) => {
-  const newPath = path.dirname(file);
-  cwd.set(newPath);
-  return generateFolder({ path: cwd.get() });
-};
-
-const createFolder = ({ path: name, force = false }: Options) => {
-  if (isDirectory({ path: name })) {
-    // console.log(`Folder already exist.`);
-    return false;
-  }
-
-  let folder = path.join(cwd.get(), name);
-  if (force) {
-    folder = name;
-  }
-  fs.mkdirSync(folder);
-  return generateFolder({ path: folder });
-};
-
-const list = async ({ path: base }: Path) => {
+const list = async (base: string) => {
   let dir = base;
   if (isPlatformWindows) {
     if (base.match(/^([A-Z]{1}:)$/)) {
@@ -84,10 +56,10 @@ const list = async ({ path: base }: Path) => {
       return {
         path: folderPath,
         name: file,
-        hidden: isHidden({ path: folderPath })
+        hidden: isHidden(folderPath)
       };
     })
-    .filter((file) => isDirectory(file));
+    .filter((file) => isDirectory(file.path));
 };
 
 const isHidden = (file: string) => {
@@ -149,34 +121,12 @@ const isHardocsProject = (dir: string): boolean => {
   }
 };
 
-const getDocsFolder = async (path: string) => {
-  if (!isHardocsProject(path)) {
-    throw new Error('Not a hardocs project');
-  }
-  const hardocsJson = file.getHardocsJsonFile(path).hardocsJson;
-  const { docsDir } = hardocsJson;
-
-  return `${path}/${docsDir}`;
-};
-
-const deleteFolder = (path: string): boolean => {
-  if (isDirectory(path)) {
-    fs.rmdirSync(path, { recursive: true });
-  }
-  return true;
-};
-
 export default {
   isDirectory,
   generateFolder,
-  open,
-  openParent,
-  createFolder,
   list,
   isHidden,
-  getDocsFolder,
   readPackage,
   isHardocsProject,
-  deleteFolder,
   copy
 };
