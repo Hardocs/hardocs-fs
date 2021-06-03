@@ -16,23 +16,6 @@ describe('Schema tests', () => {
   //   expect(schema.content).toEqual(defaultStandard);
   // });
 
-  // test('should update a schema standard', async () => {
-  //   const response = await metadata.bootstrapSchema({
-  //     path: `${mocksDir}/test-project/.hardocs`,
-  //     content: defaultStandard
-  //   });
-  //   expect(response.content).toEqual(defaultStandard);
-  // });
-  // test('should generate an empty metadata file', async () => {
-  //   await metadata.generateMetadata({
-  //     path: `${mocksDir}/test-project`,
-  //     docsDir: 'docs',
-  //     label: 'default',
-  //     schemaUrl: 'https://json.schemastore.org/esmrc.json'
-  //   });
-  //   // expect(response)
-  // });
-
   test('load metadata and schema content', async () => {
     // const openedProject = await project.create({
     //   path: mocksDir,
@@ -53,16 +36,6 @@ describe('Schema tests', () => {
 
   // test('should load metadata', async () => {
   //   await metadata.loadMetadata(`${mocksDir}/test-project`, 'docs', 'schema');
-  // });
-
-  // test('should download schema from URL', async () => {
-  //   const isWritten = await metadata.schemaFromURL(
-  //     'https://json.schemastore.org/esmrc.json',
-  //     'schema',
-  //     `${mocksDir}/test-project/.hardocs`
-  //   );
-
-  //   expect(isWritten).toBeTruthy();
   // });
 });
 

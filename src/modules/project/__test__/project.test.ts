@@ -31,18 +31,18 @@ describe('Hardocs project test: ', () => {
     expect(_openedProject).toMatchObject(mockData);
   });
 
-  it('create a hardocs project from an existing folder', async () => {
-    const _hardocsProject = (await project.createFromExisting({
-      name: 'test-project',
-      docsDir: 'docs',
-      path: projectPath
-    })) as HDS.IProject;
+  // it('create a hardocs project from an existing folder', async () => {
+  //   const _hardocsProject = (await project.createFromExisting({
+  //     name: 'test-project',
+  //     docsDir: 'docs',
+  //     path: projectPath
+  //   })) as HDS.IProject;
 
-    /**
-     * Ensure that the created project matches a valid hardocs project
-     */
-    expect(_hardocsProject).toMatchObject(mockData);
-  });
+  //   /**
+  //    * Ensure that the created project matches a valid hardocs project
+  //    */
+  //   expect(_hardocsProject).toMatchObject(mockData);
+  // });
 
   it('throws an error for invalid project', async () => {
     const response = await project.open({ path: __dirname });
