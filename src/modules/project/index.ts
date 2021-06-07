@@ -7,9 +7,9 @@ import { Options } from './../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 
 const openProject = async ({
-  path: fullPath
+  path: basePath
 }: Partial<Options>): Promise<HDS.IProject | HDS.IError> => {
-  if (!fullPath) {
+  if (!basePath) {
     return {
       error: true,
       message:
@@ -18,7 +18,7 @@ const openProject = async ({
   }
 
   try {
-    const { hardocsJson } = file.getHardocsJsonFile(fullPath);
+    const { hardocsJson } = file.getHardocsJsonFile(basePath);
 
     const docsDir = hardocsJson.docsDir;
 
@@ -31,11 +31,11 @@ const openProject = async ({
 
     const hardocs = await file.extractAllFileData({ path: docsDir });
 
-    const data = await metadata.loadMetadataAndSchema(hardocsJson);
+    const data = await metadata.loadMetadataAndSchema(hardocsJson, basePath);
     const response = {
       ...data,
       hardocs: [...data.hardocs, ...hardocs],
-      path: fullPath
+      path: basePath
     };
 
     return response;

@@ -24,20 +24,20 @@ const copy = (src: string, dest: string) => {
   });
 };
 
-const isDirectory = (folder: string) => {
-  folder = folder.replace(/\\/g, path.sep);
+const isDirectory = (dir: string) => {
+  dir = dir.toString().replace(/\\/g, path.sep);
   try {
-    return fs.existsSync(folder) && fs.statSync(folder).isDirectory();
-  } catch (err) {
+    return fs.existsSync(dir) && fs.statSync(dir).isDirectory();
+  } catch (err: any) {
     console.log(err.message);
     return false;
   }
 };
 
-const generateFolder = (folder: string) => {
+const generateFolder = (dir: string) => {
   return {
-    name: path.basename(folder),
-    path: folder
+    name: path.basename(dir),
+    path: dir
   };
 };
 

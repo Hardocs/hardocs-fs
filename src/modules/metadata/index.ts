@@ -11,7 +11,6 @@ const formatName = (name: string) =>
 // ✅
 const processMetadata = async (data: any) => {
   const { path, docsDir, label, schemaUrl } = data;
-  console.log({ label });
   const metadata = {
     path: `${docsDir}/${formatName(label)}-metadata.json`,
     fileName: `${formatName(label)}-metadata.json`,
@@ -74,7 +73,7 @@ const addMetadata = async (
     }
   };
 
-  manifest.allDocsData.push(data);
+  manifest.hardocs.push(data);
   await file.writeToFile(
     {
       path: manifestPath,
@@ -110,17 +109,20 @@ const loadSchema = async (name: string, path?: string) => {
 };
 
 // ✅
-const loadMetadataAndSchema = async (hardocsJson: any) => {
-  if (!hardocsJson.allDocsData) {
+const loadMetadataAndSchema = async (hardocsJson: any, basePath: string) => {
+  if (!hardocsJson.hardocs) {
     console.log('No records');
     return hardocsJson;
   }
 
-  for (const doc of hardocsJson.allDocsData) {
+  for (const doc of hardocsJson.hardocs) {
     if (doc.type === 'record') {
-      const metadataContent = await fs.promises.readFile(doc.path, 'utf-8');
+      const metadataContent = await fs.promises.readFile(
+        join(basePath, doc.path),
+        'utf-8'
+      );
       const schemaContent = await fs.promises.readFile(
-        doc.schema.path,
+        join(basePath, doc.schema.path),
         'utf-8'
       );
 
@@ -140,7 +142,7 @@ const removeFromManifest = async (projectPath: string, filename: string) => {
     await fs.promises.readFile(manifestPath, 'utf-8')
   );
 
-  manifest.allDocsData = manifest.allDocsData.filter(
+  manifest.hardocs = manifest.hardocs.filter(
     (i: any) => i.fileName !== filename
   );
 

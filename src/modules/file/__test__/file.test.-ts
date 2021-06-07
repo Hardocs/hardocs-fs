@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import file from '../';
+import file from '..';
 import json from './hardocs.json';
 
 const emptyDir = path.join(__dirname, 'empty');

@@ -28,6 +28,7 @@ describe('Hardocs project test: ', () => {
       force: true
     })) as HDS.IProject;
 
+    console.log(_openedProject.hardocs);
     expect(_openedProject).toMatchObject(mockData);
   });
 
