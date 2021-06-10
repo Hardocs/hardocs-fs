@@ -10,35 +10,35 @@ const formatName = (name: string) =>
 
 // ✅
 const processMetadata = async (data: any) => {
-  const { path, docsDir, label, schemaUrl } = data;
+  const { path, docsDir, title, schemaUrl, schemaTitle } = data;
+
+  let schemaName = schemaUrl.split('/');
+  schemaName = schemaName[schemaName.length - 1].replace('.json', '');
+
   const metadata = {
-    path: `${docsDir}/${formatName(label)}-metadata.json`,
-    fileName: `${formatName(label)}-metadata.json`,
-    title: label,
+    path: `${docsDir}/${formatName(title)}.json`,
+    fileName: `${formatName(title)}.json`,
+    title,
     type: 'record',
     schema: {
       source: schemaUrl,
-      path: `.hardocs/${formatName(label)}-schema.json`,
-      fileName: `${formatName(label)}-schema.json`
+      title: schemaTitle ?? null,
+      name: schemaName,
+      path: `.hardocs/${formatName(schemaTitle)}.json`,
+      fileName: `${formatName(schemaTitle)}.json`
     }
   };
-
   const schema = await RefParser.dereference(schemaUrl);
-  await file.writeToFile(
-    {
-      content: JSON.stringify(schema, null, 2),
-      path: join(path, metadata.schema.path)
-    },
-    true
-  );
 
-  await file.writeToFile(
-    {
-      content: JSON.stringify({}, null, 2),
-      path: join(path, metadata.path)
-    },
-    true
-  );
+  await file.writeToFile({
+    content: JSON.stringify(schema, null, 2),
+    path: join(path, metadata.schema.path)
+  });
+
+  await file.writeToFile({
+    content: JSON.stringify({}, null, 2),
+    path: join(path, metadata.path)
+  });
   return {
     ...metadata,
     content: {},
@@ -50,17 +50,18 @@ const processMetadata = async (data: any) => {
 };
 
 // ✅
-const addMetadata = async (
-  hardocsJson: any,
-  label: string,
-  schemaUrl: string
-) => {
+interface MetadataInput {
+  title: string;
+  schemaTitle?: string;
+  schemaUrl: string;
+}
+const addMetadata = async (hardocsJson: any, input: MetadataInput) => {
   const { path, docsDir } = hardocsJson;
   const manifestPath = `${getHardocsDir(path)}/hardocs.json`;
   const manifest = JSON.parse(
     await fs.promises.readFile(manifestPath, 'utf-8')
   );
-  const metadata = await processMetadata({ path, docsDir, label, schemaUrl });
+  const metadata = await processMetadata({ path, docsDir, ...input });
   const data = {
     path: metadata.path,
     fileName: metadata.fileName,
@@ -74,13 +75,10 @@ const addMetadata = async (
   };
 
   manifest.hardocs.push(data);
-  await file.writeToFile(
-    {
-      path: manifestPath,
-      content: JSON.stringify(manifest, null, 2)
-    },
-    true
-  );
+  await file.writeToFile({
+    path: manifestPath,
+    content: JSON.stringify(manifest, null, 2)
+  });
 
   return metadata;
 };
@@ -146,14 +144,11 @@ const removeFromManifest = async (projectPath: string, filename: string) => {
     (i: any) => i.fileName !== filename
   );
 
-  await file.writeToFile(
-    {
-      content: JSON.stringify(manifest, null, 2),
-      path: manifestPath,
-      fileName: manifest.name
-    },
-    true
-  );
+  await file.writeToFile({
+    content: JSON.stringify(manifest, null, 2),
+    path: manifestPath,
+    fileName: manifest.name
+  });
   return false;
 };
 
