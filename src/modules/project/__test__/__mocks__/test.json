@@ -1,18 +1,6 @@
 {
   "name": "test-project",
   "docsDir": "docs",
-  "hardocs": [
-    {
-      "path": "docs/default-metadata.json",
-      "fileName": "default-metadata.json",
-      "title": "default",
-      "type": "record",
-      "schema": {
-        "path": ".hardocs/default-schema.json",
-        "source": "https://json.schemastore.org/esmrc.json",
-        "fileName": "default-schema.json"
-      }
-    }
-  ],
+  "hardocs": [],
   "path": ".hardocs/default-schema.json"
 }

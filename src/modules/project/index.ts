@@ -67,28 +67,31 @@ const create = async (
       if (!fs.existsSync(docsDir)) {
         fs.mkdirSync(docsDir);
       }
-      const hardocs = await metadata.processMetadata({
-        docsDir: input.docsDir,
-        path: dest,
-        schemaUrl: 'https://json.schemastore.org/esmrc.json',
-        label: 'default'
-      });
+      // const hardocs = await metadata.processMetadata({
+      //   docsDir: input.docsDir,
+      //   path: dest,
+      //   schemaUrl: 'https://json.schemastore.org/esmrc.json',
+      //   title: 'default',
+      //   schemaTitle: 'example'
+      // });
 
       const result = {
         name: input.name,
         docsDir: input.docsDir,
         hardocs: [
-          {
-            path: hardocs.path,
-            fileName: hardocs.fileName,
-            title: hardocs.title,
-            type: hardocs.type,
-            schema: {
-              path: hardocs.schema.path,
-              source: hardocs.schema.source,
-              fileName: hardocs.schema.fileName
-            }
-          }
+          // {
+          //   ...hardocs,
+          //   // path: hardocs.path,
+          //   // fileName: hardocs.fileName,
+          //   // title: hardocs.title,
+          //   // type: hardocs.type,
+          //   schema: {
+          //     // path: hardocs.schema.path,
+          //     // source: hardocs.schema.source,
+          //     // fileName: hardocs.schema.fileName
+          //     ...hardocs.schema
+          //   }
+          // }
         ]
       };
       await fs.promises.writeFile(
