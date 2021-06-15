@@ -29,7 +29,16 @@ const openProject = async ({
       };
     }
 
-    const hardocs = await file.extractAllFileData({ path: docsDir });
+    const hardocs = await file
+      .extractAllFileData({
+        path: `${basePath}/${docsDir}`
+      })
+      .then((v) =>
+        v.map((doc: any) => {
+          doc.path = `${docsDir}/${doc.fileName}`;
+          return doc;
+        })
+      );
 
     const data = await metadata.loadMetadataAndSchema(hardocsJson, basePath);
     const response = {
@@ -67,32 +76,11 @@ const create = async (
       if (!fs.existsSync(docsDir)) {
         fs.mkdirSync(docsDir);
       }
-      // const hardocs = await metadata.processMetadata({
-      //   docsDir: input.docsDir,
-      //   path: dest,
-      //   schemaUrl: 'https://json.schemastore.org/esmrc.json',
-      //   title: 'default',
-      //   schemaTitle: 'example'
-      // });
 
       const result = {
         name: input.name,
         docsDir: input.docsDir,
-        hardocs: [
-          // {
-          //   ...hardocs,
-          //   // path: hardocs.path,
-          //   // fileName: hardocs.fileName,
-          //   // title: hardocs.title,
-          //   // type: hardocs.type,
-          //   schema: {
-          //     // path: hardocs.schema.path,
-          //     // source: hardocs.schema.source,
-          //     // fileName: hardocs.schema.fileName
-          //     ...hardocs.schema
-          //   }
-          // }
-        ]
+        hardocs: []
       };
       await fs.promises.writeFile(
         hardocsJson,

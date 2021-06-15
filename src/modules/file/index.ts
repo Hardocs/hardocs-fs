@@ -31,8 +31,7 @@ const openFile = (path: string) => {
     return {
       title,
       content: readFile,
-      fileName: getFileName(path),
-      path
+      fileName: getFileName(path)
     };
   } catch (er: any) {
     throw new Error(er.message);
