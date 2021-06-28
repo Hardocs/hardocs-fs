@@ -74,11 +74,16 @@ const addMetadata = async (hardocsJson: any, input: MetadataInput) => {
     }
   };
 
-  manifest.hardocs.push(data);
-  await file.writeToFile({
-    path: manifestPath,
-    content: JSON.stringify(manifest, null, 2)
-  });
+  const existing = manifest.hardocs.find(
+    (d: any) => d.fileName === data.fileName
+  );
+  if (!existing) {
+    manifest.hardocs.push(data);
+    await file.writeToFile({
+      path: manifestPath,
+      content: JSON.stringify(manifest, null, 2)
+    });
+  }
 
   return metadata;
 };
