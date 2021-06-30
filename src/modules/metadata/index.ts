@@ -1,9 +1,12 @@
 import RefParser from '@apidevtools/json-schema-ref-parser';
+import Ajv from 'ajv';
 import fs from 'fs';
 import { join } from 'path';
 import cwd from '../cwd';
 import file from '../file';
 import { getHardocsDir } from './../../utils/constants';
+
+const ajv = new Ajv();
 
 const formatName = (name: string) =>
   name.split(' ').join('-').trim().toLowerCase();
@@ -29,6 +32,12 @@ const processMetadata = async (data: any) => {
     }
   };
   const schema = await RefParser.dereference(schemaUrl);
+
+  const valid = ajv.validate(schema, {});
+
+  if (!valid) {
+    throw new Error('Invalid schema');
+  }
 
   await file.writeToFile({
     content: JSON.stringify(schema, null, 2),
@@ -62,6 +71,9 @@ const addMetadata = async (hardocsJson: any, input: MetadataInput) => {
     await fs.promises.readFile(manifestPath, 'utf-8')
   );
   const metadata = await processMetadata({ path, docsDir, ...input });
+  if (!metadata) {
+    return metadata;
+  }
   const data = {
     path: metadata.path,
     fileName: metadata.fileName,
