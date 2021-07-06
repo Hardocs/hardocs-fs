@@ -63,7 +63,6 @@ interface MetadataInput {
   title: string;
   schemaTitle?: string;
   schemaUrl: string;
-  type: string;
 }
 const addMetadata = async (hardocsJson: any, input: MetadataInput) => {
   const { path, docsDir } = hardocsJson;
@@ -109,8 +108,8 @@ const processDoc = async (input: any) => {
   );
 
   const doc = {
-    path: `${docsDir}/${formatName(title)}.json`,
-    fileName: `${formatName(title)}.json`,
+    path: `${docsDir}/${formatName(title)}.html`,
+    fileName: `${formatName(title)}.html`,
     title,
     type: 'doc'
   };
