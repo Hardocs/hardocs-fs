@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import doc from '../doc';
 import file from '../file';
 import folder from '../folder';
-import metadata from '../metadata';
 import { Options } from './../../typings/globals';
 import { getHardocsDir } from './../../utils/constants';
 
@@ -40,7 +40,7 @@ const openProject = async ({
         })
       );
 
-    const data = await metadata.loadMetadataAndSchema(hardocsJson, basePath);
+    const data = await doc.loadMetadataAndSchema(hardocsJson, basePath);
     const response = {
       ...data,
       hardocs: [...data.hardocs, ...hardocs],

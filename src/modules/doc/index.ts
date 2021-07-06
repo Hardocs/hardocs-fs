@@ -2,9 +2,9 @@ import RefParser from '@apidevtools/json-schema-ref-parser';
 import Ajv from 'ajv';
 import fs from 'fs';
 import { join } from 'path';
+import { getHardocsDir } from '../../utils/constants';
 import cwd from '../cwd';
 import file from '../file';
-import { getHardocsDir } from './../../utils/constants';
 
 const ajv = new Ajv();
 
@@ -63,6 +63,7 @@ interface MetadataInput {
   title: string;
   schemaTitle?: string;
   schemaUrl: string;
+  type: string;
 }
 const addMetadata = async (hardocsJson: any, input: MetadataInput) => {
   const { path, docsDir } = hardocsJson;
@@ -70,6 +71,7 @@ const addMetadata = async (hardocsJson: any, input: MetadataInput) => {
   const manifest = JSON.parse(
     await fs.promises.readFile(manifestPath, 'utf-8')
   );
+
   const metadata = await processMetadata({ path, docsDir, ...input });
   if (!metadata) {
     return metadata;
@@ -98,6 +100,34 @@ const addMetadata = async (hardocsJson: any, input: MetadataInput) => {
   }
 
   return metadata;
+};
+const processDoc = async (input: any) => {
+  const { docsDir, title, path } = input;
+  const manifestPath = `${getHardocsDir(path)}/hardocs.json`;
+  const manifest = JSON.parse(
+    await fs.promises.readFile(manifestPath, 'utf-8')
+  );
+
+  const doc = {
+    path: `${docsDir}/${formatName(title)}.json`,
+    fileName: `${formatName(title)}.json`,
+    title,
+    type: 'doc'
+  };
+
+  const existing = manifest.hardocs.find(
+    (document: any) => document.fileName === doc.fileName
+  );
+
+  if (!existing) {
+    manifest.hardocs.push(doc);
+
+    await file.writeToFile({
+      path: manifestPath,
+      content: JSON.stringify(manifest, null, 2)
+    });
+  }
+  return doc;
 };
 
 /**
@@ -174,5 +204,6 @@ export default {
   processMetadata,
   loadMetadataAndSchema,
   addMetadata,
-  removeFromManifest
+  removeFromManifest,
+  processDoc
 };
