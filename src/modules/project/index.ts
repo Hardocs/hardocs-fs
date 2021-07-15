@@ -29,21 +29,9 @@ const openProject = async ({
       };
     }
 
-    const hardocs = await file
-      .extractAllFileData({
-        path: `${basePath}/${docsDir}`
-      })
-      .then((v) =>
-        v.map((doc: any) => {
-          doc.path = `${docsDir}/${doc.fileName}`;
-          return doc;
-        })
-      );
-
-    const data = await doc.loadMetadataAndSchema(hardocsJson, basePath);
+    const data = await doc.loadHardocs(hardocsJson, basePath);
     const response = {
       ...data,
-      hardocs: [...data.hardocs, ...hardocs],
       path: basePath
     };
 

@@ -8,8 +8,7 @@ import file from '../file';
 
 const ajv = new Ajv();
 
-const formatName = (name: string) =>
-  name.split(' ').join('-').trim().toLowerCase();
+const formatName = (name: string) => name.split(' ').join('-').trim();
 
 // ✅
 const processMetadata = async (data: any) => {
@@ -27,8 +26,8 @@ const processMetadata = async (data: any) => {
       source: schemaUrl,
       title: schemaTitle ?? null,
       name: schemaName,
-      path: `.hardocs/${formatName(schemaTitle)}.json`,
-      fileName: `${formatName(schemaTitle)}.json`
+      path: `.hardocs/${schemaName}.json`,
+      fileName: `${formatName(schemaName)}.json`
     }
   };
   const schema = await RefParser.dereference(schemaUrl);
@@ -83,6 +82,7 @@ const addMetadata = async (hardocsJson: any, input: MetadataInput) => {
     schema: {
       path: metadata.schema.path,
       source: metadata.schema.source,
+      name: metadata.schema.name,
       fileName: metadata.schema.fileName
     }
   };
@@ -153,7 +153,7 @@ const loadSchema = async (name: string, path?: string) => {
 };
 
 // ✅
-const loadMetadataAndSchema = async (hardocsJson: any, basePath: string) => {
+const loadHardocs = async (hardocsJson: any, basePath: string) => {
   if (!hardocsJson.hardocs) {
     console.log('No records');
     return hardocsJson;
@@ -172,6 +172,13 @@ const loadMetadataAndSchema = async (hardocsJson: any, basePath: string) => {
 
       doc.content = metadataContent;
       doc.schema.content = schemaContent;
+    } else {
+      const docContent = await fs.promises.readFile(
+        join(basePath, doc.path),
+        'utf-8'
+      );
+
+      doc.content = docContent;
     }
   }
 
@@ -201,7 +208,7 @@ const removeFromManifest = async (projectPath: string, filename: string) => {
 export default {
   loadSchema,
   processMetadata,
-  loadMetadataAndSchema,
+  loadHardocs,
   addMetadata,
   removeFromManifest,
   processDoc
