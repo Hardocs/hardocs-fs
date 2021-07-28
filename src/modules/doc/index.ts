@@ -12,49 +12,62 @@ const formatName = (name: string) => name.split(' ').join('-').trim();
 
 // ✅
 const processMetadata = async (data: any) => {
-  const { path, docsDir, title, schemaUrl, schemaTitle } = data;
-
-  let schemaName = schemaUrl.split('/');
-  schemaName = schemaName[schemaName.length - 1].replace('.json', '');
-
-  const metadata = {
-    path: `${docsDir}/${formatName(title)}.json`,
-    fileName: `${formatName(title)}.json`,
+  const {
+    path,
+    docsDir,
     title,
-    type: 'record',
-    schema: {
-      source: schemaUrl,
-      title: schemaTitle ?? null,
-      name: schemaName,
-      path: `.hardocs/${schemaName}.json`,
-      fileName: `${formatName(schemaName)}.json`
+    schemaUrl,
+    schemaTitle,
+    validate = true
+  } = data;
+
+  try {
+    let schemaName = schemaUrl.split('/');
+    schemaName = schemaName[schemaName.length - 1].replace('.json', '');
+
+    const metadata = {
+      path: `${docsDir}/${formatName(title)}.json`,
+      fileName: `${formatName(title)}.json`,
+      title,
+      type: 'record',
+      schema: {
+        source: schemaUrl,
+        title: schemaTitle ?? null,
+        name: schemaName,
+        path: `.hardocs/${schemaName}.json`,
+        fileName: `${formatName(schemaName)}.json`
+      }
+    };
+    const schema = await RefParser.dereference(schemaUrl);
+
+    if (validate) {
+      const valid = ajv.validate(schema, {});
+
+      if (!valid) {
+        throw new Error('Invalid schema');
+      }
     }
-  };
-  const schema = await RefParser.dereference(schemaUrl);
 
-  const valid = ajv.validate(schema, {});
+    await file.writeToFile({
+      content: JSON.stringify(schema, null, 2),
+      path: join(path, metadata.schema.path)
+    });
 
-  if (!valid) {
-    throw new Error('Invalid schema');
+    await file.writeToFile({
+      content: JSON.stringify({}, null, 2),
+      path: join(path, metadata.path)
+    });
+    return {
+      ...metadata,
+      content: {},
+      schema: {
+        ...metadata.schema,
+        content: schema
+      }
+    };
+  } catch (err: any) {
+    throw new Error(err);
   }
-
-  await file.writeToFile({
-    content: JSON.stringify(schema, null, 2),
-    path: join(path, metadata.schema.path)
-  });
-
-  await file.writeToFile({
-    content: JSON.stringify({}, null, 2),
-    path: join(path, metadata.path)
-  });
-  return {
-    ...metadata,
-    content: {},
-    schema: {
-      ...metadata.schema,
-      content: schema
-    }
-  };
 };
 
 // ✅
@@ -64,41 +77,46 @@ interface MetadataInput {
   schemaUrl: string;
 }
 const addMetadata = async (hardocsJson: any, input: MetadataInput) => {
-  const { path, docsDir } = hardocsJson;
-  const manifestPath = `${getHardocsDir(path)}/hardocs.json`;
-  const manifest = JSON.parse(
-    await fs.promises.readFile(manifestPath, 'utf-8')
-  );
+  try {
+    const { path, docsDir } = hardocsJson;
+    const manifestPath = `${getHardocsDir(path)}/hardocs.json`;
+    const manifest = JSON.parse(
+      await fs.promises.readFile(manifestPath, 'utf-8')
+    );
 
-  const metadata = await processMetadata({ path, docsDir, ...input });
-  if (!metadata) {
-    return metadata;
-  }
-  const data = {
-    path: metadata.path,
-    fileName: metadata.fileName,
-    title: metadata.title,
-    type: metadata.type,
-    schema: {
-      path: metadata.schema.path,
-      source: metadata.schema.source,
-      name: metadata.schema.name,
-      fileName: metadata.schema.fileName
+    const metadata = await processMetadata({ path, docsDir, ...input });
+    if (!metadata) {
+      return metadata;
     }
-  };
 
-  const existing = manifest.hardocs.find(
-    (d: any) => d.fileName === data.fileName
-  );
-  if (!existing) {
-    manifest.hardocs.push(data);
-    await file.writeToFile({
-      path: manifestPath,
-      content: JSON.stringify(manifest, null, 2)
-    });
+    const data = {
+      path: metadata.path,
+      fileName: metadata.fileName,
+      title: metadata.title,
+      type: metadata.type,
+      schema: {
+        path: metadata.schema.path,
+        source: metadata.schema.source,
+        name: metadata.schema.name,
+        fileName: metadata.schema.fileName
+      }
+    };
+
+    const existing = manifest.hardocs.find(
+      (d: any) => d.fileName === data.fileName
+    );
+    if (!existing) {
+      manifest.hardocs.push(data);
+      await file.writeToFile({
+        path: manifestPath,
+        content: JSON.stringify(manifest, null, 2)
+      });
+    }
+
+    return metadata;
+  } catch (err: any) {
+    throw new Error(err);
   }
-
-  return metadata;
 };
 const processDoc = async (input: any) => {
   const { docsDir, title, path } = input;
