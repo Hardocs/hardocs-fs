@@ -32,7 +32,7 @@ const processMetadata = async (data: any) => {
       type: 'record',
       schema: {
         source: schemaUrl,
-        title: schemaTitle ?? null,
+        title: schemaTitle ?? schemaName,
         name: schemaName,
         path: `.hardocs/${schemaName}.json`,
         fileName: `${formatName(schemaName)}.json`
@@ -75,6 +75,7 @@ interface MetadataInput {
   title: string;
   schemaTitle?: string;
   schemaUrl: string;
+  validate?: boolean;
 }
 const addMetadata = async (hardocsJson: any, input: MetadataInput) => {
   try {
@@ -97,6 +98,7 @@ const addMetadata = async (hardocsJson: any, input: MetadataInput) => {
       schema: {
         path: metadata.schema.path,
         source: metadata.schema.source,
+        title: metadata.schema.title,
         name: metadata.schema.name,
         fileName: metadata.schema.fileName
       }
