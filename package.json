@@ -1,6 +1,6 @@
 {
   "name": "hardocs-fs",
-  "version": "0.0.4",
+  "version": "0.0.41",
   "description": "Helper functions to perform most file/folder operations meant to be used in an electron app.",
   "scripts": {
     "lint": "eslint './**/*.{tsx,ts}' --quiet --fix",
