@@ -1,0 +1,6 @@
+{
+  "name": "test-project",
+  "docsDir": "docs",
+  "hardocs": [],
+  "path": ".hardocs/default-schema.json"
+}

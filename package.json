@@ -1,6 +1,6 @@
 {
   "name": "hardocs-fs",
-  "version": "0.0.222",
+  "version": "0.0.4",
   "description": "Helper functions to perform most file/folder operations meant to be used in an electron app.",
   "scripts": {
     "lint": "eslint './**/*.{tsx,ts}' --quiet --fix",
@@ -19,6 +19,7 @@
   "author": "Divine Hycenth <divinehycenth8@gmail.com>",
   "license": "GPLv2",
   "devDependencies": {
+    "@types/ajv": "^1.0.0",
     "@types/glob": "^7.1.3",
     "@types/jest": "^26.0.14",
     "@types/jsdom": "^16.2.3",
@@ -42,10 +43,11 @@
     "rimraf": "^3.0.2",
     "ts-jest": "^26.4.1",
     "ts-node": "^8.10.2",
-    "typescript": "^4.0.2"
+    "typescript": "^4.3.5"
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.0.7",
+    "ajv": "^8.6.1",
     "dotenv": "^8.2.0",
     "glob": "^7.1.6",
     "jimp": "^0.16.1",

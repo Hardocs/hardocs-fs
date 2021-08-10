@@ -1,6 +1,6 @@
-import file from '../';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+import file from '..';
 import json from './hardocs.json';
 
 const emptyDir = path.join(__dirname, 'empty');
@@ -21,21 +21,6 @@ describe('Test for file operations: ', () => {
   const filePath = path.join(__dirname, 'divine-quote.html');
   it('exists', () => {
     expect(file.exists(filePath)).toBeTruthy();
-  });
-
-  it('opens a file and return an object', () => {
-    const openFile = file.openFile({ path: filePath });
-
-    const openFileKeys = {
-      title: '',
-      content: '',
-      fileName: '',
-      path: ''
-    };
-
-    const sortedFileKeys = Object.keys(openFile).sort();
-    const sortedFileTest = Object.keys(openFileKeys).sort();
-    expect(sortedFileKeys).toEqual(sortedFileTest);
   });
 
   it('returns an array of strings of paths to html files in this directory', () => {

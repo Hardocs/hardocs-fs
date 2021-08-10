@@ -1,18 +1,18 @@
 import * as fs from 'fs';
 import glob from 'glob';
-import { Options, Path } from '../../typings/globals';
+import { Options } from '../../typings/globals';
 import cwd from '../cwd';
 import folder from '../folder';
 import { getHardocsDir } from './../../utils/constants';
 
 // const dom = new jsdom.JSDOM();
 
-const openFile = ({ path: filePath, force = false }: Options) => {
+const openFile = (path: string) => {
   try {
-    if (!filePath) {
-      filePath = cwd.get();
+    if (!path) {
+      path = cwd.get();
     }
-    const readFile = fs.readFileSync(filePath, 'utf-8');
+    const readFile = fs.readFileSync(path, 'utf-8');
 
     const regex = /<[^>].+?>(.*?)<\/.+?>/m;
     const newRegex = /(<([^>]+)>)/gi;
@@ -31,32 +31,27 @@ const openFile = ({ path: filePath, force = false }: Options) => {
     return {
       title,
       content: readFile,
-      fileName: getFileName({ path: filePath }),
-      path: force ? filePath : `${cwd.get()}/${filePath}`
+      fileName: getFileName(path)
     };
-  } catch (er) {
+  } catch (er: any) {
     throw new Error(er.message);
   }
 };
 
 const writeToFile = async (
-  input: HDS.IFileInput,
-  absolute?: boolean
+  input: HDS.IFileInput
 ): Promise<boolean | HDS.IError> => {
-  const { path, content, fileName } = input;
+  const { path, content } = input;
   if (!input) {
     throw new Error('Input all fields');
   }
 
-  let newPath = path;
-  if (!absolute) {
-    newPath = `${path}/${fileName}`;
-  }
+  const newPath = path;
   try {
     fs.writeFileSync(newPath, content, { encoding: 'utf8' });
 
     return true;
-  } catch (er) {
+  } catch (er: any) {
     return {
       error: true,
       message: er.message
@@ -76,51 +71,19 @@ const allHtmlFilesPath = (filePath?: string) => {
   return allHtmls;
 };
 
-// const getEntryFilePath = async ({
-//   path: projectPath,
-//   force
-// }: Options): Promise<string> => {
-//   if (!force) {
-//     projectPath = `${cwd.get()}/${projectPath}`;
-//   }
-
-//   if (!folder.isHardocsProject({ path: projectPath, force })) {
-//     throw new Error('Not a valid hardocs project -- getEntryFilePath');
-//   }
-
-//   try {
-//     const docsDir = await folder.getDocsFolder({
-//       path: projectPath,
-//       force
-//     });
-
-//     const entryFileName = getHardocsJsonFile({ path: projectPath, force })
-//       .hardocsJson.metadata;
-
-//     const entryFile = `${docsDir}/${entryFileName}`;
-//     return entryFile;
-//   } catch (err) {
-//     return 'Not a valid project';
-//   }
-// };
-
-const getHardocsJsonFile = ({
-  path,
-  force = false
-}: Partial<Options>): {
+const getHardocsJsonFile = (
+  path: string
+): {
   hardocsJson: HDS.IProject;
   hardocsDir: string;
 } => {
-  if (force && !path) {
-    throw new Error('Please specify path when using `force: true` option..');
-  }
   if (!path) {
-    path = cwd.get();
+    throw new Error('Please specify path when using `force: true` option..');
   }
 
   const hardocsDir = getHardocsDir(path);
 
-  if (!folder.isHardocsProject({ path, force })) {
+  if (!folder.isHardocsProject(path)) {
     throw new Error('Not a valid hardocs project -- getHardocsJsonFile');
   }
   const hardocsFile: string = fs.readFileSync(
@@ -153,7 +116,7 @@ const openEntryFile = async ({ path, force }: Options) => {
     path = `${cwd.get()}/${path}`;
   }
 
-  const metadata = openFile({ path, force: false });
+  const metadata = openFile(path);
   return metadata;
 };
 
@@ -161,25 +124,14 @@ const extractAllFileData = async ({ path }: Options) => {
   const allHtmlFilesPathPath = allHtmlFilesPath(path);
   try {
     return allHtmlFilesPathPath.map((f) => {
-      const d = openFile({ path: f, force: false });
-      // const d = await openFile({ filePath: f });
-
-      const data = {
-        // title: d.title,
-        // description: d.description,
-        // fileName: getFileName({ path: f }),
-        // fullPath: `${cwd.get()}/${d.path}`,
-        ...d
-        // content: '' TODO: return only entry file contents
-      };
-      return data;
+      return openFile(f);
     });
   } catch (er) {
     throw new Error('Error occurred :(');
   }
 };
 
-const getFileName = ({ path }: Path) => {
+const getFileName = (path: string) => {
   const fullPath = path.split(/\//gis);
   const lastIndex = fullPath[fullPath.length - 1];
   return lastIndex.toString().includes(`.html`) && lastIndex;
@@ -189,23 +141,21 @@ const exists = (path: string): boolean => {
   return fs.existsSync(path);
 };
 
-const deleteFile = ({
-  filePath
-}: HDS.IDeleteFileOnMutationArguments): boolean | HDS.IError => {
-  if (folder.isDirectory({ path: filePath })) {
+const deleteFile = (path: string): boolean | HDS.IError => {
+  if (folder.isDirectory(path)) {
     return {
       error: true,
       message: 'File path must point to a valid file and not a directory'
     };
   }
 
-  if (!exists(filePath)) {
+  if (!exists(path)) {
     return {
       error: true,
       message: "File doesn't exist"
     };
   }
-  fs.stat(filePath, (err, stat) => {
+  fs.stat(path, (err, stat) => {
     if (err) {
       return {
         error: true,
@@ -220,7 +170,7 @@ const deleteFile = ({
         message: "Method doesn't support deleting of directories."
       };
     }
-    fs.unlink(filePath, (err) => {
+    fs.unlink(path, (err) => {
       if (err) {
         return {
           error: true,

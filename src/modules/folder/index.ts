@@ -1,10 +1,6 @@
-import { getHardocsDir } from './../../utils/constants';
-import * as path from 'path';
 import * as fs from 'fs';
-
-import { Options, GeneratedFolder, Path } from '../../typings/globals';
-import cwd from '../cwd';
-import file from '../file';
+import * as path from 'path';
+import { getHardocsDir } from './../../utils/constants';
 
 const isPlatformWindows =
   process.platform.indexOf('win') === 0 || process.platform.includes('win');
@@ -28,54 +24,24 @@ const copy = (src: string, dest: string) => {
   });
 };
 
-const isDirectory = ({ path: file }: Path) => {
-  file = file.replace(/\\/g, path.sep);
+const isDirectory = (dir: string) => {
+  dir = dir.toString().replace(/\\/g, path.sep);
   try {
-    return fs.existsSync(file) && fs.statSync(file).isDirectory();
-  } catch (err) {
+    return fs.existsSync(dir) && fs.statSync(dir).isDirectory();
+  } catch (err: any) {
     console.log(err.message);
     return false;
   }
 };
 
-const generateFolder = ({ path: file }: Path): GeneratedFolder => {
+const generateFolder = (dir: string) => {
   return {
-    name: path.basename(file),
-    path: file
+    name: path.basename(dir),
+    path: dir
   };
 };
 
-const getCurrent = () => {
-  const baseDir = cwd.get();
-  return generateFolder({ path: baseDir });
-};
-
-const open = async ({ path: file }: Path) => {
-  await cwd.set(file);
-  return generateFolder({ path: cwd.get() });
-};
-
-const openParent = ({ path: file }: Path) => {
-  const newPath = path.dirname(file);
-  cwd.set(newPath);
-  return generateFolder({ path: cwd.get() });
-};
-
-const createFolder = ({ path: name, force = false }: Options) => {
-  if (isDirectory({ path: name })) {
-    // console.log(`Folder already exist.`);
-    return false;
-  }
-
-  let folder = path.join(cwd.get(), name);
-  if (force) {
-    folder = name;
-  }
-  fs.mkdirSync(folder);
-  return generateFolder({ path: folder });
-};
-
-const list = async ({ path: base }: Path) => {
+const list = async (base: string) => {
   let dir = base;
   if (isPlatformWindows) {
     if (base.match(/^([A-Z]{1}:)$/)) {
@@ -90,13 +56,13 @@ const list = async ({ path: base }: Path) => {
       return {
         path: folderPath,
         name: file,
-        hidden: isHidden({ path: folderPath })
+        hidden: isHidden(folderPath)
       };
     })
-    .filter((file) => isDirectory({ path: file.path }));
+    .filter((file) => isDirectory(file.path));
 };
 
-const isHidden = ({ path: file }: Path) => {
+const isHidden = (file: string) => {
   try {
     const prefixed = path.basename(file).charAt(0) === hiddenPrefix;
     const result = {
@@ -121,20 +87,13 @@ const isHidden = ({ path: file }: Path) => {
   }
 };
 
-const readPackage = ({
-  path: docsPath = '',
-  force = false
-}: Partial<Options>) => {
-  if (!force) {
-    docsPath = cwd.get();
-  }
-
+const readPackage = (docsPath: string) => {
   // Hardocs hidden folder
   const hardocsDir = getHardocsDir(docsPath);
   const hardocsPkg = path.join(hardocsDir, 'hardocs.json');
 
   try {
-    if (isDirectory({ path: hardocsDir })) {
+    if (isDirectory(hardocsDir)) {
       if (fs.existsSync(hardocsPkg)) {
         const jSON = fs.readFileSync(hardocsPkg, 'utf8');
 
@@ -149,9 +108,9 @@ const readPackage = ({
   }
 };
 
-const isHardocsProject = ({ path: dir, force = false }: Options): boolean => {
+const isHardocsProject = (dir: string): boolean => {
   try {
-    const pkg = readPackage({ path: dir, force });
+    const pkg = readPackage(dir);
     return !!pkg;
   } catch (er) {
     if (process.env.HARDOCS_DEV_MODE) {
@@ -162,42 +121,12 @@ const isHardocsProject = ({ path: dir, force = false }: Options): boolean => {
   }
 };
 
-const getDocsFolder = async ({ path, force }: Partial<Options>) => {
-  let fromBaseDir = cwd.get();
-  if (force) {
-    if (path) {
-      fromBaseDir = path;
-    }
-  }
-  if (!isHardocsProject({ path: fromBaseDir })) {
-    throw new Error('Not a hardocs project');
-  }
-  const hardocsJson = file.getHardocsJsonFile({ path: fromBaseDir, force })
-    .hardocsJson;
-  const { docsDir } = hardocsJson;
-
-  return `${fromBaseDir}/${docsDir}`;
-};
-
-const deleteFolder = ({ path }: Path): boolean => {
-  if (isDirectory({ path })) {
-    fs.rmdirSync(path, { recursive: true });
-  }
-  return true;
-};
-
 export default {
   isDirectory,
   generateFolder,
-  getCurrent,
-  open,
-  openParent,
-  createFolder,
   list,
   isHidden,
-  getDocsFolder,
   readPackage,
   isHardocsProject,
-  deleteFolder,
   copy
 };
