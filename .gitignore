@@ -6,6 +6,7 @@ tmp/
 temp/
 .env
 yarn-error.log
+yarn.lock
 mongo-server/
 server-2/
 push.sh
